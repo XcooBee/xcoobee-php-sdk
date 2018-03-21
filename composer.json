@@ -1,0 +1,22 @@
+{
+    "name": "xcoobee/xcoobee-sdk-php",
+    "description": "XcooBee SDK for PHP",
+    "type": "library",
+    "authors": [
+        {
+            "name": "XcooBee",
+            "email": "info@xcoobee.com"
+        }
+    ],
+    "require": {
+        "webonyx/graphql-php": "^0.11.5",
+        "singpolyma/openpgp-php": "^0.3.0",
+        "guzzlehttp/guzzle": "^6.3",
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload":{
+        "psr-4":{
+            "xcoobee\\":"src/xcoobee"
+        }
+    }
+}
