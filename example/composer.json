@@ -1,0 +1,23 @@
+{
+    "name": "xcoobee/example",
+    "description": "Example SDK",
+    "authors": [
+        {
+            "name": "XcooBee",
+            "email": "info2@xcoobee.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "../xcoobee-php-sdk"
+        }
+    ],
+    "require": {
+        "webonyx/graphql-php": "^0.11.5",
+        "singpolyma/openpgp-php": "^0.3.0",
+        "guzzlehttp/guzzle": "^6.3",
+        "phpunit/phpunit": "^7.0"
+    }
+}

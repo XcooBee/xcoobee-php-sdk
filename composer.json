@@ -5,14 +5,16 @@
     "authors": [
         {
             "name": "XcooBee",
-            "email": "info@xcoobee.com"
+            "email": "info2@xcoobee.com"
         }
     ],
     "require": {
-        "webonyx/graphql-php": "^0.11.5",
         "singpolyma/openpgp-php": "^0.3.0",
         "guzzlehttp/guzzle": "^6.3",
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^7.0",
+        "rtheunissen/guzzle-log-middleware": "^0.4.1",
+        "monolog/monolog": "^1.23",
+        "tedivm/stash": "^0.14.2"
     },
     "autoload":{
         "psr-4":{

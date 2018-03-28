@@ -9,7 +9,7 @@
          testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader">
 
     <testsuites>
-        <testsuite name="All">
+        <testsuite name="sendmessageTest">
             <directory>test</directory>
         </testsuite>
     </testsuites>

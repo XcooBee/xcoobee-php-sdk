@@ -7,4 +7,5 @@ class ConfigModel
     public $pgpSecret;
     public $pgpPassword;
     public $campaignId;
+    public $encode;
 }

@@ -1,18 +1,84 @@
 <?php namespace xcoobee;
+
+use xcoobee\core\Configuration;
 use xcoobee\models\ConfigModel;
-use xcoobee\core\Message;
+use xcoobee\auth\Auth;
+
+use xcoobee\core\Bees;
 
 class XcooBee
 {
-    protected $homeDirectory;
-    public function __construct($homedir)
-    {
-        $this->homeDirectory = $homedir;
+    
+    /**
+     * Config Object
+     *
+     * @var Configuration
+     */
+    private $config;
+
+    /**
+     * XcooBeeClient expects user's home directory path for config and secret.
+     *
+     * @param string $homeDir
+     */
+    public function __construct($homeDir){
+        $this->config = new Configuration;
+        $this->config->defaultConfig($homeDir);
     }
 
-    public function sendUserMessage($message, $consentId, ConfigModel $config)
+    /**
+     * setConfig override default configuration.
+     *
+     * @param string $key
+     * @param string $secret
+     * @param string $pgpsecret
+     * @param string $pgppass
+     * @param string $campaign_id
+     * @param int $encode
+     * @return bool
+     */
+    public function setConfig($key, $secret, $pgpsecret, $pgppass, $campaign_id, $encode)
     {
-        $message = new Message;
-        return $message->sendUserMessage($message, $consentId, $config);
+        $config = new ConfigModel;
+        $config->apiKey = $key;
+        $config->apiSecret = $secret;
+        $config->pgpSecret = $pgpsecret;
+        $config->pgpPassword = $pgppass;
+        $config->campaignId = $campaign_id;
+        $config->encode = $encode;
+        
+        return $this->config->setConfig($config);
+    }
+
+    public function getConfig($key)
+    {
+        return $this->config->getConfig($key);
+    }
+
+    /**
+     * clearConfig clears configuration from memory/cache.
+     *
+     * @return bool
+     */
+    public function clearConfig()
+    {
+        return $this->config->clearConfig();
+    }
+
+    public function listBees($searchText = "")
+    {
+        $bees = new Bees;
+        return $bees->getBees($searchText);
+    }
+
+    public function uploadFiles()
+    {
+        
+    }
+
+    public function testXcoobee()
+    {
+        $this->auth = new Auth;
+        return $this->auth->getToken();
     }
 }
