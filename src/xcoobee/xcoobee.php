@@ -5,6 +5,7 @@ use xcoobee\models\ConfigModel;
 use xcoobee\auth\Auth;
 
 use xcoobee\core\Bees;
+use xcoobee\core\Users;
 
 class XcooBee
 {
@@ -71,14 +72,17 @@ class XcooBee
         return $bees->getBees($searchText);
     }
 
-    public function uploadFiles()
+    public function uploadFiles($files, $endPoint = null)
     {
-        
+        $bees = new Bees;
+        return $bees->uploadFiles($files, $endPoint);
     }
 
     public function testXcoobee()
     {
-        $this->auth = new Auth;
-        return $this->auth->getToken();
+        $this->auth = new uploadFiles;
+        return $this->auth->uploadFiles("asdfadsf");
+        //$users = new Users;
+        //return $users->getUser();
     }
 }

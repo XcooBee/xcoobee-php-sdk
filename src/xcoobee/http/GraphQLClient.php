@@ -12,7 +12,7 @@ use xcoobee\exceptions\GraphQLMissingData;
 use xcoobee\core\Constants;
 use xcoobee\auth\Auth;
 
-class Client extends Auth
+class GraphQLClient extends Auth
 {
     /**
      * @var \GuzzleHttp\Client
@@ -98,7 +98,6 @@ class Client extends Auth
     public function response($url, $query, $variables = [], $headers = [])
     {
         $response = $this->raw($url, $query, $variables, $headers);
-        //var_dump($response);
         return new Response($response);
     }
 }

@@ -20,7 +20,6 @@ class Configuration
 
     public function setConfig(ConfigModel $config)
     {
-        //var_dump($config->apiKey);
         $this->store = new PersistedData();
         $this->store->setStore(Constants::CURRENT_CONFIG, $config);
 
@@ -55,7 +54,7 @@ class Configuration
     public function defaultConfig($homedir){
         $this->store = new PersistedData();
         $currentConfig = $this->store->getStore(Constants::CURRENT_CONFIG);
-        //var_dump($currentConfig);
+        
         if($currentConfig == null){
             //echo "getting config";
             $lines = file_get_contents($homedir.Constants::CONFIG_FILE);

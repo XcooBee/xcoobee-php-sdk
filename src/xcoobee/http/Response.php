@@ -31,10 +31,11 @@ class Response
      */
     public function __construct($response)
     {
+        
         $time = new DateTime;
         $responseBody = $response->getBody();
         $responseStatus = $response->getStatusCode();
-        
+      
         $this->time = $time->format('Y-m-d H:i:s');
         if (isset($responseBody)) {
             $this->data = $responseBody;

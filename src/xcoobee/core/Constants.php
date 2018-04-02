@@ -9,4 +9,5 @@ class Constants
     const CURRENT_CONFIG = "CURRENT_CONFIG";
     const PREVIOUS_CONFIG = "PREVIOUS_CONFIG";
     const AUTH_TOKEN = "AUTH_TOKEN";
+    const CURRENT_USER = "CURRENT_USER";
 }
