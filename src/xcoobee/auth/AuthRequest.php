@@ -1,5 +1,5 @@
 <?php 
-namespace xcoobee\auth;
+namespace XcooBee\Auth;
 
 use JsonSerializable;
 

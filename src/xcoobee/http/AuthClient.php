@@ -1,4 +1,4 @@
-<?php namespace xcoobee\http;
+<?php namespace XcooBee\Http;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
@@ -7,7 +7,7 @@ use GuzzleHttp\MessageFormatter;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-use xcoobee\core\Constants;
+use XcooBee\Core\Constants;
 
 class AuthClient
 {

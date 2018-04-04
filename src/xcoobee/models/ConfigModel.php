@@ -1,4 +1,4 @@
-<?php namespace xcoobee\models;
+<?php namespace XcooBee\Models;
 
 class ConfigModel
 {

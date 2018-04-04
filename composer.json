@@ -1,5 +1,5 @@
 {
-    "name": "xcoobee/xcoobee-sdk-php",
+    "name": "XcooBee/xcoobee-sdk-php",
     "description": "XcooBee SDK for PHP",
     "type": "library",
     "authors": [
@@ -18,7 +18,7 @@
     },
     "autoload":{
         "psr-4":{
-            "xcoobee\\":"src/xcoobee"
+            "XcooBee\\":"src/XcooBee"
         }
     }
 }

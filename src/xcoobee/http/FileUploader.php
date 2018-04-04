@@ -1,11 +1,11 @@
-<?php namespace xcoobee\http;
+<?php namespace XcooBee\Http;
 
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\MessageFormatter;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use xcoobee\core\Constants;
+use XcooBee\Core\Constants;
 
 class FileUploader
 {

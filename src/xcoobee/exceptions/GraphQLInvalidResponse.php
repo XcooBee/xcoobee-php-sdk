@@ -1,5 +1,5 @@
 <?php
-namespace xcoobee\exceptions;
+namespace XcooBee\Exceptions;
 
 class GraphQLInvalidResponse extends \Exception
 {

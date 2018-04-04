@@ -1,5 +1,5 @@
 <?php 
-namespace xcoobee\http;
+namespace XcooBee\Http;
 use \Datetime;
 
 class Response

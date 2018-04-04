@@ -1,7 +1,7 @@
-<?php namespace xcoobee\core;
+<?php namespace XcooBee\Core;
 
-use xcoobee\models\ConfigModel;
-use xcoobee\core\Configuration;
+use XcooBee\Models\ConfigModel;
+use XcooBee\Core\Configuration;
 
 class Message
 {

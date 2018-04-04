@@ -1,11 +1,11 @@
-<?php namespace xcoobee;
+<?php namespace XcooBee;
 
-use xcoobee\core\Configuration;
-use xcoobee\models\ConfigModel;
-use xcoobee\auth\Auth;
+use XcooBee\Core\Configuration;
+use XcooBee\Models\ConfigModel;
+use XcooBee\Auth\Auth;
 
-use xcoobee\core\Bees;
-use xcoobee\core\Users;
+use XcooBee\Core\Bees;
+use XcooBee\Core\Users;
 
 class XcooBee
 {
@@ -76,6 +76,12 @@ class XcooBee
     {
         $bees = new Bees;
         return $bees->uploadFiles($files, $endPoint);
+    }
+
+    public function takeOff($bees, $parameters, $subscriptions)
+    {
+        $bee = new Bees;
+        return $bee->takeOff($bees, $parameters, $subscriptions);
     }
 
     public function testXcoobee()

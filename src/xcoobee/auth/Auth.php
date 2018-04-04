@@ -1,9 +1,9 @@
-<?php namespace xcoobee\auth;
+<?php namespace XcooBee\Auth;
 
-use xcoobee\http\AuthClient;
-use xcoobee\store\PersistedData;
-use xcoobee\core\Configuration;
-use xcoobee\core\Constants;
+use XcooBee\Http\AuthClient;
+use XcooBee\Store\PersistedData;
+use XcooBee\Core\Configuration;
+use XcooBee\Core\Constants;
 
 class Auth
 {

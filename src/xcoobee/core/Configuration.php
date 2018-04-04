@@ -1,8 +1,8 @@
 <?php
-namespace xcoobee\core;
-use xcoobee\models\ConfigModel;
-use xcoobee\store\PersistedData;
-use xcoobee\core\Constants;
+namespace XcooBee\Core;
+use XcooBee\Models\ConfigModel;
+use XcooBee\Store\PersistedData;
+use XcooBee\Core\Constants;
 use Psr\Cache\CacheItemPoolInterface;
 
 class Configuration
@@ -28,14 +28,12 @@ class Configuration
         
         if(($currentConfig != $previousConfig) || ($previousConfig == null))
         {
-            echo "config null or new";
             $this->store->setStore(Constants::CURRENT_CONFIG, $config);
             $this->store->setStore(Constants::PREVIOUS_CONFIG, $config);
 
             return true;
         }
         else{
-            echo "SAME";
             return true;
         }
     }
@@ -56,7 +54,6 @@ class Configuration
         $currentConfig = $this->store->getStore(Constants::CURRENT_CONFIG);
         
         if($currentConfig == null){
-            //echo "getting config";
             $lines = file_get_contents($homedir.Constants::CONFIG_FILE);
             $lines = preg_split("/\\r\\n|\\r|\\n/", $lines);
             $configModel = new ConfigModel;

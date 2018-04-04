@@ -1,4 +1,4 @@
-<?php namespace xcoobee\core;
+<?php namespace XcooBee\Core;
 
 class Consent
 {

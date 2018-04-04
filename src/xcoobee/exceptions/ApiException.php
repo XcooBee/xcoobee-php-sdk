@@ -1,7 +1,7 @@
-<?php namespace xcoobee\exceptions;
+<?php namespace XcooBee\Exceptions;
 
 use GuzzleHttp\Exception\RequestException;
-use xcoobee\util\JSON;
+use XcooBee\util\JSON;
 
 class ApiException extends \RuntimeException implements XcoobeeException
 {

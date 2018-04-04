@@ -1,7 +1,7 @@
 <?php
 
-namespace xcoobee\exceptions;
+namespace XcooBee\Exceptions;
 
-interface XcoobeeException extends \Throwable
+interface XcooBeeException extends \Throwable
 {
 }

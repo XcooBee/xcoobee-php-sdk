@@ -1,6 +1,6 @@
 <?php 
-use xcoobee\models\configModel;
-use xcoobee\core\Message;
+use Xcoobee\Models\ConfigModel;
+use Xcoobee\Core\Message;
 
 class MessageTest extends PHPUnit_Framework_TestCase{
     

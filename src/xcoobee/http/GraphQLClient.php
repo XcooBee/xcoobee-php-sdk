@@ -1,5 +1,5 @@
 <?php
-namespace xcoobee\http;
+namespace XcooBee\Http;
 
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
@@ -7,10 +7,10 @@ use GuzzleHttp\MessageFormatter;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-use xcoobee\exceptions\GraphQLInvalidResponse;
-use xcoobee\exceptions\GraphQLMissingData;
-use xcoobee\core\Constants;
-use xcoobee\auth\Auth;
+use XcooBee\Exceptions\GraphQLInvalidResponse;
+use XcooBee\Exceptions\GraphQLMissingData;
+use XcooBee\Core\Constants;
+use XcooBee\Auth\Auth;
 
 class GraphQLClient extends Auth
 {

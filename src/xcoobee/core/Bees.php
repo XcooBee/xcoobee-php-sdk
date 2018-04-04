@@ -1,9 +1,9 @@
-<?php namespace xcoobee\core;
+<?php namespace XcooBee\Core;
 
-use xcoobee\http\GraphQLClient;
-use xcoobee\core\Constants;
-use xcoobee\core\Users;
-use xcoobee\http\FileUploader;
+use XcooBee\Http\GraphQLClient;
+use XcooBee\Core\Constants;
+use XcooBee\Core\Users;
+use XcooBee\Http\FileUploader;
 
 class Bees
 {
@@ -42,17 +42,18 @@ class Bees
         return $client->response("graphql", $query, $variables, $headers);
     }
 
-    public function uploadFiles($files = [], $endPoint="")
+    public function uploadFiles($files = [], $endPoint = "outbox")
     {
+        $endPoint = !empty($endPoint) ? $endPoint : "outbox";
         $users = new Users;
         $user = $users->getUser();
+        
         if($user !== null)
         {
-            //get end point cursor;
-            $endpointCursor = $this->getOutboxEndpoint($user->userCursor);
+            $endpointCursor = $this->getOutboxEndpoint($user->userCursor, $endPoint);
             
-            //get policies;
             $policies = $this->getPolicy($endPoint, $endpointCursor, $files);
+            
             foreach ($files as $key => $file) {
                 try {
                     $fileName = basename($file);
@@ -61,7 +62,7 @@ class Bees
                     
                     $upload = new FileUploader();
                     $response = $upload->uploadFile($file, $policy);
-                    echo "Uploaded successfully ".$fileName."<br />";
+                    
                 } catch(RequestException $e) {
                     throw $e;
                 }
@@ -69,7 +70,7 @@ class Bees
         }
     }
 
-    public function takeOff($bees, $params = [], $subscriptions = [])
+    public function takeOff($bees=[], $params, $subscriptions)
     {
         $query = 'mutation addDirective($params: DirectiveInput!) {
             add_directive(params: $params) {
@@ -77,6 +78,43 @@ class Bees
             }
         }';
 
+        $beeParams = array(
+            'filenames' => $params["process"]["fileNames"],
+            'user_reference' => $params["process"]["userReference"]
+        );
+        
+        $destinations = $params["process"]["destinations"];
+        foreach($destinations as $key => $destination){
+            if($this->isValidEmail($destination)){
+                $beeParams["destinations"][$key] = array("email"=> $destination);
+            }
+            else{
+                $beeParams["destinations"][$key] = array("xcoobee_id"=> $destination);
+            }
+        }
+       
+        $beeParams["bees"]= array();
+        foreach ($bees as $key => $bee) {
+            if($bee !=="transfer"){
+                $beeParams["bees"][$key] = array(
+                    'bee_name'=>$bee, 
+                    'params'=> isset($params[$bee]) ? (json_encode($params[$bee])) :'{}',
+                );
+            }
+        }
+
+        $headers = [
+            'Content-Type' => 'application/json'
+        ];
+        
+        $variables = [
+            'params' => $beeParams
+        ];
+
+        $client = new GraphQLClient;
+
+        $response = $client->response("graphql", $query, $variables, $headers);
+        print_r($response);
     }
 
     private function getPolicy($intent, $endpointCursor="", $files=[])
@@ -103,13 +141,13 @@ class Bees
             'Content-Type' => 'application/json'
         ];
 
-        echo $query;
         $response = $client->response("graphql", $query, [], $headers);
         return json_decode($response->data);
     }
 
-    private function getOutboxEndpoint($userCursor)
+    private function getOutboxEndpoint($userCursor, $intent)
     {
+        $userIntent = $intent;
         $client = new GraphQLClient;
         $query = 'query getEndpoint($user_cursor: String!) {
             outbox_endpoints(user_cursor: $user_cursor) {
@@ -131,16 +169,20 @@ class Bees
         
         $response = $client->response("graphql", $query, $variables, $headers);
         $responseClass = json_decode($response->data);
-
-        $endpoint = array_filter($responseClass->data->outbox_endpoints->data,
-            function($value, $key) {
-                return $value->name == "flex";
-            }, ARRAY_FILTER_USE_BOTH);
+        
+        $endpoint = array_filter($responseClass->data->outbox_endpoints->data, 
+            function($value, $key) use ($intent) {
+                return (($value->name == $intent) || ($value->name == "flex"));
+        }, ARRAY_FILTER_USE_BOTH);
 
         if($endpoint != null ){
             return $endpoint[0]->cursor;
         }
 
         return null;
+    }
+
+    function isValidEmail($value) {
+        return (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $value)) ? false : true;
     }
 }

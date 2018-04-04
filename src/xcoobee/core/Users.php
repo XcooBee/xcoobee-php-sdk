@@ -1,8 +1,8 @@
-<?php namespace xcoobee\core;
-use xcoobee\http\GraphQLClient;
-use xcoobee\store\PersistedData;
-use xcoobee\core\Constants;
-use xcoobee\models\UserModel;
+<?php namespace XcooBee\Core;
+use XcooBee\Http\GraphQLClient;
+use XcooBee\Store\PersistedData;
+use XcooBee\Core\Constants;
+use XcooBee\Models\UserModel;
 
 class Users
 {
@@ -23,12 +23,8 @@ class Users
     
             $client = new GraphQLClient;
             $response = $client->response("graphql", $query, [], $headers);
-            //echo $user->data;
+            
             $user = json_decode($response->data);
-            // echo $user->data->user->cursor;
-            // echo $user->data->user->xcoobee_id;
-
-            //echo $user->cursor;
             $userModel = new UserModel;
             $userModel->userCursor = $user->data->user->cursor;
             $userModel->xcoobeeId = $user->data->user->xcoobee_id;
