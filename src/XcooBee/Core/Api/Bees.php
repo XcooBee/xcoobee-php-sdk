@@ -3,11 +3,23 @@
 namespace XcooBee\Core\Api;
 
 
-use GuzzleHttp\Exception\RequestException;
+use XcooBee\Core\Validation;
 use XcooBee\Http\FileUploader;
 
 class Bees extends Api
 {
+    /** @var Users */
+    protected $_users;
+    /** @var FileUploader */
+    protected $_fileUploader;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->_users = new Users();
+    }
+
     /**
      * Return list of bees
      *
@@ -51,44 +63,35 @@ class Bees extends Api
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadFiles($files, $endPoint = "outbox")
+    public function uploadFiles($files, $endPoint = 'outbox')
     {
-        $endPoint = !empty($endPoint) ? $endPoint : "outbox";
-        $users = new Users();
-        $user = $users->getUser();
-        
-        if($user !== null)
-        {
-            $endpointCursor = $this->getOutboxEndpoint($user->userCursor, $endPoint);
-            
-            $policies = $this->getPolicy($endPoint, $endpointCursor, $files);
-            
-            foreach ($files as $key => $file) {
-                try {
-                    $policy = "policy" . $key;
-                    $policy = $policies->data->$policy;
-                    
-                    $upload = new FileUploader();
+        $endPoint = !empty($endPoint) ? $endPoint : 'outbox';
 
-                    return $upload->uploadFile($file, $policy);
-                    
-                } catch(RequestException $e) {
-                    throw $e;
-                }
-            }
+        $user = $this->_users->getUser();
+        $endpointCursor = $this->_getOutboxEndpoint($user->userCursor, $endPoint);
+        $policies = $this->_getPolicy($endPoint, $endpointCursor, $files);
+
+        $result = [];
+        foreach ($files as $key => $file) {
+            $policy = 'policy' . $key;
+            $policy = $policies->data->$policy;
+
+            $result[] = $this->_fileUploader->uploadFile($file, $policy);
         }
+
+        return $result;
     }
 
     /**
      * Trigger flight of passed bees
      *
      * @param array $bees
-     * @param array $params
+     * @param array $options
      *
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function takeOff(array $bees, $params)
+    public function takeOff(array $bees, $options)
     {
         $query = 'mutation addDirective($params: DirectiveInput!) {
             add_directive(params: $params) {
@@ -96,43 +99,42 @@ class Bees extends Api
             }
         }';
 
-        $beeParams = [
-            'filenames'         => $params["process"]["fileNames"],
-            'user_reference'    => $params["process"]["userReference"]
+        $params = [
+            'filenames'         => $options['process']['fileNames'],
+            'user_reference'    => $options['process']['userReference']
         ];
         
-        $destinations = $params["process"]["destinations"];
-        foreach($destinations as $key => $destination){
-            if($this->isValidEmail($destination)){
-                $beeParams["destinations"][$key] = ["email"=> $destination];
-            }
-            else{
-                $beeParams["destinations"][$key] = ["xcoobee_id"=> $destination];
+        $destinations = array_key_exists('destinations', $options['process']) ? $options['process']['destinations'] : [];
+        foreach($destinations as $key => $destination) {
+            if (Validation::isValidEmail($destination)) {
+                $params['destinations'][$key] = ['email' => $destination];
+            } else {
+                $params['destinations'][$key] = ['xcoobee_id' => $destination];
             }
         }
        
-        $beeParams["bees"]= [];
-        foreach ($bees as $key => $bee) {
-            if($bee !=="transfer"){
-                $beeParams["bees"][$key] = [
-                    'bee_name'=>$bee, 
-                    'params'=> isset($params[$bee]) ? (json_encode($params[$bee])) :'{}',
+        $params['bees'] = [];
+        foreach ($bees as $beeName => $beeParams) {
+            if($beeName !== 'transfer'){
+                $params['bees'][] = [
+                    'bee_name'  => $beeName,
+                    'params'    => count($beeParams) ? json_encode($beeParams) : "{}",
                 ];
             }
         }
 
-        return $this->_request($query, [ 'params' => $beeParams ]);
+        return $this->_request($query, ['params' => $params]);
     }
 
-    private function getPolicy($intent, $endpointCursor = "", $files = [])
+    protected function _getPolicy($intent, $endpointCursor = "", $files = [])
     {
         $query = 'query uploadPolicy {';
         foreach($files as $key => $file){
             $fileName = basename($file);
 
-            $query .= "policy$key: upload_policy(filePath: '$fileName',
-                intent: '$intent',
-                identifier: '$endpointCursor'){
+            $query .= "policy$key: upload_policy(filePath: \"$fileName\",
+                intent: $intent,
+                identifier: \"$endpointCursor\"){
                     signature
                     policy
                     date
@@ -147,7 +149,7 @@ class Bees extends Api
         return $this->_request($query);
     }
 
-    private function getOutboxEndpoint($userCursor, $intent)
+    protected function _getOutboxEndpoint($userCursor, $intent)
     {
         $query = 'query getEndpoint($user_cursor: String!) {
             outbox_endpoints(user_cursor: $user_cursor) {
@@ -171,9 +173,5 @@ class Bees extends Api
         }
 
         return null;
-    }
-
-    function isValidEmail($value) {
-        return preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $value);
     }
 }
