@@ -5,11 +5,7 @@ use XcooBee\XcooBee;
 
 $xcoobee = new XcooBee();
 
-$xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromData([
-    'apiKey'        => 'zoKy4WkQ4JKYVLWN73JN4ha3E43sEq',
-    'apiSecret'     => 'EGufpI+45P0f1UnZtKjVreWmOnt99t',
-    'encode'        => false,
-]));
+$xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile('/var/www/html'));
 
 $xcoobee->bees->uploadFiles(['1.jpg', '2.jpg']);
 
@@ -24,4 +20,6 @@ $parameters = [
     ]
 ];
 
-$xcoobee->bees->takeOff($bees, $parameters);
+$res = $xcoobee->bees->takeOff($bees, $parameters);
+
+var_export($res);

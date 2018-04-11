@@ -4,6 +4,7 @@ namespace XcooBee\Core\Api;
 
 
 use XcooBee\Http\GraphQLClient;
+use XcooBee\Store\PersistedData;
 
 class Api
 {
@@ -13,6 +14,18 @@ class Api
     public function __construct()
     {
         $this->_client = new GraphQLClient();
+    }
+
+    /**
+     * Returns current user cursor
+     *
+     * @return string
+     */
+    protected function _getUserCursor()
+    {
+        $user = PersistedData::getInstance()->getStore(PersistedData::CURRENT_USER_KEY);
+
+        return $user->userCursor;
     }
 
     /**

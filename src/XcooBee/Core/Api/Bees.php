@@ -18,6 +18,7 @@ class Bees extends Api
         parent::__construct();
 
         $this->_users = new Users();
+        $this->_fileUploader = new FileUploader();
     }
 
     /**
@@ -101,7 +102,9 @@ class Bees extends Api
 
         $params = [
             'filenames'         => $options['process']['fileNames'],
-            'user_reference'    => $options['process']['userReference']
+            'user_reference'    => array_key_exists('userReference', $options['process'])
+                ? $options['process']['userReference']
+                : null
         ];
         
         $destinations = array_key_exists('destinations', $options['process']) ? $options['process']['destinations'] : [];
@@ -164,9 +167,9 @@ class Bees extends Api
         $response = $this->_request($query, ['user_cursor' => (string)$userCursor]);
 
         $endpoint = array_filter($response->data->outbox_endpoints->data,
-            function($value, $key) use ($intent) {
+            function($value) use ($intent) {
                 return (($value->name == $intent) || ($value->name == "flex"));
-        }, ARRAY_FILTER_USE_BOTH);
+            });
 
         if($endpoint != null ){
             return $endpoint[0]->cursor;
