@@ -1,0 +1,24 @@
+{
+    "name": "XcooBee/xcoobee-sdk-php",
+    "description": "XcooBee SDK for PHP",
+    "type": "library",
+    "authors": [
+        {
+            "name": "XcooBee",
+            "email": "info2@xcoobee.com"
+        }
+    ],
+    "require": {
+        "singpolyma/openpgp-php": "^0.3.0",
+        "guzzlehttp/guzzle": "^6.3",
+        "phpunit/phpunit": "^7.0",
+        "rtheunissen/guzzle-log-middleware": "^0.4.1",
+        "monolog/monolog": "^1.23",
+        "tedivm/stash": "^0.14.2"
+    },
+    "autoload":{
+        "psr-4":{
+            "XcooBee\\":"src/XcooBee"
+        }
+    }
+}
