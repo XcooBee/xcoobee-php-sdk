@@ -11,7 +11,7 @@ class Users extends Api
     /**
      * Return current user
      *
-     * @return mixed
+     * @return UserModel
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getUser(){
@@ -28,13 +28,11 @@ class Users extends Api
     
             $response = $this->_request($query, []);
 
-            $user = $response->data->user;
-
-            $userModel = new UserModel();
-            $userModel->userCursor = $user->cursor;
-            $userModel->xcoobeeId = $user->xcoobee_id;
+            $user = new UserModel();
+            $user->userId = $response->data->user->cursor;
+            $user->xcoobeeId = $response->data->user->xcoobee_id;
             
-            $store->setStore(PersistedData::CURRENT_USER_KEY, $userModel);
+            $store->setStore(PersistedData::CURRENT_USER_KEY, $user);
         }
 
         return $user;

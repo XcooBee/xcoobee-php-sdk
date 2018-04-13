@@ -22,7 +22,7 @@ class Bees extends TestCase
         ]);
 
         $this->_setProperty($beesMock, '_users', $this->_getMock(Users::class, [
-            'getUser' => (object) ['userCursor' => 'test']
+            'getUser' => (object) ['userId' => 'test']
         ]));
         $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
             'uploadFile' => true,
@@ -38,11 +38,12 @@ class Bees extends TestCase
     /**
      * @param array $bees
      * @param array $params
+     * @param array $subscriptions
      * @param array $paramsExpected
      *
      * @dataProvider takeOffProvider
      */
-    public function testTakeOff($bees, $params, $paramsExpected)
+    public function testTakeOff($bees, $params, $subscriptions, $paramsExpected)
     {
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_request' => true,
@@ -54,7 +55,7 @@ class Bees extends TestCase
                 $this->assertEquals($paramsExpected, $params);
             }));
 
-        $beesMock->takeOff($bees, $params);
+        $beesMock->takeOff($bees, $params, $subscriptions);
     }
 
     public function takeOffProvider() {
@@ -71,6 +72,7 @@ class Bees extends TestCase
                         "destinations" => ['~test']
                     ]
                 ],
+                [],
                 [
                     'params' => [
                         'filenames' => ['1.jpg', '2.jpg'],
@@ -78,9 +80,10 @@ class Bees extends TestCase
                         'destinations' => [
                             ['xcoobee_id' => '~test'],
                         ],
+                        'subscriptions' => [],
                         'bees' => [],
                     ]
-                ]
+                ],
             ],
             [
                 [
@@ -92,6 +95,7 @@ class Bees extends TestCase
                         "destinations" => ['~test', 'test@xcoobee.com']
                     ]
                 ],
+                [],
                 [
                     'params' => [
                         'filenames' => ['1.jpg', '2.jpg'],
@@ -100,9 +104,36 @@ class Bees extends TestCase
                             ['xcoobee_id' => '~test'],
                             ['email' => 'test@xcoobee.com'],
                         ],
+                        'subscriptions' => [],
                         'bees' => [],
                     ]
-                ]
+                ],
+            ],
+            [
+                [
+                    'xcoobee_twitter_base' => [
+                        'message' => 'test',
+                    ],
+                ],
+                [
+                    'process' => [
+                        'fileNames' => ['1.jpg', '2.jpg'],
+                    ]
+                ],
+                [],
+                [
+                    'params' => [
+                        'filenames' => ['1.jpg', '2.jpg'],
+                        'user_reference' => null,
+                        'subscriptions' => [],
+                        'bees' => [
+                            [
+                                'bee_name' => 'xcoobee_twitter_base',
+                                'params' => '{"message":"test"}',
+                            ]
+                        ],
+                    ]
+                ],
             ],
             [
                 [
@@ -116,9 +147,23 @@ class Bees extends TestCase
                     ]
                 ],
                 [
+                    [
+                        'target' => 'https://testapi.xcoobee.net/Test',
+                        'signed' => false,
+                        'events' => 'success,error',
+                    ]
+                ],
+                [
                     'params' => [
                         'filenames' => ['1.jpg', '2.jpg'],
                         'user_reference' => null,
+                        'subscriptions' => [
+                            [
+                                'target' => 'https://testapi.xcoobee.net/Test',
+                                'signed' => false,
+                                'events' => 'success,error',
+                            ]
+                        ],
                         'bees' => [
                             [
                                 'bee_name' => 'xcoobee_twitter_base',
@@ -126,7 +171,7 @@ class Bees extends TestCase
                             ]
                         ],
                     ]
-                ]
+                ],
             ],
             [
                 [
@@ -137,10 +182,12 @@ class Bees extends TestCase
                         'fileNames' => ['1.jpg', '2.jpg'],
                     ]
                 ],
+                [],
                 [
                     'params' => [
                         'filenames' => ['1.jpg', '2.jpg'],
                         'user_reference' => null,
+                        'subscriptions' => [],
                         'bees' => [
                             [
                                 'bee_name' => 'xcoobee_twitter_base',
@@ -148,7 +195,7 @@ class Bees extends TestCase
                             ]
                         ],
                     ]
-                ]
+                ],
             ],
         ];
     }

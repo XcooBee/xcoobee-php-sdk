@@ -17,15 +17,17 @@ class Api
     }
 
     /**
-     * Returns current user cursor
+     * Returns current user id
      *
      * @return string
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function _getUserCursor()
+    protected function _getUserId()
     {
-        $user = PersistedData::getInstance()->getStore(PersistedData::CURRENT_USER_KEY);
+        $user = new Users();
+        $currentUser = $user->getUser();
 
-        return $user->userCursor;
+        return $currentUser->userId;
     }
 
     /**

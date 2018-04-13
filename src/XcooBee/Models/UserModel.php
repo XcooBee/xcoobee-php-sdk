@@ -5,6 +5,6 @@ namespace XcooBee\Models;
 
 class UserModel
 {
-    public $userCursor;
+    public $userId;
     public $xcoobeeId;
 }

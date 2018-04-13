@@ -29,7 +29,7 @@ class Bees extends Api
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getBees($searchText = ""){
+    public function listBees($searchText = ""){
         $query = 'query getBees($searchText: String) {
             bees(search: $searchText) {
                 data {
@@ -59,18 +59,18 @@ class Bees extends Api
      * Upload passed files
      *
      * @param string[] $files
-     * @param string $endPoint
+     * @param string $endpoint
      *
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadFiles($files, $endPoint = 'outbox')
+    public function uploadFiles($files, $endpoint = 'outbox')
     {
-        $endPoint = !empty($endPoint) ? $endPoint : 'outbox';
+        $endpoint = !empty($endpoint) ? $endpoint : 'outbox';
 
         $user = $this->_users->getUser();
-        $endpointCursor = $this->_getOutboxEndpoint($user->userCursor, $endPoint);
-        $policies = $this->_getPolicy($endPoint, $endpointCursor, $files);
+        $endpointId = $this->_getOutboxEndpoint($user->userId, $endpoint);
+        $policies = $this->_getPolicy($endpoint, $endpointId, $files);
 
         $result = [];
         foreach ($files as $key => $file) {
@@ -88,11 +88,12 @@ class Bees extends Api
      *
      * @param array $bees
      * @param array $options
+     * @param array $subscriptions
      *
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function takeOff(array $bees, $options)
+    public function takeOff(array $bees, $options, $subscriptions = [])
     {
         $query = 'mutation addDirective($params: DirectiveInput!) {
             add_directive(params: $params) {
@@ -104,7 +105,8 @@ class Bees extends Api
             'filenames'         => $options['process']['fileNames'],
             'user_reference'    => array_key_exists('userReference', $options['process'])
                 ? $options['process']['userReference']
-                : null
+                : null,
+            'subscriptions'     => $subscriptions,
         ];
         
         $destinations = array_key_exists('destinations', $options['process']) ? $options['process']['destinations'] : [];
@@ -129,7 +131,7 @@ class Bees extends Api
         return $this->_request($query, ['params' => $params]);
     }
 
-    protected function _getPolicy($intent, $endpointCursor = "", $files = [])
+    protected function _getPolicy($intent, $endpointId = "", $files = [])
     {
         $query = 'query uploadPolicy {';
         foreach($files as $key => $file){
@@ -137,7 +139,7 @@ class Bees extends Api
 
             $query .= "policy$key: upload_policy(filePath: \"$fileName\",
                 intent: $intent,
-                identifier: \"$endpointCursor\"){
+                identifier: \"$endpointId\"){
                     signature
                     policy
                     date
@@ -152,10 +154,10 @@ class Bees extends Api
         return $this->_request($query);
     }
 
-    protected function _getOutboxEndpoint($userCursor, $intent)
+    protected function _getOutboxEndpoint($userId, $intent)
     {
-        $query = 'query getEndpoint($user_cursor: String!) {
-            outbox_endpoints(user_cursor: $user_cursor) {
+        $query = 'query getEndpoint($userId: String!) {
+            outbox_endpoints(user_cursor: $userId) {
                 data {
                     cursor
                     name
@@ -164,7 +166,7 @@ class Bees extends Api
             }
         }';
         
-        $response = $this->_request($query, ['user_cursor' => (string)$userCursor]);
+        $response = $this->_request($query, ['userId' => (string)$userId]);
 
         $endpoint = array_filter($response->data->outbox_endpoints->data,
             function($value) use ($intent) {
