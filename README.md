@@ -55,16 +55,17 @@ The SDK will attempt to determine the configuration object based on the followin
 All PGP data is optional to the configuration object. If you do not supply it the SDK will skip decryption/encryption steps. You will have to do these outside the SDK and supply or process the data yourself.
 
 
-#### setConfig(key,secret,pgpsecret,pgppass,campaign_id)
+#### setConfig(configModel)
 
 The `setConfig` call is the mechanism to create the initial configuration object. You can use it multiple times. Each time you call you will override the existing data. The data once set will persist until library is discarded or `clearConfig` is called.
 
 ```
-key         => the api-key
-secret      => the api-secret
-pgpsecret   => the pgp-secret key
-pgppass     => the pgp-password 
-campaign_id => the default campaign_id
+apiKey      => the api-key
+apiSecret   => the api-secret
+pgpSecret   => the pgp-secret key
+pgpPassword => the pgp-password 
+campaignId  => the default campaign_id
+encode      => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
 
 #### clearConfig()
@@ -95,21 +96,21 @@ The initial content of the config file is plain text, with each option on a sepa
 
 **example file**:
 ```
-key=8sihfsd89f7
-secret=8937438hf
-campaign_id=ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be
-pgppass=somethingsecret
+apiKey=8sihfsd89f7
+apiSecret=8937438hf
+campaignId=ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be
+pgpPassword=somethingsecret
 encode=0
 ```
 
 options: 
 
 ```
-key         => the api-key
-secret      => the api-secret
-campaign_id => the default campaign_id
-pgppass     => the password for your pgp key
-encode      => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+apiKey         => the api-key
+apiSecret      => the api-secret
+campaignId     => the default campaign_id
+pgpPassword    => the password for your pgp key
+encode         => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
 
 
@@ -295,8 +296,83 @@ standard JSON response object
 - status 200 if success: 
     - data will contain campaign data object
 - status 400 if error
-     
 
+## listCampaigns()
+get all user campaigns
+
+### response
+
+standard JSON response object
+- status 200 if success: 
+    - data will contain array of campaign objects
+- status 400 if error
+
+## createCampaign(data)
+Create campaign from passed data
+
+options: 
+
+```
+data => object with data to create campaign. e.g. 
+
+data.name ='test'
+data.title[0].locale = 'en-us'
+data.title[0].value = 'test'
+data.description[0].locale = 'en-us'
+data.description[0].value = 'test'
+data.requests[0].name = 'test'
+data.requests[0].request_data_types[0] = 'first_name'
+data.requests[0].request_data_types[1] = 'last_name'
+data.requests[0].request_data_types[2] = 'xcoobee_id'
+data.requests[0].required_data_types[0] = 'first_name'
+data.requests[0].required_data_types[1] = 'last_name'
+data.requests[0].required_data_types[2] = 'xcoobee_id'
+data.requests[0].consent_types[0] = 'deliver_a_product'
+```
+
+### response
+
+standard JSON response object
+- status 200 if success: 
+    - data will contain campaign ref id
+- status 400 if error
+
+## modifyCampaign(campaignId, data)
+Modify campaign with new data
+
+options: 
+
+```
+campaignId  => the campaign id to use
+data        => object with data to modify campaign. e.g. 
+
+data.name ='test'
+data.title[0].value = 'TEST'
+```
+
+### response
+
+standard JSON response object
+- status 200 if success: 
+    - data will contain campaign ref id
+- status 400 if error
+
+## activateCampaign([campaignId])
+Set status of campaign to active
+
+options: 
+
+```
+campaign_id => optional: the campaign id to use if not default
+```
+
+### response
+
+standard JSON response object
+- status 200 if success: 
+    - data will contain campaign ref id
+- status 400 if error
+     
 ## getDataPackage(packagePointer,[config])
 
 When data is hosted for you at XcooBee you can request the data package each time you need to use it. You will need to provide `packagePointer`. This call will only respond to authorized call source.
@@ -317,7 +393,7 @@ standard JSON response object
 - status 400 if error
 
 
-## getConsentData(consentid,[config])
+## getConsentData(consentId,[config])
 
 Query for a specific consent given. Company can get consent definition for any consent that was created. The data normally has three areas: Who, what data types, what the uses are, how long.
 
@@ -361,7 +437,7 @@ standard JSON response object
     - data object will contain website cookie consent CSV: application,usage,advertising
 - status 400 if error
 
-## requestConsent(xid,refId,[campaign_id],[config])
+## requestConsent(xid,[refId],[campaign_id],[config])
 
 Sends out the consent request to a specific user using the data in the campaign. 
 
@@ -383,7 +459,7 @@ standard JSON response object
 - status 400 if error
 
 
-## confirmConsentChange(consentid,[config])
+## confirmConsentChange(consentId,[config])
 Use this call to confirm that data has been changed in company systems according to change requested by user.
 
 options:
@@ -399,7 +475,7 @@ standard JSON response object
     - data object will contain true
 - status 400 if error
 
-## confirmDataDelete(consentid,[config])
+## confirmDataDelete(consentId,[config])
 Send by company to confirm that data has been purged from company systems
 
 options:
@@ -416,7 +492,7 @@ standard JSON response object
 - status 400 if error
 
 
-## setUserDataResponse(message, consentid, [config])
+## setUserDataResponse(message, consentId, [config])
 
 Companies can respond to user data requested via this call (it is a shortcut way to hiring `xcoobee-data-response` bee). Standard hiring points will be deducted for this. The call will generate a pdf document based on the information in `message`. You should use the `Bee API` if you would like to send data files to users such as CSV, Excel, JSON etc.
 
@@ -655,7 +731,7 @@ standard JSON response object
     - data object will contain true
 - status 400 if error
 
-## takeOff(bees, [parameters], [subscriptions])
+## takeOff(bees, [options], [subscriptions])
 
 You normally use this as follow up call to `uploadFiles()`. This will start your processing. You specify the bee(s) that you want to hire and the parameter that are needed for the bee to work on your file(s). If you want to be kept up to date you can supply subscriptions. Please note that subscriptions will deduct points from your balance and will cause errors when your balance is insufficient.
 
@@ -723,7 +799,7 @@ standard JSON response object
     - data object will contain true
 - status 400 if error
 
-## listBees(searchtext)
+## listBees(searchText)
 
 This function will help you search through the bees in the system that your account is able to hire. This is a simple keyword search interface.
 
