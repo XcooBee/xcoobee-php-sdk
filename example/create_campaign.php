@@ -3,12 +3,22 @@ require '../vendor/autoload.php';
 
 use XcooBee\XcooBee;
 
+// TODO: replace path with yours
+$homeDir = '/home/vrabeshko/www/xcoobee-php-sdk';
+
+
 $xcoobee = new XcooBee();
 
-$xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile('/home/vrabeshko/www/xcoobee-php-sdk'));
+$xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile($homeDir));
+// or
+//$xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromData([
+//    'apiKey'    => '',
+//    'apiSecret' => '',
+//]));
 
-$res = $xcoobee->consents->createCampaign([
-    'name' => 'test',
+echo 'Requesting creating campaign' . PHP_EOL;
+$xcoobee->consents->createCampaign([
+    'name' => 'new campaign 2',
     'title' => [
         [
             'locale' => 'en-us',
@@ -30,3 +40,10 @@ $res = $xcoobee->consents->createCampaign([
         ]
     ],
 ]);
+
+echo 'Waiting for creating campaign (20s)' . PHP_EOL;
+sleep(20);
+
+$res = $xcoobee->consents->listCampaigns();
+
+var_export($res);

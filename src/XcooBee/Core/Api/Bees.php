@@ -106,8 +106,11 @@ class Bees extends Api
             'user_reference'    => array_key_exists('userReference', $options['process'])
                 ? $options['process']['userReference']
                 : null,
-            'subscriptions'     => $subscriptions,
         ];
+
+        if ($subscriptions) {
+            $params['subscriptions'] = $subscriptions;
+        }
         
         $destinations = array_key_exists('destinations', $options['process']) ? $options['process']['destinations'] : [];
         foreach($destinations as $key => $destination) {

@@ -16,6 +16,10 @@ $xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile($homeDir));
 //    'apiSecret' => '',
 //]));
 
-$res = $xcoobee->bees->listBees();
+// Should be default campaign id provided in config
+echo 'Requesting adding requests to campaign' . PHP_EOL;
+$xcoobee->consents->requestConsent('~Volodymyr_Rabeshko');
 
-var_export($res);
+echo 'Waiting for creating request (10s)' . PHP_EOL;
+echo 'Requesting activating campaign' . PHP_EOL;
+$xcoobee->consents->activateCampaign();

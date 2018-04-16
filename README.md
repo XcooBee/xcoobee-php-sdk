@@ -55,16 +55,17 @@ The SDK will attempt to determine the configuration object based on the followin
 All PGP data is optional to the configuration object. If you do not supply it the SDK will skip decryption/encryption steps. You will have to do these outside the SDK and supply or process the data yourself.
 
 
-#### setConfig(key,secret,pgpsecret,pgppass,campaign_id)
+#### setConfig(configModel)
 
 The `setConfig` call is the mechanism to create the initial configuration object. You can use it multiple times. Each time you call you will override the existing data. The data once set will persist until library is discarded or `clearConfig` is called.
 
 ```
-key         => the api-key
-secret      => the api-secret
-pgpsecret   => the pgp-secret key
-pgppass     => the pgp-password 
-campaign_id => the default campaign_id
+apiKey      => the api-key
+apiSecret   => the api-secret
+pgpSecret   => the pgp-secret key
+pgpPassword => the pgp-password 
+campaignId  => the default campaign_id
+encode      => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
 
 #### clearConfig()
@@ -95,21 +96,21 @@ The initial content of the config file is plain text, with each option on a sepa
 
 **example file**:
 ```
-key=8sihfsd89f7
-secret=8937438hf
-campaign_id=ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be
-pgppass=somethingsecret
+apiKey=8sihfsd89f7
+apiSecret=8937438hf
+campaignId=ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be
+pgpPassword=somethingsecret
 encode=0
 ```
 
 options: 
 
 ```
-key         => the api-key
-secret      => the api-secret
-campaign_id => the default campaign_id
-pgppass     => the password for your pgp key
-encode      => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+apiKey         => the api-key
+apiSecret      => the api-secret
+campaignId     => the default campaign_id
+pgpPassword    => the password for your pgp key
+encode         => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
 
 

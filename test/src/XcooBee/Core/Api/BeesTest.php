@@ -80,7 +80,6 @@ class Bees extends TestCase
                         'destinations' => [
                             ['xcoobee_id' => '~test'],
                         ],
-                        'subscriptions' => [],
                         'bees' => [],
                     ]
                 ],
@@ -104,7 +103,6 @@ class Bees extends TestCase
                             ['xcoobee_id' => '~test'],
                             ['email' => 'test@xcoobee.com'],
                         ],
-                        'subscriptions' => [],
                         'bees' => [],
                     ]
                 ],
@@ -125,7 +123,6 @@ class Bees extends TestCase
                     'params' => [
                         'filenames' => ['1.jpg', '2.jpg'],
                         'user_reference' => null,
-                        'subscriptions' => [],
                         'bees' => [
                             [
                                 'bee_name' => 'xcoobee_twitter_base',
@@ -187,7 +184,6 @@ class Bees extends TestCase
                     'params' => [
                         'filenames' => ['1.jpg', '2.jpg'],
                         'user_reference' => null,
-                        'subscriptions' => [],
                         'bees' => [
                             [
                                 'bee_name' => 'xcoobee_twitter_base',
