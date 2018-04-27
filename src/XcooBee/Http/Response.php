@@ -24,18 +24,35 @@ class Response
      *
      * @param ResponseInterface $response
      */
-    public function __construct(ResponseInterface $response)
+    public function __construct()
     {
-        $time = new \DateTime();
+		$time = new \DateTime();
+        $this->time = $time->format('Y-m-d H:i:s');
+        $errors = (object)[];
+    }
+    
+	/*
+	 * 
+	 * name: Set response from http
+	 * @param
+	 * @return
+	 * 
+	 */
+    public static function setFromHttpResponse(ResponseInterface $response)
+    {
+		$xcoobeeResponse = new self();
         $responseBody = json_decode($response->getBody());
 
         if (isset($responseBody->data)) {
-            $this->data = $responseBody->data;
+            $xcoobeeResponse->data = $responseBody->data;
         }
+		
+        if (isset($responseBody->errors)) {
+		  $xcoobeeResponse->errors = $responseBody->errors;
+		}
 
-        $this->errors = isset($responseBody->errors) ? $responseBody->errors : (object) [];
+        $xcoobeeResponse->code = $response->getStatusCode();
 
-        $this->code = $response->getStatusCode();
-        $this->time = $time->format('Y-m-d H:i:s');
-    }
+        return $xcoobeeResponse;
+	}
 }
