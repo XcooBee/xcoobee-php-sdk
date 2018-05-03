@@ -22,7 +22,6 @@ class Response
     /**
      * Response constructor.
      *
-     * @param ResponseInterface $response
      */
     public function __construct()
     {
@@ -33,10 +32,12 @@ class Response
     
 	/*
 	 * 
-	 * name: Set response from http
-	 * @param
-	 * @return
+	 * name: Set response data from http request
 	 * 
+	 * @param ResponseInterface $response
+	 * 
+	 * @return \XcooBee\Http\Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
 	 */
     public static function setFromHttpResponse(ResponseInterface $response)
     {
