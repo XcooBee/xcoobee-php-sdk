@@ -649,24 +649,18 @@ It contains:
 - message
 
 
-# Breach
+# Message
 
-The breach API is the main way to interact with users during breach. The breach declaration and initial notifications occur in the UI.
-
-## sendBreachAdvice(message,consentid,[bees],[config])
-
-Companies can use this mechanism to inform users about a breach related to a consent.
-XcooBee may mark other consents to you as suspect. A Breach is declared and breach tracking started if this is the first Breach for the Campaign.
-In the `message` to the user you can highlight the proposed action from the user. With the `bees` array you can also provide a set of bees that the user can hire to mitigate issues. The bees will be presented to the user for hiring. Should there be points related to the use of bees, they will be charged to your account. XcooBee will mark the hiring of related bee as mitigation action taken by the user.
+## sendUserMessage(message, consentid, [breachid], [config])
+This function allows you to send a message to users. You can communicate issues regarding breach, consent, and data this way. It will create a threaded discussion for the user and for you and append to it this message.
 
 options:
 ```
 message       => the text to be sent to the user as user data, can be html formatted. Max 2000 characters.
 consentid     => the consent id that triggers the notification
-bees          => optional: array of bee references
+breachid      => optional: related breach, user will receive a message with proposed actions declared in a breach
 config        => optional: the config object
 ```
-
 
 ### response
 standard JSON response object
@@ -674,17 +668,52 @@ standard JSON response object
     - data object will contain true
 - status 400 if error
 
-## sendUserMessage(message,consentid,[config])
-This function allows you to send a message to users. You can communicate issues regarding breach, consent, and data this way. It will create a threaded discussion for the user and for you and append to it this message.
+## getConversations([config])
+This function allows you to get a list of discussions with users regarding breaches, consents and so on.
 
 options:
 ```
-message       => the text to be sent to the user as user data, can be html formatted. Max 2000 characters.
-consentid     => the consent id that triggers the notification
 config        => optional: the config object
 ```
 
+### response
+standard JSON response object
+- status 200 if success: 
+    - data object will contain true
+- status 400 if error
 
+## getConversation(userId, [config])
+This function allows you to get full discussion with selected user.
+
+options:
+```
+userId        => the user id 
+config        => optional: the config object
+```
+
+### response
+standard JSON response object
+- status 200 if success: 
+    - data object will contain true
+- status 400 if error
+
+
+# Breach
+
+The breach API is the main way to interact with users during breach. The breach declaration and initial notifications occur in the UI.
+
+## createBreach([to be defined])
+
+options:
+```
+
+```
+
+### response
+standard JSON response object
+- status 200 if success: 
+    - data object will contain true
+- status 400 if error
 
 
 ## Breach Events (webhooks)
