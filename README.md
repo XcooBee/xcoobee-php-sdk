@@ -702,20 +702,6 @@ standard JSON response object
 
 The breach API is the main way to interact with users during breach. The breach declaration and initial notifications occur in the UI.
 
-## createBreach([to be defined])
-
-options:
-```
-
-```
-
-### response
-standard JSON response object
-- status 200 if success: 
-    - data object will contain true
-- status 400 if error
-
-
 ## Breach Events (webhooks)
 
 ### BreachPresented
