@@ -1,8 +1,10 @@
 <?php 
 namespace XcooBee\Core\Api;
+
 use XcooBee\Http\Response;
 use XcooBee\Core\Api\Consents;
 use XcooBee\Core\Configuration;
+
 class System extends Api
 {
 	/** @var Users */
