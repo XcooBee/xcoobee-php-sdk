@@ -44,6 +44,7 @@ class SystemTest extends TestCase
 
 		$response = $systemMock->ping();
 		$this->assertEquals(400, $response->code);
+		$this->assertEquals('campaign not found.', $response->errors[0]->message);
 	}
 
 	public function testPing_NoPGP()
@@ -57,5 +58,6 @@ class SystemTest extends TestCase
 
 		$response = $systemMock->ping();
 		$this->assertEquals(400, $response->code);
+		$this->assertEquals('pgp key not found.', $response->errors[0]->message);
 	}
 }
