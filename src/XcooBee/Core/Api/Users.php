@@ -23,6 +23,7 @@ class Users extends Api
                 user {
                     cursor
                     xcoobee_id
+                    pgp_public_key
                 }
             }';
     
@@ -31,7 +32,7 @@ class Users extends Api
             $user = new UserModel();
             $user->userId = $response->data->user->cursor;
             $user->xcoobeeId = $response->data->user->xcoobee_id;
-            
+            $user->pgp_public_key = $response->data->user->pgp_public_key;
             $store->setStore(PersistedData::CURRENT_USER_KEY, $user);
         }
 

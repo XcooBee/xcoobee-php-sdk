@@ -2,16 +2,15 @@
 
 namespace XcooBee\Http;
 
-
 use Psr\Http\Message\ResponseInterface;
 
-class Response
-{
-    /** @var object */
-    public $data;
+class Response {
+
+    /** @var mixed */
+    public $data = null;
 
     /** @var object */
-    public $errors;
+    public $errors = [];
 
     /** @var string */
     public $code;
@@ -19,23 +18,37 @@ class Response
     /** @var string */
     public $time;
 
-    /**
-     * Response constructor.
-     *
-     * @param ResponseInterface $response
-     */
-    public function __construct(ResponseInterface $response)
+    public function __construct() 
     {
         $time = new \DateTime();
+        $this->time = $time->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * 
+     * name: Set response data from http request
+     * 
+     * @param ResponseInterface $response
+     * 
+     * @return \XcooBee\Http\Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public static function setFromHttpResponse(ResponseInterface $response) 
+    {
+        $xcoobeeResponse = new self();
         $responseBody = json_decode($response->getBody());
 
         if (isset($responseBody->data)) {
-            $this->data = $responseBody->data;
+            $xcoobeeResponse->data = $responseBody->data;
         }
 
-        $this->errors = isset($responseBody->errors) ? $responseBody->errors : (object) [];
+        if (isset($responseBody->errors)) {
+            $xcoobeeResponse->errors = $responseBody->errors;
+        }
 
-        $this->code = $response->getStatusCode();
-        $this->time = $time->format('Y-m-d H:i:s');
+        $xcoobeeResponse->code = $response->getStatusCode();
+
+        return $xcoobeeResponse;
     }
+
 }
