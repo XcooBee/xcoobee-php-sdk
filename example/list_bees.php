@@ -16,6 +16,6 @@ $xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile($homeDir));
 //    'apiSecret' => '',
 //]));
 
-$res = $xcoobee->system->ping();
+$res = $xcoobee->bees->listBees();
 
 var_export($res);

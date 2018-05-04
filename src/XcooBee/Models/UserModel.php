@@ -7,4 +7,5 @@ class UserModel
 {
     public $userId;
     public $xcoobeeId;
+    public $pgp_public_key;
 }

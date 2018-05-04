@@ -18,17 +18,13 @@ class Response {
     /** @var string */
     public $time;
 
-    /**
-     * Response constructor.
-     *
-     */
     public function __construct() 
     {
         $time = new \DateTime();
         $this->time = $time->format('Y-m-d H:i:s');
     }
 
-    /*
+    /**
      * 
      * name: Set response data from http request
      * 
@@ -37,7 +33,6 @@ class Response {
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-
     public static function setFromHttpResponse(ResponseInterface $response) 
     {
         $xcoobeeResponse = new self();
