@@ -11,8 +11,6 @@ class System extends Api
 	protected $_users;
 	/** @var Consent */
 	protected $_consent;
-	/** @var Response */
-	protected $_response;
 
 	public function __construct()
 	{
@@ -32,22 +30,20 @@ class System extends Api
 	public function ping()
 	{
 		$user = $this->_users->getUser();
-		$this->_response = new Response();
-		if($user->pgp_public_key){
-			$campaignInfo=$this->_consent->getCampaignInfo();
-			if(!empty($campaignInfo->data->campaign))
-			{
-				$this->_response->code=200;
-			}else
-			{
-				$this->_response->code=400;
-				$this->_response->errors="campaign not found.";
-			}
-		}else{
-			$this->_response->code=400;
-			$this->_response->errors="pgp key not found.";	
-		}
+		$response = new Response();
+		if ($user->pgp_public_key) {
+            $campaignInfo = $this->_consent->getCampaignInfo();
+            if (!empty($campaignInfo->data->campaign)) {
+                $response->code = 200;
+            } else {
+                $response->code = 400;
+                $response->errors = "campaign not found.";
+            }
+        } else {
+            $response->code = 400;
+            $response->errors = "pgp key not found.";
+        }
 
-		return $this->_response;	
+		return $response;	
 	}
 }
