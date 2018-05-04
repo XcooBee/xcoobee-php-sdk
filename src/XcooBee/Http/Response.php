@@ -6,7 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class Response {
 
-    /** @var object */
+    /** @var mixed */
     public $data = null;
 
     /** @var object */
@@ -22,7 +22,8 @@ class Response {
      * Response constructor.
      *
      */
-    public function __construct() {
+    public function __construct() 
+    {
         $time = new \DateTime();
         $this->time = $time->format('Y-m-d H:i:s');
     }
@@ -37,7 +38,8 @@ class Response {
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
 
-    public static function setFromHttpResponse(ResponseInterface $response) {
+    public static function setFromHttpResponse(ResponseInterface $response) 
+    {
         $xcoobeeResponse = new self();
         $responseBody = json_decode($response->getBody());
 
