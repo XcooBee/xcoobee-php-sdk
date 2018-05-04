@@ -15,13 +15,13 @@ class SystemTest extends TestCase
 			'getUser' => (object) ['pgp_public_key' => 'test']
 		]));
 		$this->_setProperty($systemMock, '_consent', $this->_getMock(Users::class, [
-                    'getCampaignInfo' => (object) [
-                        'data' => (object) [
-                            'campaign' => (object) [
-                                'xcoobee_targets' => [],
-                            ],
-                        ],
-                    ]
+			'getCampaignInfo' => (object) [
+				'data' => (object) [
+					'campaign' => (object) [
+						'xcoobee_targets' => [],
+					],
+				],
+			]
         ]));
 
 		$response = $systemMock->ping();
@@ -37,9 +37,9 @@ class SystemTest extends TestCase
 			'getUser' => (object) ['pgp_public_key' => 'test']
 		]));
 		$this->_setProperty($systemMock, '_consent', $this->_getMock(Users::class, [
-                    'getCampaignInfo' => (object) [
-                        'data' => null
-                    ]
+			'getCampaignInfo' => (object) [
+				'data' => null
+			]
         ]));
 
 		$response = $systemMock->ping();

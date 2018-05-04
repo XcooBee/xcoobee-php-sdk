@@ -2,8 +2,6 @@
 namespace XcooBee\Core\Api;
 
 use XcooBee\Http\Response;
-use XcooBee\Core\Api\Consents;
-use XcooBee\Core\Configuration;
 
 class System extends Api
 {
@@ -37,11 +35,15 @@ class System extends Api
 				$response->code = 200;
 			} else {
 				$response->code = 400;
-				$response->errors = "campaign not found.";
+				$response->errors = [
+					(object)['message' => "campaign not found."]
+				];
 			}
 		} else {
 			$response->code = 400;
-			$response->errors = "pgp key not found.";
+			$response->errors = [
+				(object)['message' => "pgp key not found."]
+			];
 		}
 
 		return $response;	

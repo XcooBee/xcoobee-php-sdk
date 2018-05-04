@@ -8,10 +8,10 @@ use Psr\Http\Message\ResponseInterface;
 class Response
 {
     /** @var object */
-    public $data;
+    public $data = null;
 
     /** @var object */
-    public $errors;
+    public $errors = [];
 
     /** @var string */
     public $code;
@@ -27,7 +27,6 @@ class Response
     {
 		$time = new \DateTime();
         $this->time = $time->format('Y-m-d H:i:s');
-        $errors = (object)[];
     }
     
 	/*
