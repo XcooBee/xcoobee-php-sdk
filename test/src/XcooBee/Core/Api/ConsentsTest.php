@@ -147,7 +147,31 @@ class Consents extends TestCase
 
         $consentsMock->requestConsent('test');
     }
+    
+    public function testGetConsentData() {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+        $consentsMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params) {
+                    $this->assertEquals(['consentId' => 'testConsentID'], $params);
+                }));
 
+        $consentsMock->getConsentData('testConsentID');
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testGetConsentData_NoConsentProvided() {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+
+        $consentsMock->getConsentData(null);
+    }
+    
     public function requestConsentProvider() {
         return [
             [

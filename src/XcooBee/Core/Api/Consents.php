@@ -2,7 +2,6 @@
 
 namespace XcooBee\Core\Api;
 
-
 use XcooBee\Core\Configuration;
 use XcooBee\Exception\XcooBeeException;
 
@@ -166,7 +165,7 @@ class Consents extends Api
         ]);
     }
 	
-	/**
+    /**
      * @param string $consentId
      *
      * @return \XcooBee\Http\Response
@@ -180,7 +179,7 @@ class Consents extends Api
         }
 
         $query = 'query getConsentData($consentId: String!) {
-				consent(consent_cursor: $consentId) {
+		consent(consent_cursor: $consentId) {
                     user_display_name,
                     user_xcoobee_id,
                     consent_name,
@@ -195,8 +194,8 @@ class Consents extends Api
                     request_owner,
                     request_data_types,
                     required_data_types
-				}
-			}';
+		}
+	}';
 
         return $this->_request($query, ['consentId' => $consentId]);    
     }
