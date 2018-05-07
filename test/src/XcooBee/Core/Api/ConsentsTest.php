@@ -2,8 +2,8 @@
 
 namespace Test\XcooBee\Core\Api;
 
-
 use XcooBee\Test\TestCase;
+use \XcooBee\Core\Api\Consents as Consent;
 
 class Consents extends TestCase
 {
@@ -148,7 +148,8 @@ class Consents extends TestCase
         $consentsMock->requestConsent('test');
     }
     
-    public function testGetConsentData() {
+    public function testGetConsentData() 
+    {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
         ]);
@@ -164,12 +165,11 @@ class Consents extends TestCase
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
-    public function testGetConsentData_NoConsentProvided() {
-        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => true,
-        ]);
+    public function testGetConsentData_NoConsentProvided() 
+    {
+        $consents = new Consent();
 
-        $consentsMock->getConsentData(null);
+        $consents->getConsentData(null);
     }
     
     public function requestConsentProvider() {
