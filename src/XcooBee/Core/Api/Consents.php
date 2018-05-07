@@ -2,7 +2,6 @@
 
 namespace XcooBee\Core\Api;
 
-
 use XcooBee\Core\Configuration;
 use XcooBee\Exception\XcooBeeException;
 
@@ -165,7 +164,42 @@ class Consents extends Api
             ],
         ]);
     }
+	
+    /**
+     * @param string $consentId
+     *
+     * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getConsentData($consentId)
+    {
+        if (!$consentId) {
+            throw new XcooBeeException('No "consent" provided');
+        }
 
+        $query = 'query getConsentData($consentId: String!) {
+		consent(consent_cursor: $consentId) {
+                    user_display_name,
+                    user_xcoobee_id,
+                    consent_name,
+                    consent_description,
+                    consent_status,
+                    consent_type,
+                    consent_details {
+                      datatype
+                    },
+                    date_c,
+                    date_e,
+                    request_owner,
+                    request_data_types,
+                    required_data_types
+		}
+	}';
+
+        return $this->_request($query, ['consentId' => $consentId]);    
+    }
+    
     protected function _getDefaultCampaignId()
     {
         $configuration = new Configuration();
