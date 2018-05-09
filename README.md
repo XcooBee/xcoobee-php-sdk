@@ -213,7 +213,7 @@ There is no wildcard event subscription, however, you can add many handlers at o
 
 ```
 Example JavaScript:
-addEventSubscription([{"ConsentDeclined":"declinedHandler"}],"ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be",myConfigObj);
+addEventSubscription([{"consent_declined":"declinedHandler"}],"ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be",myConfigObj);
 
 ```
 
@@ -514,7 +514,7 @@ standard JSON response object
 
 These are events returned to your endpoint as part of user working with their consent center. All endpoints are determined inside each Consent Campaign.
 
-### ConsentApproved
+### consent_approved
 Fires when a consent request is approved. 
 The consent object is returned. It contains:
 - consent reference
@@ -522,12 +522,12 @@ The consent object is returned. It contains:
 - consent types
 - expiration
 
-### ConsentDeclined
+### consent_declined
 Fires when a consent request is declined. You should remove user data and sent a XcooBee confirmation via `confirmDataDelete()`.
 The data submitted contains:
 - consent reference
 
-### ConsentChanged
+### consent_changed
 Fires when consent is changed. A standard consent object is returned.
 It contains:
 - consent reference
@@ -535,7 +535,7 @@ It contains:
 - consent types
 - expiration
 
-### ConsentNearExpiration
+### consent_near_expiration
 Fires when an active consent is about to expire (inside 30 days).
 This is not exactly 30 days as the XcooBee system processes may push this slightly.  
 You should plan ask for renewal of consent if you like to use the user data longer.
@@ -543,7 +543,7 @@ It contains:
 - consent reference
 - expiration
 
-### ConsentExpired
+### consent_expired
 Fires when consent expired. You should remove user data and sent XcooBee confirmation via `confirmDataDelete()`.
 It contains:
 - consent reference
@@ -575,7 +575,7 @@ This section covers events that are used in connection with gathering data and c
 
 Events submitted by XooBee to your system.
 
-### DataApproved
+### data_approved
 Fires when consent is given and data has been supplied by user. A standard consent object is returned.
 It contains:
 - consent reference
@@ -583,12 +583,12 @@ It contains:
 - consent types
 - expiration
 
-### DataDeclined
+### data_declined
 Fires when user declined to provide data and consent. You should remove user data and sent XcooBee confirmation via `confirmDataDelete()`.
 It contains:
 - consent reference
 
-### DataChanged
+### data_changed
 Fires when data or consent is changed. A standard consent object is returned.
 It contains:
 - consent reference
@@ -596,7 +596,7 @@ It contains:
 - consent types
 - expiration
 
-### DataNearExpiration
+### data_near_expiration
 Fires when an active consent is about to expire (inside 30 days).
 This is not exactly 30 days as the XcooBee system processes may push this slightly.  
 You should plan ask for renewal of consent if you like to use the user data longer.
@@ -604,7 +604,7 @@ It contains:
 - consent reference
 - expiration
 
-### DataExpired
+### data_expired
 Fires when data has expired. You should remove user data and sent XcooBee confirmation via `confirmDataDelete()`.
 It contains:
 - consent reference
@@ -682,12 +682,12 @@ The breach API is the main way to interact with users during breach. The breach 
 
 ## Breach Events (webhooks)
 
-### BreachPresented
+### breach_presented
 Fires when user has opened breach advice.
 It contains:
 - consent reference
 
-### BreachBeeUsed
+### breach_bee_used
 Fires when user has used a bee that you have identified in the breach advice.
 It contains:
 - consent reference
