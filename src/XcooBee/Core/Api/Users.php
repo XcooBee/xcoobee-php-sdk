@@ -2,7 +2,6 @@
 
 namespace XcooBee\Core\Api;
 
-
 use XcooBee\Store\PersistedData;
 use XcooBee\Models\UserModel;
 
