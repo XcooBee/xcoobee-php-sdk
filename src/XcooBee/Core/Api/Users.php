@@ -4,6 +4,7 @@ namespace XcooBee\Core\Api;
 
 use XcooBee\Store\PersistedData;
 use XcooBee\Models\UserModel;
+use XcooBee\Exception\XcooBeeException;
 
 class Users extends Api
 {
@@ -39,6 +40,27 @@ class Users extends Api
     }
     
     /**
+     * send message to user
+     *
+     * @param String $targetId
+     * @param String $consentId
+     * @param String $message
+     * @param String $note_type
+     * 
+     * @return \XcooBee\Http\Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function sendUserMessage($targetId, $consentId, $message, $note_type = 'consent') {
+        $mutation = 'mutation sendUserMessage($config: SendMessageConfig) {
+                send_message(config: $config) {
+                    note_text,
+                }
+            }';
+
+        return $this->_request($mutation, ['config' => ['note_type' => $note_type, 'user_cursor' => $targetId, 'consent_cursor' => $consentId, 'message' => $message]]);
+    }
+    
+    /**
      * list all the user conversation
      *
      * @param array $data
@@ -46,9 +68,9 @@ class Users extends Api
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getConversations($data = array(), $records = null) {
-        $query = 'query getConversations($userId: String!,$first : Int) {
-            conversations(user_cursor: $userId, first : $first) {
+    public function getConversations($data = array(), $first = null, $after=null) {
+        $query = 'query getConversations($userId: String!,$first : Int, $after: String) {
+            conversations(user_cursor: $userId , first : $first , after : $after) {
                 data {
                     display_name,
                     consent_cursor,
@@ -62,7 +84,7 @@ class Users extends Api
             }
         }';
 
-        return $this->_request($query, array_merge(['first' => $records,'userId' => $this->_getUserId()], $data));
+        return $this->_request($query, array_merge(['first' => $first , 'after'=> $after , 'userId' => $this->_getUserId()], $data));
     }
 
     /**
@@ -74,13 +96,13 @@ class Users extends Api
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getConversation($conversationID, $records = null) {
+    public function getConversation($conversationID, $first = null, $after=null) {
         if (!$conversationID) {
             throw new XcooBeeException('No "conversation" provided');
         }
 
-        $query = 'query getConversation($conversationID: String!,$first : Int) {
-		conversation(target_cursor: $conversationID, first : $first) {
+        $query = 'query getConversation($conversationID: String!,$first : Int, $after: String) {
+		conversation(target_cursor : $conversationID, first : $first, after : $after) {
                     data {
                         display_name,
                         consent_cursor,
@@ -94,6 +116,6 @@ class Users extends Api
 		}
 	}';
 
-        return $this->_request($query, ['first' => $records, 'conversationID' => $conversationID]);
+        return $this->_request($query, ['first' => $first, 'after'=> $after,'conversationID' => $conversationID]);
     }
 }
