@@ -57,7 +57,12 @@ class Users extends Api
                 }
             }';
 
-        return $this->_request($mutation, ['config' => ['note_type' => $note_type, 'user_cursor' => $targetId, 'consent_cursor' => $consentId, 'message' => $message]]);
+        return $this->_request($mutation, ['config' => [
+            'note_type' => $note_type, 
+            'user_cursor' => $targetId, 
+            'consent_cursor' => $consentId, 
+            'message' => $message
+        ]]);
     }
     
     /**
@@ -68,7 +73,7 @@ class Users extends Api
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getConversations($data = array(), $first = null, $after=null) {
+    public function getConversations($data = [], $first = null, $after=null) {
         $query = 'query getConversations($userId: String!,$first : Int, $after: String) {
             conversations(user_cursor: $userId , first : $first , after : $after) {
                 data {
