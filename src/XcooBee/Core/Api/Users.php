@@ -63,7 +63,7 @@ class Users extends Api {
         }
         $noteType = $breachId ? 'breach' : 'consent';
         return $this->_request($mutation, ['config' => [
-                        'note_type' => $note_type,
+                        'note_type' => $noteType,
                         'user_cursor' => $targetId,
                         'breach_cursor' => $breachId,
                         'consent_cursor' => $consentId,
@@ -137,7 +137,7 @@ class Users extends Api {
         $consent = $consents->getConsentData($consentId);
         if (!empty($consent->data->consent)) {
 
-            return $consent->data->consent->request_owner_cursor;
+            return $consent->data->consent->user_cursor;
         }
 
         return false;
