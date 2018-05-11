@@ -43,33 +43,29 @@ class Users extends Api {
     /**
      * send message to user
      *
-     * @param String $consentId
      * @param String $message
+     * @param String $consentId
      * @param String $breachid
      * 
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function sendUserMessage($consentId, $message, $breachid = null) {
+    public function sendUserMessage($message, $consentId, $breachId = null) {
         $mutation = 'mutation sendUserMessage($config: SendMessageConfig) {
                 send_message(config: $config) {
                     note_text,
                 }
             }';
 
-        $targetId = $this->getTargetID($consentId);
+        $targetId = $this->_getTargetID($consentId);
         if (!$targetId) {
             throw new XcooBeeException('invalid "consent" provided');
         }
-        if (!empty($breachId)) {
-            $note_type = 'breach';
-        } else {
-            $note_type = 'consent';
-        }
+        $noteType = $breachId ? 'breach' : 'consent';
         return $this->_request($mutation, ['config' => [
                         'note_type' => $note_type,
                         'user_cursor' => $targetId,
-                        'breach_cursor' => $breachid,
+                        'breach_cursor' => $breachId,
                         'consent_cursor' => $consentId,
                         'message' => $message
         ]]);
@@ -136,7 +132,7 @@ class Users extends Api {
         return $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $userId]);
     }
 
-    protected function getTargetID($consentId) {
+    protected function _getTargetID($consentId) {
         $consents = new Consents();
         $consent = $consents->getConsentData($consentId);
         if (!empty($consent->data->consent)) {
