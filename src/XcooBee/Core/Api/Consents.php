@@ -182,7 +182,6 @@ class Consents extends Api
 		consent(consent_cursor: $consentId) {
                     user_display_name,
                     user_xcoobee_id,
-                    request_owner_cursor,
                     user_cursor,
                     consent_name,
                     consent_description,
