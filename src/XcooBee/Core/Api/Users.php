@@ -57,14 +57,14 @@ class Users extends Api {
                 }
             }';
 
-        $targetId = $this->_getTargetID($consentId);
-        if (!$targetId) {
+        $userId = $this->_getUserIdByConsent($consentId);
+        if (!$userId) {
             throw new XcooBeeException('invalid "consent" provided');
         }
         $noteType = $breachId ? 'breach' : 'consent';
         return $this->_request($mutation, ['config' => [
                         'note_type' => $noteType,
-                        'user_cursor' => $targetId,
+                        'user_cursor' => $userId,
                         'breach_cursor' => $breachId,
                         'consent_cursor' => $consentId,
                         'message' => $message
@@ -132,7 +132,7 @@ class Users extends Api {
         return $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $userId]);
     }
 
-    protected function _getTargetID($consentId) {
+    protected function _getUserIdByConsent($consentId) {
         $consents = new Consents();
         $consent = $consents->getConsentData($consentId);
         if (!empty($consent->data->consent)) {
