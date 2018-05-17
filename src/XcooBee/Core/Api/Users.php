@@ -11,46 +11,59 @@ class Users extends Api {
 
     /**
      * Return current user
-     *
+     * 
+     * @param array $config
      * @return UserModel
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getUser() {
+    public function getUser($config = []) {
+        
+        if(!empty($config)){
+            
+            return $this->_getUser($config);
+        }
         $store = new PersistedData();
         $user = $store->getStore(PersistedData::CURRENT_USER_KEY);
 
         if ($user === null) {
-            $query = 'query {
-                user {
-                    cursor
-                    xcoobee_id
-                    pgp_public_key
-                }
-            }';
-
-            $response = $this->_request($query, []);
-
-            $user = new UserModel();
-            $user->userId = $response->data->user->cursor;
-            $user->xcoobeeId = $response->data->user->xcoobee_id;
-            $user->pgp_public_key = $response->data->user->pgp_public_key;
+            
+            $user = $this->_getUser($config);
             $store->setStore(PersistedData::CURRENT_USER_KEY, $user);
         }
 
         return $user;
     }
+    
+    protected function _getUser($config){
+        $query = 'query {
+            user {
+                cursor
+                xcoobee_id
+                pgp_public_key
+            }
+        }';
+        $response = $this->_request($query, [],$config);
 
+        $user = new UserModel();
+        $user->userId = $response->data->user->cursor;
+        $user->xcoobeeId = $response->data->user->xcoobee_id;
+        $user->pgp_public_key = $response->data->user->pgp_public_key;
+        
+        return $user;
+    }
+    
     /**
      * send message to user
      *
      * @param String $message
      * @param String $consentId
      * @param String $breachid
+     * @param array $config
      * 
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function sendUserMessage($message, $consentId, $breachId = null) {
+    public function sendUserMessage($message, $consentId, $breachId = null, $config = []) {
         $mutation = 'mutation sendUserMessage($config: SendMessageConfig) {
                 send_message(config: $config) {
                     note_text,
@@ -68,19 +81,20 @@ class Users extends Api {
                         'breach_cursor' => $breachId,
                         'consent_cursor' => $consentId,
                         'message' => $message
-        ]]);
+        ]], $config);
     }
 
     /**
      * list all the user conversation
      *
+     * @param array $config
      * @param Int $first
      * @param Int $after
      * 
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getConversations($first = null, $after = null) {
+    public function getConversations($config =[], $first = null, $after = null) {
         $query = 'query getConversations($userId: String!,$first : Int, $after: String) {
             conversations(user_cursor: $userId , first : $first , after : $after) {
                 data {
@@ -96,20 +110,21 @@ class Users extends Api {
             }
         }';
 
-        return $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $this->_getUserId()]);
+        return $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $this->_getUserId($config)], $config);
     }
 
     /**
      * get conversation data
      *
      * @param string $userId
+     * @param array $config
      * @param Int $first
      * @param Int $after
      * 
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getConversation($userId, $first = null, $after = null) {
+    public function getConversation($userId, $config =[], $first = null, $after = null) {
         if (!$userId) {
             throw new XcooBeeException('No "user" provided');
         }
@@ -129,12 +144,12 @@ class Users extends Api {
 		}
 	}';
 
-        return $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $userId]);
+        return $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $userId], $config);
     }
 
-    protected function _getUserIdByConsent($consentId) {
+    protected function _getUserIdByConsent($consentId, $config = []) {
         $consents = new Consents();
-        $consent = $consents->getConsentData($consentId);
+        $consent = $consents->getConsentData($consentId, $config = []);
         if (!empty($consent->data->consent)) {
 
             return $consent->data->consent->user_cursor;

@@ -2,7 +2,6 @@
 
 namespace XcooBee\Http;
 
-
 use GuzzleHttp\Client as HttpClient;
 use XcooBee\Store\PersistedData;
 
@@ -11,7 +10,7 @@ class Client
     const API_URL = 'https://testapi.xcoobee.net/Test/';
     const TIME_OUT = 3000;
 
-
+    public $storetoken = false;
     protected $_client;
 
     public function __construct()
@@ -53,11 +52,16 @@ class Client
     }
 
     /**
+     * @param array $config
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function _getAuthToken()
+    protected function _getAuthToken($config = [])
     {
+        if (!empty($config)) {
+            
+            return $this->fetchToken($config);
+        }
         $token = PersistedData::getInstance()->getStore(PersistedData::AUTH_TOKEN_KEY);
 
         if($token === null){
@@ -68,12 +72,16 @@ class Client
     }
 
     /**
+     * @param array $config
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function fetchToken()
+    protected function fetchToken($config = [])
     {
-        $config = PersistedData::getInstance()->getStore(PersistedData::CURRENT_CONFIG_KEY);
+        if (empty($config)) {
+            $config = PersistedData::getInstance()->getStore(PersistedData::CURRENT_CONFIG_KEY);
+            $this->storetoken = true;
+        }
 
         $res = $this->post($this->_getUriFromEndpoint("get_token"), ['body' => json_encode([
             'key' => $config->apiKey,
@@ -81,7 +89,9 @@ class Client
         ])]);
         $token = json_decode($res->getBody());
 
-        PersistedData::getInstance()->setStore(PersistedData::AUTH_TOKEN_KEY, $token->token);
+        if ($this->storetoken === true) {
+            PersistedData::getInstance()->setStore(PersistedData::AUTH_TOKEN_KEY, $token->token);
+        }
 
         return $token->token;
     }

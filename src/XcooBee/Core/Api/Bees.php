@@ -2,7 +2,6 @@
 
 namespace XcooBee\Core\Api;
 
-
 use XcooBee\Core\Validation;
 use XcooBee\Http\FileUploader;
 
@@ -25,11 +24,11 @@ class Bees extends Api
      * Return list of bees
      *
      * @param string $searchText
-     *
+     * @param array $config
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function listBees($searchText = ""){
+    public function listBees($searchText = "", $config = []){
         $query = 'query getBees($searchText: String) {
             bees(search: $searchText) {
                 data {
@@ -52,7 +51,7 @@ class Bees extends Api
             }
         }';
 
-        return $this->_request($query, ['searchText' => $searchText]);
+        return $this->_request($query, ['searchText' => $searchText], $config);
     }
 
     /**
@@ -60,24 +59,25 @@ class Bees extends Api
      *
      * @param string[] $files
      * @param string $endpoint
-     *
+     * @param array $config
+     * 
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadFiles($files, $endpoint = 'outbox')
+    public function uploadFiles($files, $endpoint = 'outbox', $config = [])
     {
         $endpoint = !empty($endpoint) ? $endpoint : 'outbox';
 
-        $user = $this->_users->getUser();
-        $endpointId = $this->_getOutboxEndpoint($user->userId, $endpoint);
-        $policies = $this->_getPolicy($endpoint, $endpointId, $files);
+        $user = $this->_users->getUser($config);
+        $endpointId = $this->_getOutboxEndpoint($user->userId, $endpoint, $config);
+        $policies = $this->_getPolicy($endpoint, $endpointId, $files , $config);
 
         $result = [];
         foreach ($files as $key => $file) {
             $policy = 'policy' . $key;
             $policy = $policies->data->$policy;
-
-            $result[] = $this->_fileUploader->uploadFile($file, $policy);
+            
+            $result[] = $this->_fileUploader->uploadFile($file, $policy, $config);
         }
 
         return $result;
@@ -134,7 +134,7 @@ class Bees extends Api
         return $this->_request($query, ['params' => $params]);
     }
 
-    protected function _getPolicy($intent, $endpointId = "", $files = [])
+    protected function _getPolicy($intent, $endpointId = "", $files = [], $config = [])
     {
         $query = 'query uploadPolicy {';
         foreach($files as $key => $file){
@@ -154,10 +154,10 @@ class Bees extends Api
         }
         $query .= '}';
 
-        return $this->_request($query);
+        return $this->_request($query, [] , $config);
     }
 
-    protected function _getOutboxEndpoint($userId, $intent)
+    protected function _getOutboxEndpoint($userId, $intent , $config = [])
     {
         $query = 'query getEndpoint($userId: String!) {
             outbox_endpoints(user_cursor: $userId) {
@@ -169,7 +169,7 @@ class Bees extends Api
             }
         }';
         
-        $response = $this->_request($query, ['userId' => (string)$userId]);
+        $response = $this->_request($query, ['userId' => (string)$userId], $config);
 
         $endpoint = array_filter($response->data->outbox_endpoints->data,
             function($value) use ($intent) {

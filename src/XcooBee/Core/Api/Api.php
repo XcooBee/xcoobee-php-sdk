@@ -19,13 +19,14 @@ class Api
     /**
      * Returns current user id
      *
+     * @param array $config configuration array
      * @return string
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function _getUserId()
+    protected function _getUserId($config = [])
     {
         $user = new Users();
-        $currentUser = $user->getUser();
+        $currentUser = $user->getUser($config);
 
         return $currentUser->userId;
     }
@@ -35,13 +36,18 @@ class Api
      *
      * @param $query
      * @param array $variables
+     * @param array $config
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function _request($query, $variables = [])
+    protected function _request($query, $variables = [], $config=[])
     {
+        if(!empty($config)){
+            $config=\XcooBee\Models\ConfigModel::createFromData($config);
+        }
+        
         return $this->_client->request($query, $variables, [
             'Content-Type' => 'application/json',
-        ]);
+        ],$config);
     }
 }

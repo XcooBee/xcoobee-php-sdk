@@ -13,15 +13,15 @@ class GraphQLClient extends Client
      * @param $query string
      * @param $variables array
      * @param $headers array
-     *
+     * @param array $config
      * @return Response
      *
      * @throws \Exception
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request($query, $variables = [], $headers = [])
+    public function request($query, $variables = [], $headers = [], $config=[])
     {
-        $headers["Authorization"] = $this->_getAuthToken();
+        $headers["Authorization"] = $this->_getAuthToken($config);
 
         return Response::setFromHttpResponse($this->post($this->_getUriFromEndpoint(self::API_URL), [
             'json' => [
