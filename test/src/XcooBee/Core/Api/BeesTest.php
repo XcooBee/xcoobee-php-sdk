@@ -20,16 +20,16 @@ class Bees extends TestCase
                 ]
             ]
         ]);
-        
+
         $this->_setProperty($beesMock, '_users', $this->_getMock(Users::class, [
             'getUser' => (object) ['userId' => 'test']
         ]));
-        
         $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
             'uploadFile' => true,
         ]));
-        
+
         $result = $beesMock->uploadFiles(['1.txt', '2.txt']);
+
         $this->assertEquals(2, count($result));
         $this->assertTrue($result[0]);
         $this->assertTrue($result[1]);
@@ -46,24 +46,27 @@ class Bees extends TestCase
                 ]
             ]
         ]);
+
         $this->_setProperty($beesMock, '_users', $this->_getMock(Users::class, [
             'getUser' => (object) ['userId' => 'test']
         ]));
         $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
             'uploadFile' => true,
         ]));
+
         $result = $beesMock->uploadFiles(['1.txt', '2.txt'], [
             'apiKey'=> 'testapikey' , 
             'apiSecret'=> 'testapisecret' 
         ]);
-        
+
         $this->assertEquals(2, count($result));
         $this->assertTrue($result[0]);
         $this->assertTrue($result[1]);
     }
     
     public function testListBees()
-    { 
+    {
+        
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_request' => true,
         ]);
@@ -98,12 +101,13 @@ class Bees extends TestCase
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_request' => true,
         ]);
+
         $beesMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) use ($paramsExpected) {
                 $this->assertEquals($paramsExpected, $params);
             }));
-            
+
         $beesMock->takeOff($bees, $params, $subscriptions);
     }
 

@@ -27,13 +27,13 @@ class Users extends TestCase {
             '_request' => true,
         ]);
         $usersMock->expects($this->once())
-            ->method('_request')
-            ->will($this->returnCallback(function ($query, $params, $config) {
-                $this->assertEquals(['userId' => 'testuserId', 'first' => null, 'after' => null], $params);
-                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
-        }));
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['userId' => 'testuserId', 'first' => null, 'after' => null], $params);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                        }));
 
-        $usersMock->getConversation('testuserId', null, null, [
+        $usersMock->getConversation('testuserId', [
             'apiKey'=> 'testapikey' , 
             'apiSecret'=> 'testapisecret' 
         ]);
@@ -65,34 +65,37 @@ class Users extends TestCase {
             '_request' => true,
             '_getUserId' => 'testUserID'
         ]);
+        
         $usersMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params, $config) {
                 $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
         }));
-        
-        $usersMock->getConversations(null, null, [
+                
+        $usersMock->getConversations([
             'apiKey'=> 'testapikey' , 
             'apiSecret'=> 'testapisecret' 
         ]);
     }
     
-    public function testSendUserMessage() {
+    public function testSendUserMessage() 
+    {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
             '_getUserIdByConsent' => 'testuserID'
         ]);
+
         $usersMock->expects($this->once())
-            ->method('_request')
-            ->will($this->returnCallback(function ($query, $params) {
-                $this->assertEquals(['config' => [
-                        'message' => 'test message',
-                        'consent_cursor' => 'testconsentId',
-                        'note_type' => 'consent',
-                        'user_cursor' => 'testuserID',
-                        'breach_cursor' => null
-                    ]], $params);
-        }));
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params) {
+                            $this->assertEquals(['config' => [
+                                    'message' => 'test message',
+                                    'consent_cursor' => 'testconsentId',
+                                    'note_type' => 'consent',
+                                    'user_cursor' => 'testuserID',
+                                    'breach_cursor' => null
+                                ]], $params);
+                        }));
 
         $usersMock->sendUserMessage('test message', 'testconsentId');
     }

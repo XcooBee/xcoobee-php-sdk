@@ -57,8 +57,8 @@ class Consents extends TestCase
         ]);
     }
     
-    public function testListCampaigns(){
-        
+    public function testListCampaigns()
+    { 
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
             '_getUserId' => 'testUserID'
@@ -68,7 +68,7 @@ class Consents extends TestCase
     }
     
     public function testListCampaigns_UseConfig()
-    { 
+    {  
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
             '_getUserId'=>'testUserId'
@@ -99,12 +99,13 @@ class Consents extends TestCase
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
         ]);
+
         $consentsMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) {
                 $this->assertEquals(['config' => ['campaign_cursor' => 'testCampaignId', 'name' => 'test']], $params);
             }));
-            
+
         $consentsMock->modifyCampaign('testCampaignId', ['name' => 'test']);
     }
 
@@ -113,12 +114,13 @@ class Consents extends TestCase
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
         ]);
+
         $consentsMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) {
                 $this->assertEquals(['config' => ['campaign_cursor' => 'testCampaignId']], $params);
             }));
-            
+
         $consentsMock->activateCampaign('testCampaignId');
     }
 
@@ -128,12 +130,13 @@ class Consents extends TestCase
             '_request' => true,
             '_getDefaultCampaignId' => 'testCampaignId',
         ]);
+
         $consentsMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) {
                 $this->assertEquals(['config' => ['campaign_cursor' => 'testCampaignId']], $params);
             }));
-            
+
         $consentsMock->activateCampaign();
     }
 
@@ -145,7 +148,7 @@ class Consents extends TestCase
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_getDefaultCampaignId' => null,
         ]);
-        
+
         $consentsMock->activateCampaign();
     }
 
