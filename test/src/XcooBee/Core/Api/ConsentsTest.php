@@ -61,6 +61,7 @@ class Consents extends TestCase
         
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
+            '_getUserId' => 'testUserID'
         ]);
         
         $consentsMock->listCampaigns();
