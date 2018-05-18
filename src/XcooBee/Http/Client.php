@@ -48,7 +48,7 @@ class Client
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function _refreshAuthToken(){
-        return $this->fetchToken();
+        return $this->_fetchToken();
     }
 
     /**
@@ -58,14 +58,13 @@ class Client
      */
     protected function _getAuthToken($config = [])
     {
-        if (!empty($config)) {
-            
-            return $this->fetchToken($config);
+        if (!$config) {
+            return $this->_fetchToken($config);
         }
         $token = PersistedData::getInstance()->getStore(PersistedData::AUTH_TOKEN_KEY);
 
         if($token === null){
-            return $this->fetchToken();
+            return $this->_fetchToken();
         }
 
         return $token;
@@ -76,7 +75,7 @@ class Client
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function fetchToken($config = [])
+    protected function _fetchToken($config = [])
     {
         if (empty($config)) {
             $config = PersistedData::getInstance()->getStore(PersistedData::CURRENT_CONFIG_KEY);

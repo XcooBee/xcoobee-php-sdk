@@ -66,17 +66,14 @@ class Bees extends Api
      */
     public function uploadFiles($files, $endpoint = 'outbox', $config = [])
     {
-        $endpoint = !empty($endpoint) ? $endpoint : 'outbox';
-
+        $endpoint = !$endpoint ? $endpoint : 'outbox';
         $user = $this->_users->getUser($config);
         $endpointId = $this->_getOutboxEndpoint($user->userId, $endpoint, $config);
         $policies = $this->_getPolicy($endpoint, $endpointId, $files , $config);
-
         $result = [];
         foreach ($files as $key => $file) {
             $policy = 'policy' . $key;
             $policy = $policies->data->$policy;
-            
             $result[] = $this->_fileUploader->uploadFile($file, $policy, $config);
         }
 

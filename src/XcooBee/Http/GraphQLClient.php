@@ -2,7 +2,6 @@
 
 namespace XcooBee\Http;
 
-
 class GraphQLClient extends Client
 {
     const API_URL = 'graphql';
@@ -19,7 +18,7 @@ class GraphQLClient extends Client
      * @throws \Exception
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function request($query, $variables = [], $headers = [], $config=[])
+    public function request($query, $variables = [], $headers = [], $config = [])
     {
         $headers["Authorization"] = $this->_getAuthToken($config);
 

@@ -18,8 +18,7 @@ class Users extends Api {
      */
     public function getUser($config = []) {
         
-        if(!empty($config)){
-            
+        if(!$config){
             return $this->_getUser($config);
         }
         $store = new PersistedData();
@@ -94,7 +93,7 @@ class Users extends Api {
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getConversations($config =[], $first = null, $after = null) {
+    public function getConversations($config = [], $first = null, $after = null) {
         $query = 'query getConversations($userId: String!,$first : Int, $after: String) {
             conversations(user_cursor: $userId , first : $first , after : $after) {
                 data {
@@ -124,7 +123,7 @@ class Users extends Api {
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getConversation($userId, $config =[], $first = null, $after = null) {
+    public function getConversation($userId, $config = [], $first = null, $after = null) {
         if (!$userId) {
             throw new XcooBeeException('No "user" provided');
         }

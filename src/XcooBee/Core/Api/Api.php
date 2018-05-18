@@ -40,7 +40,7 @@ class Api
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    protected function _request($query, $variables = [], $config=[])
+    protected function _request($query, $variables = [], $config = [])
     {
         if(!empty($config)){
             $config=\XcooBee\Models\ConfigModel::createFromData($config);
