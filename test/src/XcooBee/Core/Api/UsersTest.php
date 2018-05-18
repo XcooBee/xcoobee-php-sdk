@@ -69,7 +69,8 @@ class Users extends TestCase {
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params, $config) {
                 $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
-        }));        
+        }));
+        
         $usersMock->getConversations(null, null, [
             'apiKey'=> 'testapikey' , 
             'apiSecret'=> 'testapisecret' 
