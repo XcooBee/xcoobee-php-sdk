@@ -20,16 +20,13 @@ class Bees extends TestCase
                 ]
             ]
         ]);
-
         $this->_setProperty($beesMock, '_users', $this->_getMock(Users::class, [
             'getUser' => (object) ['userId' => 'test']
         ]));
         $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
             'uploadFile' => true,
         ]));
-
         $result = $beesMock->uploadFiles(['1.txt', '2.txt']);
-
         $this->assertEquals(2, count($result));
         $this->assertTrue($result[0]);
         $this->assertTrue($result[1]);
@@ -46,35 +43,31 @@ class Bees extends TestCase
                 ]
             ]
         ]);
-
         $this->_setProperty($beesMock, '_users', $this->_getMock(Users::class, [
             'getUser' => (object) ['userId' => 'test']
         ]));
         $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
             'uploadFile' => true,
         ]));
-
         $result = $beesMock->uploadFiles(['1.txt', '2.txt'], [
             'apiKey'=> 'testapikey' , 
             'apiSecret'=> 'testapisecret' 
         ]);
-
         $this->assertEquals(2, count($result));
         $this->assertTrue($result[0]);
         $this->assertTrue($result[1]);
     }
     
-    public function testListBees(){
-        
+    public function testListBees()
+    { 
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_request' => true,
         ]);
-        
         $consentsMock->listBees();
     }
     
-    public function testListBees_UseConfig(){
-        
+    public function testListBees_UseConfig()
+    {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_request' => true,
         ]);
@@ -83,7 +76,6 @@ class Bees extends TestCase
             ->will($this->returnCallback(function ($query, $params, $config) {
                 $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
         }));
-        
         $consentsMock->listBees(null,['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret']);
     }
     
@@ -100,17 +92,16 @@ class Bees extends TestCase
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_request' => true,
         ]);
-
         $beesMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) use ($paramsExpected) {
                 $this->assertEquals($paramsExpected, $params);
             }));
-
         $beesMock->takeOff($bees, $params, $subscriptions);
     }
 
-    public function takeOffProvider() {
+    public function takeOffProvider() 
+    {
         return [
             [
                 [

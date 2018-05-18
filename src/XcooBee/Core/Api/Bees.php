@@ -151,10 +151,10 @@ class Bees extends Api
         }
         $query .= '}';
 
-        return $this->_request($query, [] , $config);
+        return $this->_request($query, [], $config);
     }
 
-    protected function _getOutboxEndpoint($userId, $intent , $config = [])
+    protected function _getOutboxEndpoint($userId, $intent, $config = [])
     {
         $query = 'query getEndpoint($userId: String!) {
             outbox_endpoints(user_cursor: $userId) {
