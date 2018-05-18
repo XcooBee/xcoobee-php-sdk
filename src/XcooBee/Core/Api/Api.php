@@ -48,6 +48,6 @@ class Api
         
         return $this->_client->request($query, $variables, [
             'Content-Type' => 'application/json',
-        ],$config);
+        ], $config);
     }
 }

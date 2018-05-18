@@ -33,7 +33,7 @@ class Users extends TestCase {
                             $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
                         }));
 
-        $usersMock->getConversation('testuserId', [
+        $usersMock->getConversation('testuserId', null, null, [
             'apiKey'=> 'testapikey' , 
             'apiSecret'=> 'testapisecret' 
         ]);
@@ -72,7 +72,7 @@ class Users extends TestCase {
                 $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
         }));
                 
-        $usersMock->getConversations([
+        $usersMock->getConversations(null, null, [
             'apiKey'=> 'testapikey' , 
             'apiSecret'=> 'testapisecret' 
         ]);

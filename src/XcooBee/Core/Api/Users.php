@@ -21,10 +21,10 @@ class Users extends Api {
         if(!$config){
             return $this->_getUser($config);
         }
+        
         $store = new PersistedData();
         $user = $store->getStore(PersistedData::CURRENT_USER_KEY);
         if ($user === null) {
-            
             $user = $this->_getUser($config);
             $store->setStore(PersistedData::CURRENT_USER_KEY, $user);
         }
@@ -41,7 +41,7 @@ class Users extends Api {
                 pgp_public_key
             }
         }';
-        $response = $this->_request($query, [],$config);
+        $response = $this->_request($query, [], $config);
         $user = new UserModel();
         $user->userId = $response->data->user->cursor;
         $user->xcoobeeId = $response->data->user->xcoobee_id;
@@ -72,6 +72,7 @@ class Users extends Api {
         if (!$userId) {
             throw new XcooBeeException('invalid "consent" provided');
         }
+        
         $noteType = $breachId ? 'breach' : 'consent';
         return $this->_request($mutation, ['config' => [
                         'note_type' => $noteType,
