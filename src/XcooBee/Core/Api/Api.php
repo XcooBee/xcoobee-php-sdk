@@ -42,7 +42,7 @@ class Api
      */
     protected function _request($query, $variables = [], $config = [])
     {
-        if(!empty($config)){
+        if(!$config){
             $config=\XcooBee\Models\ConfigModel::createFromData($config);
         }
         
