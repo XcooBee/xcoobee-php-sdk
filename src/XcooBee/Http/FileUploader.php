@@ -2,7 +2,6 @@
 
 namespace XcooBee\Http;
 
-
 class FileUploader extends Client
 {
     /**
@@ -10,10 +9,11 @@ class FileUploader extends Client
      *
      * @param $filePath
      * @param $policy
+     * @param  array $config 
      * @return mixed|\Psr\Http\Message\ResponseInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadFile($filePath, $policy)
+    public function uploadFile($filePath, $policy, $config = [])
     {
          $url = $policy->upload_url;
 
@@ -55,6 +55,6 @@ class FileUploader extends Client
                      'name'     => 'file',
                      'contents' => fopen($filePath, 'r'),
                  ],
-         ]]);
+         ]], $config);
     }
 }

@@ -34,7 +34,60 @@ class Bees extends TestCase
         $this->assertTrue($result[0]);
         $this->assertTrue($result[1]);
     }
+    
+    public function testUploadFiles_Upload2Files_UseConfig()
+    {
+        $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
+            '_getOutboxEndpoint' => 'test',
+            '_getPolicy' => (object) [
+                'data' => (object) [
+                    'policy0' => 'test',
+                    'policy1' => 'test',
+                ]
+            ]
+        ]);
 
+        $this->_setProperty($beesMock, '_users', $this->_getMock(Users::class, [
+            'getUser' => (object) ['userId' => 'test']
+        ]));
+        $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
+            'uploadFile' => true,
+        ]));
+
+        $result = $beesMock->uploadFiles(['1.txt', '2.txt'], [
+            'apiKey'=> 'testapikey' , 
+            'apiSecret'=> 'testapisecret' 
+        ]);
+
+        $this->assertEquals(2, count($result));
+        $this->assertTrue($result[0]);
+        $this->assertTrue($result[1]);
+    }
+    
+    public function testListBees()
+    {
+        
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
+            '_request' => true,
+        ]);
+        
+        $consentsMock->listBees();
+    }
+    
+    public function testListBees_UseConfig()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
+            '_request' => true,
+        ]);
+        $consentsMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+        }));
+        
+        $consentsMock->listBees(null,['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret']);
+    }
+    
     /**
      * @param array $bees
      * @param array $params
@@ -58,7 +111,8 @@ class Bees extends TestCase
         $beesMock->takeOff($bees, $params, $subscriptions);
     }
 
-    public function takeOffProvider() {
+    public function takeOffProvider() 
+    {
         return [
             [
                 [

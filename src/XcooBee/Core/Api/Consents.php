@@ -10,10 +10,12 @@ class Consents extends Api
     /**
      * List all campaigns
      *
+     * @param array $config
+     * 
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function listCampaigns()
+    public function listCampaigns($config = [])
     {
         $query = 'query getCampaigns($userId: String!) {
             campaigns(user_cursor: $userId) {
@@ -28,18 +30,19 @@ class Consents extends Api
             }
         }';
 
-        return $this->_request($query, ['userId' => $this->_getUserId()]);
+        return $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
     }
 
     /**
      * Return information about campaign
-     *
+     * 
      * @param string $campaignId
+     * @param array $config
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getCampaignInfo($campaignId = null)
+    public function getCampaignInfo($campaignId = null, $config = [])
     {
         if ($campaignId === null) {
             $campaignId = $this->_getDefaultCampaignId();
@@ -61,7 +64,7 @@ class Consents extends Api
                 }
             }';
 
-        return $this->_request($query, ['campaignId' => $campaignId]);
+        return $this->_request($query, ['campaignId' => $campaignId], $config);
     }
 
     /**
@@ -134,11 +137,12 @@ class Consents extends Api
      * @param string $xid
      * @param string $refId
      * @param string $campaignId
+     * @param string $config
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function requestConsent($xid, $refId = null, $campaignId = null)
+    public function requestConsent($xid, $refId = null, $campaignId = null, $config = [])
     {
         if ($campaignId === null) {
             $campaignId = $this->_getDefaultCampaignId();
@@ -162,7 +166,7 @@ class Consents extends Api
             'targets' => [
                 'xcoobee_ids' => $recipients,
             ],
-        ]);
+        ], $config);
     }
 	
     /**
@@ -172,7 +176,7 @@ class Consents extends Api
      * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getConsentData($consentId)
+    public function getConsentData($consentId, $config = [])
     {
         if (!$consentId) {
             throw new XcooBeeException('No "consent" provided');
@@ -198,7 +202,7 @@ class Consents extends Api
 		}
 	}';
 
-        return $this->_request($query, ['consentId' => $consentId]);    
+        return $this->_request($query, ['consentId' => $consentId], $config);    
     }
     
     protected function _getDefaultCampaignId()
