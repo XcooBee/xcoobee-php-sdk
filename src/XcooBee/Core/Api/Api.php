@@ -2,7 +2,6 @@
 
 namespace XcooBee\Core\Api;
 
-
 use XcooBee\Http\GraphQLClient;
 use XcooBee\Store\PersistedData;
 
@@ -43,7 +42,7 @@ class Api
     protected function _request($query, $variables = [], $config = [])
     {
         if(!$config){
-            $config=\XcooBee\Models\ConfigModel::createFromData($config);
+            $config = \XcooBee\Models\ConfigModel::createFromData($config);
         }
         
         return $this->_client->request($query, $variables, [
