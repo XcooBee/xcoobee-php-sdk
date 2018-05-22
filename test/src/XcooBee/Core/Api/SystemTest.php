@@ -153,7 +153,7 @@ class SystemTest extends TestCase
 
         $systemMock->expects($this->once())
                 ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
+                ->will($this->returnCallback(function ($query, $params) {
                     $this->assertEquals(['config' => [
                             'events' => [["handler" => "testEventHandler", "event_type" => "testEventType"]],
                             'campaign_cursor' => 'testCampaignId'
@@ -209,7 +209,7 @@ class SystemTest extends TestCase
 
         $systemMock->expects($this->once())
                 ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
+                ->will($this->returnCallback(function ($query, $params) {
                     $this->assertEquals(['config' => [
                             'events' => ["testEventType"],
                             'campaign_cursor' => 'testCampaignId'
