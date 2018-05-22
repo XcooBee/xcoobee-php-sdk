@@ -4,6 +4,7 @@ namespace XcooBee\Core\Api;
 
 use XcooBee\Http\GraphQLClient;
 use XcooBee\Store\PersistedData;
+use XcooBee\Core\Configuration;
 
 class Api
 {
@@ -48,5 +49,15 @@ class Api
         return $this->_client->request($query, $variables, [
             'Content-Type' => 'application/json',
         ], $config);
+    }
+    
+    /**
+     * Get default Campaign
+     */
+    protected function _getDefaultCampaignId() 
+    {
+        $configuration = new Configuration();
+
+        return $configuration->getConfig()->campaignId;
     }
 }

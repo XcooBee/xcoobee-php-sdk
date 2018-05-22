@@ -116,7 +116,8 @@ class System extends Api
                 }
             }
         }';
-
+        
+        $mappedEvents = [];
         foreach ($events as $type => $handler) {
             $mappedEvents[] = [
                 'handler' => $handler,
@@ -155,7 +156,8 @@ class System extends Api
                 deleted_number
             }
         }';
-
+        
+        $mappedEvents = [];
         foreach ($events as $key => $type) {
             $mappedEvents[] = $this->_getSubscriptionEvent($type);
         }
@@ -164,13 +166,6 @@ class System extends Api
                 'campaign_cursor' => $campaignId,
                 'events' => $mappedEvents,
             ]], $config);
-    }
-
-    protected function _getDefaultCampaignId() 
-    {
-        $configuration = new Configuration();
-
-        return $configuration->getConfig()->campaignId;
     }
 
     /**
