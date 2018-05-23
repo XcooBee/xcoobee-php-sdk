@@ -3,7 +3,6 @@
 namespace XcooBee\Core\Api;
 
 use XcooBee\Http\Response;
-use XcooBee\Core\Configuration;
 use XcooBee\Exception\XcooBeeException;
 
 class System extends Api 
@@ -183,15 +182,15 @@ class System extends Api
             'ConsentApproved'        => 'consent_approved',
             'ConsentDeclined'        => 'consent_declined',
             'ConsentChanged'         => 'consent_changed',
-            'ConsentNear_expiration' => 'consent_near_expiration',
+            'ConsentNearExpiration'  => 'consent_near_expiration',
             'ConsentExpired'         => 'consent_expired',
             'DataApproved'           => 'data_approved',
             'DataDeclined'           => 'data_declined',
             'DataChanged'            => 'data_changed',
-            'DataNear_expiration'    => 'data_near_expiration',
+            'DataNearExpiration'     => 'data_near_expiration',
             'DataExpired'            => 'data_expired',
-            'DreachPresented'        => 'breach_presented',
-            'DreachBeeUsed'          => 'breach_bee_used',
+            'BreachPresented'        => 'breach_presented',
+            'BreachBeeUsed'          => 'breach_bee_used',
         ];
 
         if (!array_key_exists($event, $events)) {
