@@ -3,6 +3,7 @@
 namespace XcooBee\Core\Api;
 
 use XcooBee\Http\GraphQLClient;
+use XcooBee\Store\PersistedData;
 use XcooBee\Core\Configuration;
 
 class Api
