@@ -142,7 +142,19 @@ class SystemTest extends TestCase
 
         $systemMock->addEventSubscription(["testEventType" => "testEventHandler"], 'testCampaignId');
     }
+    
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testAddEventSubscription_InvalidEvent() 
+    {
+        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+            '_request' => true,
+        ]);
 
+        $systemMock->addEventSubscription(["testEventType" => "testEventHandler"], 'testCampaignId');
+    }
+    
     public function testAddEventSubscription_UseDefaultCampaign() 
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
@@ -218,7 +230,19 @@ class SystemTest extends TestCase
 
         $systemMock->deleteEventSubscription(["testEventType"], 'testCampaignId');
     }
+    
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testDeleteEventSubscription_InvalidEvent() 
+    {
+        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+            '_request' => true,
+        ]);
 
+        $systemMock->deleteEventSubscription(["testEventType"], 'testCampaignId');
+    }
+    
     public function testDeleteEventSubscription_UseDefaultCampaign() 
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
