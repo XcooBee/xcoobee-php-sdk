@@ -191,6 +191,8 @@ class System extends Api
             'DataExpired'            => 'data_expired',
             'BreachPresented'        => 'breach_presented',
             'BreachBeeUsed'          => 'breach_bee_used',
+            'UserDataRequest'        => 'user_data_request',
+            'UserMessage'            => 'user_message' 
         ];
 
         if (!array_key_exists($event, $events)) {
