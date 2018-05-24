@@ -141,7 +141,7 @@ class Consents extends Api
      * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function requestConsent($xid, $refId = null, $campaignId = null, $config = [])
+    public function requestConsent($xid, $refId = null, $campaignId = null, $config = []) 
     {
         if ($campaignId === null) {
             $campaignId = $this->_getDefaultCampaignId();
@@ -151,21 +151,13 @@ class Consents extends Api
             throw new XcooBeeException('No "campaignId" provided');
         }
 
-        $campaignData = $this->getCampaignInfo($campaignId);
+        $mutation = 'mutation requestConsent($config: AdditionalRequestConfig) {
+                send_consent_request(config: $config) {
+                    ref_id
+                }
+            }';
 
-        $recipients = [];
-        foreach ($campaignData->data->campaign->xcoobee_targets as $xcoobee_target) {
-            $recipients[] = ['xcoobee_id' => $xcoobee_target->xcoobee_id];
-        }
-        $recipients[] = ['xcoobee_id' => $xid];
-
-        return $this->modifyCampaign($campaignId, [
-            'reference' => $refId,
-            'requests' => [],
-            'targets' => [
-                'xcoobee_ids' => $recipients,
-            ],
-        ], $config);
+        return $this->_request($mutation, ['reference' => $refId, 'config' => ['xcoobee_id' => $xid, 'campaign_cursor' => $campaignId]], $config);
     }
 	
     /**
