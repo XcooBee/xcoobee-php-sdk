@@ -2,7 +2,6 @@
 
 namespace XcooBee\Core\Api;
 
-use XcooBee\Core\Configuration;
 use XcooBee\Exception\XcooBeeException;
 
 class Consents extends Api
@@ -205,10 +204,4 @@ class Consents extends Api
         return $this->_request($query, ['consentId' => $consentId], $config);    
     }
     
-    protected function _getDefaultCampaignId()
-    {
-        $configuration = new Configuration();
-
-        return $configuration->getConfig()->campaignId;
-    }
 }
