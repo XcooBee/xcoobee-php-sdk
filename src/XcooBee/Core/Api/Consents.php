@@ -3,6 +3,7 @@
 namespace XcooBee\Core\Api;
 
 use XcooBee\Exception\XcooBeeException;
+use XcooBee\Http\Response;
 
 class Consents extends Api
 {
@@ -157,7 +158,41 @@ class Consents extends Api
                 }
             }';
 
-        return $this->_request($mutation, ['reference' => $refId, 'config' => ['xcoobee_id' => $xid, 'campaign_cursor' => $campaignId]], $config);
+        return $this->_request($mutation, ['config' => ['reference' => $refId, 'xcoobee_id' => $xid, 'campaign_cursor' => $campaignId]], $config);
+    }
+    
+    /**
+     * @param string $message
+     * @param string $consentId
+     * @param string $request_ref
+     * @param array $filename
+     * @param array $config
+     * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function setUserDataResponse($message, $consentId, $request_ref = null, $filename = null, $config = []) 
+    {
+        $user = new Users;
+        $response = new Response();
+        $messageResponse = $user->sendUserMessage($message, $consentId, null, $config);
+        $response->code = $messageResponse->code;
+        $response->errors = $messageResponse->errors;
+        if ($request_ref && $filename) {
+            $bees = new Bees;
+            $bees->uploadFiles($filename);
+            $hireBee = $bees->takeOff([
+                'transfer' => ['message' => 'Test post'],
+                    ], [
+                'process' => [
+                    'fileNames' => $filename,
+                ],
+            ]);
+            $response->code = $hireBee->code;
+            $response->errors = $hireBee->errors;
+        }
+
+        return $response;
     }
 	
     /**
