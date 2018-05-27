@@ -278,6 +278,26 @@ standard JSON response object
 - status 400 if error
 
 
+## handleEvent(event)
+
+This function does not require a call to the XcooBee API. It is rather the handler for calls that you recceive **from** XcooBee via webhooks as outlined previously.
+
+You should embed this function into the route/endpoint processor that is invoked when XcooBee posts back to you one of the events that you have registered for earlier. You can find out which events these are by calling the `listEventSubscriptions` method.
+
+The webhook post will be validated in this method and if post is valid, we will look into the registered events and further invoke the mapped placeholder function for each event that was created with the `addEventSubscription()` method.
+
+Optionally, the events data object may be passed along with the data from the HTTP header and POST call.
+
+options: 
+
+```
+event  => object with HTTP post data
+
+```
+
+### response
+- no response, since this is an internal call to the mapped event handlers
+
 # Consent Administration Calls For Consent
 
 ## getCampaignInfo([campaign_id], [config])
