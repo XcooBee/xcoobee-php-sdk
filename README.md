@@ -512,15 +512,17 @@ standard JSON response object
 - status 400 if error
 
 
-## setUserDataResponse(message, consentId, [config])
+## setUserDataResponse(message, consentId [,request_ref, filename, config])
 
-Companies can respond to user data requested via this call (it is a shortcut way to hiring `xcoobee-data-response` bee). Standard hiring points will be deducted for this. The call will generate a pdf document based on the information in `message`. You should use the `Bee API` if you would like to send data files to users such as CSV, Excel, JSON etc.
+Companies can respond to user data requested via this call. Standard hiring points will be deducted for this. The call will send a `message` to user's communication center. You also need to send a file with user's data in order to close data request.
 
 options:
 ```
-message          => the text to be sent to the user as user data, can be html formatted.
-consentid     => the consent for which data has been deleted
-config        => optional: the config object
+message          => the text to be sent to the user as user data
+consentid        => the consent for which data has been deleted
+request_ref      => unique identifier of the data request, you will receive this on `UserDataRequest` event
+filename         => pointer to the file which contains user's data. 
+config           => optional: the config object
 ```
 
 ### response
