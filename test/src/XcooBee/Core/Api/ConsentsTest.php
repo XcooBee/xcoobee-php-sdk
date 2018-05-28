@@ -152,34 +152,37 @@ class Consents extends TestCase
         $consentsMock->activateCampaign();
     }
 
-    /**
-     * @param object $consentData
-     * @param string $xcoobeeId
-     * @param string $referenceId
-     * @param string $campaignId
-     * @param string $expectedCampaignId
-     * @param array $paramsExpected
-     *
-     * @dataProvider requestConsentProvider
-     */
-    public function testRequestConsent($consentData, $xcoobeeId, $referenceId, $campaignId, $expectedCampaignId, $paramsExpected)
+    public function testRequestConsent()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_getDefaultCampaignId' => 'testCampaignId',
-            'getCampaignInfo'       => $consentData,
-            'modifyCampaign'        => true,
+            '_request' => true,
         ]);
 
         $consentsMock->expects($this->once())
-            ->method('modifyCampaign')
-            ->will($this->returnCallback(function ($campaignId, $config) use ($expectedCampaignId, $paramsExpected) {
-                $this->assertEquals($campaignId, $campaignId);
-                $this->assertEquals($paramsExpected, $config);
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['config' => ['reference' => 'testReferance', 'xcoobee_id' => '~testXcooBeeId', 'campaign_cursor' => 'testCampaignId']], $params);
             }));
 
-        $consentsMock->requestConsent($xcoobeeId, $referenceId, $campaignId);
+        $consentsMock->requestConsent('~testXcooBeeId', 'testReferance', 'testCampaignId');
     }
+    
+    public function testRequestConsent_DefaultCampaign()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+            '_getDefaultCampaignId' => 'testCampaignId',
+        ]);
 
+        $consentsMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['config' => ['reference' => 'testReferance', 'xcoobee_id' => '~testXcooBeeId', 'campaign_cursor' => 'testCampaignId']], $params);
+            }));
+
+        $consentsMock->requestConsent('~testXcooBeeId', 'testReferance', 'testCampaignId');
+    }
+    
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
@@ -191,7 +194,7 @@ class Consents extends TestCase
 
         $consentsMock->requestConsent('test');
     }
-    
+        
     public function testGetConsentData() 
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
