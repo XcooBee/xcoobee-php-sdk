@@ -156,7 +156,7 @@ class Consents extends Api
      * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function requestConsent($xid, $refId = null, $campaignId = null, $config = []) 
+    public function requestConsent($xid, $refId = null, $campaignId = null, $config = [])
     {
         if ($campaignId === null) {
             $campaignId = $this->_getDefaultCampaignId();
