@@ -7,6 +7,20 @@ use XcooBee\Http\Response;
 
 class Consents extends Api
 {
+    /** @var Users */
+    protected $_users;
+    
+    /** @var Bees */
+    protected $_bees;
+    
+    public function __construct() 
+    {
+        parent::__construct();
+
+        $this->_users = new Users();
+        $this->_bees = new Bees();
+    }
+    
     /**
      * List all campaigns
      *
@@ -173,15 +187,13 @@ class Consents extends Api
      */
     public function setUserDataResponse($message, $consentId, $request_ref = null, $filename = null, $config = []) 
     {
-        $user = new Users;
         $response = new Response();
-        $messageResponse = $user->sendUserMessage($message, $consentId, null, $config);
+        $messageResponse = $this->_users->sendUserMessage($message, $consentId, null, $config);
         $response->code = $messageResponse->code;
         $response->errors = $messageResponse->errors;
         if ($request_ref && $filename) {
-            $bees = new Bees;
-            $bees->uploadFiles($filename);
-            $hireBee = $bees->takeOff([
+            $this->_bees->uploadFiles($filename);
+            $hireBee = $this->_bees->takeOff([
                 'transfer' => ['message' => 'Test post'],
                     ], [
                 'process' => [

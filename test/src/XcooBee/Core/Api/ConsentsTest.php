@@ -237,126 +237,62 @@ class Consents extends TestCase
         $consents->getConsentData(null);
     }
     
-    public function testSetUserDataResponse() 
+    public function testSetUserDataResponse()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_getUserIdByConsent' => true,
-            'sendUserMessage' => true,
-            'getConsentData' => true
+            '_request' => true,
         ]);
+        $this->_setProperty($consentsMock, '_users', $this->_getMock(Users::class, [
+            'sendUserMessage' => (object) ['code' => 200, 'errors' => []],
+        ]));
 
-        $consentsMock->expects($this->once())
-                ->method('sendUserMessage')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['config' => [
-                                    'message' => 'test message',
-                                    'consent_cursor' => 'testconsentId',
-                                    'note_type' => 'consent',
-                                    'user_cursor' => 'testuserID',
-                                    'breach_cursor' => null
-                                ]], $params);
-        }));
-
-        $consentsMock->setUserDataResponse('testMessage', 'testConsentId');
+        $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId');
+        $this->assertEquals(200, $response->code);
     }
     
-    public function requestConsentProvider() 
+    public function testSetUserDataResponse_messageFailed()
     {
-        return [
-            [
-                (object) [
-                    'data' => (object) [
-                        'campaign' => (object) [
-                            'xcoobee_targets' => [],
-                        ],
-                    ],
-                ],
-                '~testXcoobeeId',
-                null,
-                'test_campaign_id',
-                'test_campaign_id',
-                [
-                    'reference' => null,
-                    'requests' => [],
-                    'targets' => [
-                        'xcoobee_ids' => [
-                            ['xcoobee_id' => '~testXcoobeeId'],
-                        ],
-                    ],
-                ]
-            ],
-            [
-                (object) [
-                    'data' => (object) [
-                        'campaign' => (object) [
-                            'xcoobee_targets' => [],
-                        ],
-                    ],
-                ],
-                '~testXcoobeeId',
-                'test',
-                'test_campaign_id',
-                'test_campaign_id',
-                [
-                    'reference' => 'test',
-                    'requests' => [],
-                    'targets' => [
-                        'xcoobee_ids' => [
-                            ['xcoobee_id' => '~testXcoobeeId'],
-                        ],
-                    ],
-                ]
-            ],
-            [
-                (object) [
-                    'data' => (object) [
-                        'campaign' => (object) [
-                            'xcoobee_targets' => [
-                                (object) ['xcoobee_id' => '~test'],
-                            ],
-                        ],
-                    ],
-                ],
-                '~testXcoobeeId',
-                null,
-                'test_campaign_id',
-                'test_campaign_id',
-                [
-                    'reference' => null,
-                    'requests' => [],
-                    'targets' => [
-                        'xcoobee_ids' => [
-                            ['xcoobee_id' => '~test'],
-                            ['xcoobee_id' => '~testXcoobeeId'],
-                        ],
-                    ],
-                ]
-            ],
-            [
-                (object) [
-                    'data' => (object) [
-                        'campaign' => (object) [
-                            'xcoobee_targets' => [
-                                (object) ['xcoobee_id' => '~test'],
-                            ],
-                        ],
-                    ],
-                ],
-                '~testXcoobeeId',
-                null,
-                null,
-                'testCampaignId',
-                [
-                    'reference' => null,
-                    'requests' => [],
-                    'targets' => [
-                        'xcoobee_ids' => [
-                            ['xcoobee_id' => '~test'],
-                            ['xcoobee_id' => '~testXcoobeeId'],
-                        ],
-                    ],
-                ]
-            ],
-        ];
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+        $this->_setProperty($consentsMock, '_users', $this->_getMock(Users::class, [
+                    'sendUserMessage' => (object) ['code' => 400, 'errors' => []],
+        ]));
+
+        $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId');
+        $this->assertEquals(400, $response->code);
     }
+    
+    public function testSetUserDataResponse_fileUpload()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+        $this->_setProperty($consentsMock, '_users', $this->_getMock(Users::class, [
+                    'sendUserMessage' => (object) ['code' => 200, 'errors' => []],
+        ]));
+        $this->_setProperty($consentsMock, '_bees', $this->_getMock(Bees::class, [
+                    'uploadFiles' => (object) ['code' => 200, 'errors' => []],
+                    'takeOff' => (object) ['code' => 200, 'errors' => []],
+        ]));
+        $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId', 'testReference', 'testFile');
+        $this->assertEquals(200, $response->code);
+    }
+    
+    public function testSetUserDataResponse_takeOffError()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+        $this->_setProperty($consentsMock, '_users', $this->_getMock(Users::class, [
+                    'sendUserMessage' => (object) ['code' => 200, 'errors' => []],
+        ]));
+        $this->_setProperty($consentsMock, '_bees', $this->_getMock(Bees::class, [
+                    'uploadFiles' => (object) ['code' => 200, 'errors' => []],
+                    'takeOff' => (object) ['code' => 400, 'errors' => []],
+        ]));
+        $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId', 'testReference', 'testFile');
+        $this->assertEquals(400, $response->code);
+    }
+    
 }
