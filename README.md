@@ -298,6 +298,30 @@ event  => object with HTTP post data
 ### response
 - no response, since this is an internal call to the mapped event handlers
 
+
+## getEvents([config])
+
+In cases where you are not able to use direct webhook posts to your sites, for example you are in development or your system cannot be accessed via the Internet directly, you can pull your events from XcooBee.
+
+If you are using pull based access make sure that you do not have an Endpoint defined in your campaign as XcooBee will otherwise attempt to post to the endpoint and register an error. Without a campaign endpoint, XcooBee will save events that you subscribe to and respond to your pull requests.
+
+You have 72 hours to pick up the saved events. Once pulled events will be deleted. So please make sure that you save them if you need to replay them.
+
+Your pull intervall should not be more than 1 `getEvents()` call per minute otherwise HTTP error 429 will be returned. We recommend every 62 seconds to avoid any timer issues.
+
+options: 
+
+```
+config             => optional: the config object
+```
+
+### response
+
+standard JSON response object
+- status 200 if success: 
+    - data will contain array of events since last call
+- status 400 if error
+
 # Consent Administration Calls For Consent
 
 ## getCampaignInfo([campaign_id], [config])
