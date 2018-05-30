@@ -243,56 +243,60 @@ class Consents extends TestCase
             '_request' => true,
         ]);
         $this->_setProperty($consentsMock, '_users', $this->_getMock(Users::class, [
-            'sendUserMessage' => (object) ['code' => 200, 'errors' => []],
-        ]));
+                'sendUserMessage' => (object) ['data' => true,'errors' => [],'code' => 200,
+        ]]));
 
         $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId');
         $this->assertEquals(200, $response->code);
+        $this->assertEquals(true, $response->data);
     }
-    
+
     public function testSetUserDataResponse_messageFailed()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
         ]);
         $this->_setProperty($consentsMock, '_users', $this->_getMock(Users::class, [
-                    'sendUserMessage' => (object) ['code' => 400, 'errors' => []],
+                'sendUserMessage' => (object) ['code' => 400, 'errors' => ["error to send message"]],
         ]));
 
         $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId');
         $this->assertEquals(400, $response->code);
+        $this->assertEquals("error to send message", $response->errors[0]);
     }
-    
+
     public function testSetUserDataResponse_fileUpload()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
         ]);
         $this->_setProperty($consentsMock, '_users', $this->_getMock(Users::class, [
-                    'sendUserMessage' => (object) ['code' => 200, 'errors' => []],
+                'sendUserMessage' => (object) ['code' => 200, 'errors' => [], 'data' => true],
         ]));
         $this->_setProperty($consentsMock, '_bees', $this->_getMock(Bees::class, [
-                    'uploadFiles' => (object) ['code' => 200, 'errors' => []],
-                    'takeOff' => (object) ['code' => 200, 'errors' => []],
+                    'uploadFiles' => (object) ['code' => 200, 'errors' => [], 'data' => true],
+                    'takeOff' => (object) ['code' => 200, 'errors' => [], 'data' => true],
         ]));
         $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId', 'testReference', 'testFile');
         $this->assertEquals(200, $response->code);
+        $this->assertEquals(true, $response->data);
     }
-    
+
     public function testSetUserDataResponse_takeOffError()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
         ]);
         $this->_setProperty($consentsMock, '_users', $this->_getMock(Users::class, [
-                    'sendUserMessage' => (object) ['code' => 200, 'errors' => []],
+                    'sendUserMessage' => (object) ['code' => 200, 'errors' => [], 'data' => true],
         ]));
         $this->_setProperty($consentsMock, '_bees', $this->_getMock(Bees::class, [
-                    'uploadFiles' => (object) ['code' => 200, 'errors' => []],
-                    'takeOff' => (object) ['code' => 400, 'errors' => []],
+                    'uploadFiles' => (object) ['code' => 200, 'errors' => [], 'data' => true],
+                    'takeOff' => (object) ['code' => 400, 'errors' => ["error to takeoff"]],
         ]));
         $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId', 'testReference', 'testFile');
         $this->assertEquals(400, $response->code);
+        $this->assertEquals("error to takeoff", $response->errors[0]);
     }
     
 }
