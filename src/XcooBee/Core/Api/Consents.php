@@ -198,6 +198,7 @@ class Consents extends Api
                     ], [
                 'process' => [
                     'fileNames' => $filename,
+                    'userReference' => $request_ref
                 ],
             ]);
             $response->code = $hireBee->code;
