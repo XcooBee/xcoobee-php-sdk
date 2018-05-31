@@ -234,6 +234,98 @@ class Consents extends TestCase
         $consents->getConsentData(null);
     }
     
+    public function testconfirmDataDelete()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+
+        $consentsMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params) {
+                            $this->assertEquals(['consentId' => 'testconsentId'], $params);
+                        }));
+
+        $consentsMock->confirmDataDelete('testconsentId');
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testconfirmDataDelete_noConsentProvided()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+
+        $consentsMock->confirmDataDelete(null);
+    }
+
+    public function testconfirmDataDelete_UseConfig()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+
+        $consentsMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['consentId' => 'testconsentId'], $params);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+                        }));
+
+        $consentsMock->confirmDataDelete('testconsentId', [
+            'apiKey' => 'testapikey',
+            'apiSecret' => 'testapisecret'
+        ]);
+    }
+
+    public function testConfirmConsentChange()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+
+        $consentsMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params) {
+                            $this->assertEquals(['consentId' => 'testconsentId'], $params);
+                        }));
+
+        $consentsMock->confirmConsentChange('testconsentId');
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testConfirmConsentChange_noConsentProvided()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+
+        $consentsMock->confirmConsentChange(null);
+    }
+
+    public function testConfirmConsentChange_UseConfig()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+
+        $consentsMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['consentId' => 'testconsentId'], $params);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+                        }));
+
+        $consentsMock->confirmConsentChange('testconsentId', [
+            'apiKey' => 'testapikey',
+            'apiSecret' => 'testapisecret'
+        ]);
+    }
+    
     public function requestConsentProvider() 
     {
         return [
