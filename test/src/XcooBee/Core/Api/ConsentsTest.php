@@ -194,7 +194,7 @@ class Consents extends TestCase
 
         $consentsMock->requestConsent('test');
     }
-        
+
     public function testGetConsentData() 
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
