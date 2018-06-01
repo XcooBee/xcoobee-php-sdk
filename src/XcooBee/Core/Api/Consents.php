@@ -3,6 +3,7 @@
 namespace XcooBee\Core\Api;
 
 use XcooBee\Exception\XcooBeeException;
+use XcooBee\Http\Response;
 
 class Consents extends Api
 {
