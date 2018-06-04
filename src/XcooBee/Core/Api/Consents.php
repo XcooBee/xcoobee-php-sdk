@@ -193,13 +193,15 @@ class Consents extends Api
         }
 
         if ($requestRef && $filename) {
-            $this->_bees->uploadFiles($filename);
+            $this->_bees->uploadFiles($filename, $config);
+            $userId = $this->_getXcoobeeIdByConsent($consentId, $config);
             $hireBeeResponse = $this->_bees->takeOff([
                 'transfer' => ['message' => 'Test post'],
                     ], [
                 'process' => [
                     'fileNames' => $filename,
-                    'userReference' => $requestRef
+                    'userReference' => $requestRef,
+                    'destinations' => [$userId],
                 ],
             ]);
 
@@ -251,4 +253,15 @@ class Consents extends Api
         return $this->_request($query, ['consentId' => $consentId], $config);    
     }
     
+    protected function _getXcoobeeIdByConsent($consentId, $config = []) 
+    {
+        $consents = new Consents();
+        $consent = $consents->getConsentData($consentId, $config = []);
+        if (!empty($consent->data->consent)) {
+
+            return $consent->data->consent->user_xcoobee_id;
+        }
+
+        return false;
+    }
 }
