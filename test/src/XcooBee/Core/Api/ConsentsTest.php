@@ -270,6 +270,7 @@ class Consents extends TestCase
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
+            '_getXcoobeeIdByConsent' => 'testXcoobeeId'
         ]);
         $this->_setProperty($consentsMock, '_users', $this->_getMock(Users::class, [
                 'sendUserMessage' => $this->_createResponse(200, true),
@@ -287,6 +288,7 @@ class Consents extends TestCase
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
+            '_getXcoobeeIdByConsent' => 'testXcoobeeId'
         ]);
         $this->_setProperty($consentsMock, '_users', $this->_getMock(Users::class, [
                     'sendUserMessage' => $this->_createResponse(200, true)
