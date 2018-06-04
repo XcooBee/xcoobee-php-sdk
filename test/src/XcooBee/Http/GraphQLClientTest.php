@@ -33,9 +33,9 @@ class GraphQLClient extends TestCase
 
         $response = $graphQLClientMock->request('query');
 
-        $this->assertTrue($expectedCode == $response->code);
-        $this->assertTrue($returnedData == $response->data);
-        $this->assertTrue($returnedErrors == $response->errors);
+        $this->assertEquals($expectedCode, $response->code);
+        $this->assertEquals($returnedData, $response->data);
+        $this->assertEquals($returnedErrors, $response->errors);
     }
 
     public function responseProvider()
