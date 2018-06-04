@@ -78,10 +78,6 @@ class System extends Api
                     handler,
                     date_c 
                 }
-                page_info {
-                    end_cursor
-                    has_next_page
-                }
             }
         }';
 

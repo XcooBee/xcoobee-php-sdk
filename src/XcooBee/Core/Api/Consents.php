@@ -3,9 +3,24 @@
 namespace XcooBee\Core\Api;
 
 use XcooBee\Exception\XcooBeeException;
+use XcooBee\Http\Response;
 
 class Consents extends Api
 {
+    /** @var Users */
+    protected $_users;
+    
+    /** @var Bees */
+    protected $_bees;
+    
+    public function __construct() 
+    {
+        parent::__construct();
+
+        $this->_users = new Users();
+        $this->_bees = new Bees();
+    }
+    
     /**
      * List all campaigns
      *
@@ -151,21 +166,55 @@ class Consents extends Api
             throw new XcooBeeException('No "campaignId" provided');
         }
 
-        $campaignData = $this->getCampaignInfo($campaignId);
+        $mutation = 'mutation requestConsent($config: AdditionalRequestConfig) {
+                send_consent_request(config: $config) {
+                    ref_id
+                }
+            }';
 
-        $recipients = [];
-        foreach ($campaignData->data->campaign->xcoobee_targets as $xcoobee_target) {
-            $recipients[] = ['xcoobee_id' => $xcoobee_target->xcoobee_id];
+        return $this->_request($mutation, ['config' => ['reference' => $refId, 'xcoobee_id' => $xid, 'campaign_cursor' => $campaignId]], $config);
+    }
+    
+    /**
+     * @param string $message
+     * @param string $consentId
+     * @param string $requestRef
+     * @param array $filename
+     * @param array $config
+     * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function setUserDataResponse($message, $consentId, $requestRef = null, $filename = null, $config = [])
+    {
+        $messageResponse = $this->_users->sendUserMessage($message, $consentId, null, $config);
+        if ($messageResponse->code !== 200) {
+            return $messageResponse;
         }
-        $recipients[] = ['xcoobee_id' => $xid];
 
-        return $this->modifyCampaign($campaignId, [
-            'reference' => $refId,
-            'requests' => [],
-            'targets' => [
-                'xcoobee_ids' => $recipients,
-            ],
-        ], $config);
+        if ($requestRef && $filename) {
+            $this->_bees->uploadFiles($filename, $config);
+            $xcoobeeId = $this->_getXcoobeeIdByConsent($consentId, $config);
+            $hireBeeResponse = $this->_bees->takeOff([
+                'transfer' => ['message' => 'Test post'],
+                    ], [
+                'process' => [
+                    'fileNames' => $filename,
+                    'userReference' => $requestRef,
+                    'destinations' => [$xcoobeeId],
+                ],
+            ]);
+
+            if ($hireBeeResponse->code !== 200) {
+                return $hireBeeResponse;
+            }
+        }
+
+        $response = new Response();
+        $response->code = 200;
+        $response->data = true;
+
+        return $response;
     }
 	
     /**
@@ -204,4 +253,14 @@ class Consents extends Api
         return $this->_request($query, ['consentId' => $consentId], $config);    
     }
     
+    protected function _getXcoobeeIdByConsent($consentId, $config = []) 
+    {
+        $consents = new Consents();
+        $consent = $consents->getConsentData($consentId, $config = []);
+        if (!empty($consent->data->consent)) {
+            return $consent->data->consent->user_xcoobee_id;
+        }
+
+        return false;
+    }
 }
