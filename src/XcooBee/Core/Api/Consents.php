@@ -253,6 +253,67 @@ class Consents extends Api
         return $this->_request($query, ['consentId' => $consentId], $config);    
     }
     
+    /**
+     * query the XcooBee system for existing user consent
+     * @param string $xid
+     * @param string $campaignId
+     * @param array $config
+     * 
+     * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getCookieConsent($xid, $campaignId = null, $config = [])
+    {
+        if ($campaignId === null) {
+            $campaignId = $this->_getDefaultCampaignId();
+        }
+
+        if (!$campaignId) {
+            throw new XcooBeeException('No "campaignId" provided');
+        }
+
+        $query = 'query listConsents($userId: String!, $campaignId: String!, $status: ConsentStatus) {
+            consents(campaign_owner_cursor: $userId, campaign_cursor: $campaignId, status: $status) {
+                data {
+                    consent_type,
+                    user_xcoobee_id,
+                    request_data_types,
+                    consent_status,
+                    date_c
+                }
+                page_info {
+                    end_cursor
+                    has_next_page
+                }
+            }
+        }';
+
+        $consents = $this->_request($query, ['status' => 'active', 'userId' => $this->_getUserId($config), 'campaignId' => $campaignId], $config);
+        if ($consents->code !== 200) {
+            return $consents;
+        }
+        $csvContent = ['application' => false, 'usage' => false, 'advertising' => false];
+        foreach ($consents->data->consents->data as $consent) {
+            if ($xid === $consent->user_xcoobee_id && in_array($consent->consent_type, ['website_tracking', 'web_application_tracking'])) {
+                if (in_array('application_cookie', $consent->request_data_types)) {
+                    $csvContent['application'] = true;
+                }
+                if (in_array('usage_cookie', $consent->request_data_types)) {
+                    $csvContent['usage'] = true;
+                }
+                if (in_array('advertising_cookie', $consent->request_data_types)) {
+                    $csvContent['advertising'] = true;
+                }
+            }
+        }
+        $response = new Response();
+        $response->code = 200;
+        $response->data = $csvContent;
+
+        return $response;
+    }
+    
     protected function _getXcoobeeIdByConsent($consentId, $config = []) 
     {
         $consents = new Consents();

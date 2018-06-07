@@ -302,6 +302,159 @@ class Consents extends TestCase
         $this->assertEquals("error to takeoff", $response->errors[0]);
     }
     
+    /**
+     * @param int $requestCode
+     * @param array $requestData
+     * @param array $requestError
+     * @param array $expectedResponse
+     * @param string $xid
+     * 
+     * @dataProvider consentProvider
+     */
+    public function testGetCookieConsent($requestCode, $requestData, $requestError, $expectedResponse, $xid) {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
+            '_getUserId' => 'testUserID'
+        ]);
+
+        $response = $consentsMock->getCookieConsent($xid, 'testCampaignId');
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($expectedResponse, $response->data);
+        $this->assertEquals($requestError, $response->errors);
+    }
+
+    /**
+     * @param int $requestCode
+     * @param array $requestData
+     * @param array $requestError
+     * @param array $expectedResponse
+     * @param string $xid
+     * 
+     * @dataProvider consentProvider
+     */
+    public function testGetCookieConsent_defaultCampaign($requestCode, $requestData, $requestError, $expectedResponse, $xid)
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
+            '_getUserId' => 'testUserID',
+            '_getDefaultCampaignId' => 'testCampaignId'
+        ]);
+
+        $response = $consentsMock->getCookieConsent($xid);
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($expectedResponse, $response->data);
+        $this->assertEquals($requestError, $response->errors);
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testGetCookieConsent_noCampaign()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_getDefaultCampaignId' => null,
+        ]);
+
+        $consentsMock->getCookieConsent('testxID');
+    }
+
+    public function consentProvider()
+    {
+        return [[
+                200,
+                (object) [
+                    'consents' => (object) ['data' => [(object) [
+                                'consent_type' => 'web_application_tracking',
+                                'user_xcoobee_id' => 'testxID',
+                                'request_data_types' => ['application_cookie', 'usage_cookie', 'advertising_cookie']
+                            ],
+                            (object) [
+                                'consent_type' => 'website_tracking',
+                                'user_xcoobee_id' => 'testxID',
+                                'request_data_types' => ['usage_cookie', 'advertising_cookie']
+                            ],
+                            (object) [
+                                'consent_type' => 'test_consent_type',
+                                'user_xcoobee_id' => 'testxID',
+                                'request_data_types' => ['application_cookie', 'usage_cookie',]
+                            ],
+                            (object) [
+                                'consent_type' => 'website_tracking',
+                                'user_xcoobee_id' => 'demoxID',
+                                'request_data_types' => ['usage_cookie']
+                            ],
+                        ]]
+                ],
+                [],
+                ['application' => true, 'usage' => true, 'advertising' => true],
+                'testxID'
+            ],
+            [
+                200,
+                (object) [
+                    'consents' => (object) ['data' => [(object) [
+                                'consent_type' => 'website_tracking',
+                                'user_xcoobee_id' => 'testxID',
+                                'request_data_types' => ['usage_cookie']
+                            ],
+                            (object) [
+                                'consent_type' => 'test_consent_type',
+                                'user_xcoobee_id' => 'testxID',
+                                'request_data_types' => ['advertising_cookie']
+                            ],
+                            (object) [
+                                'consent_type' => 'web_application_tracking',
+                                'user_xcoobee_id' => 'demoxId',
+                                'request_data_types' => []
+                            ],
+                        ]]
+                ],
+                [],
+                ['application' => false, 'usage' => false, 'advertising' => false],
+                'demoxId'
+            ],
+            [
+                200,
+                (object) [
+                    'consents' => (object) ['data' => [(object) [
+                                'consent_type' => 'web_application_tracking',
+                                'user_xcoobee_id' => 'testxID',
+                                'request_data_types' => ['application_cookie', 'advertising_cookie']
+                            ],
+                            (object) [
+                                'consent_type' => 'website_tracking',
+                                'user_xcoobee_id' => 'testxID',
+                                'request_data_types' => ['advertising_cookie']
+                            ]
+                        ]]
+                ],
+                [],
+                ['application' => true, 'usage' => false, 'advertising' => true],
+                'testxID'
+            ],
+            [
+                200,
+                (object) [
+                    'consents' => (object) ['data' => [(object) [
+                                'consent_type' => 'web_application_tracking',
+                                'user_xcoobee_id' => 'testxID',
+                                'request_data_types' => ['application_cookie', 'usage_cookie']
+                            ]]]
+                ],
+                [],
+                ['application' => true, 'usage' => true, 'advertising' => false],
+                'testxID'
+            ],
+            [
+                400,
+                [],
+                ['testError'],
+                [],
+                'testxID'
+            ]
+        ];
+    }
+    
     protected function _createResponse($code, $data = null, $errors = []) 
     {
         $response = new Response();
