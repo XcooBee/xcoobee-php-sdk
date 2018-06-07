@@ -279,14 +279,13 @@ class Consents extends Api
             }
         }';
 
-        $allConsents = $this->_request($query, ['status' => 'active', 'userId' => $this->_getUserId($config), 'campaignId' => $campaignId], $config);
-        if ($allConsents->code !== 200) {
-            return $allConsents;
+        $consents = $this->_request($query, ['status' => 'active', 'userId' => $this->_getUserId($config), 'campaignId' => $campaignId], $config);
+        if ($consents->code !== 200) {
+            return $consents;
         }
         $csvContent = ['application' => false, 'usage' => false, 'advertising' => false];
-        $consents = $allConsents->data->consents->data;
-        foreach ($consents as $key => $consent) {
-            if (in_array($consent->consent_type, ['website_tracking', 'web_application_tracking']) && $xid === $consent->user_xcoobee_id) {
+        foreach ($consents->data->consents->data as $consent) {
+            if ($xid === $consent->user_xcoobee_id && in_array($consent->consent_type, ['website_tracking', 'web_application_tracking'])) {
                 if (in_array('application_cookie', $consent->request_data_types)) {
                     $csvContent['application'] = true;
                 }
