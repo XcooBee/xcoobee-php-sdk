@@ -241,20 +241,17 @@ class Consents extends TestCase
     public function testConfirmDataDelete()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => (object) [
-                'code' => 200,
-                'data' => "testData",
-            ]
+            '_request' => $this->_createResponse(200, "testData")
         ]);
-        
+
         $consentsMock->expects($this->once())
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params) {
                             $this->assertEquals(['consentId' => 'testconsentId'], $params);
                         }));
-                        
+
         $response = $consentsMock->confirmDataDelete('testconsentId');
-        
+
         $this->assertEquals(200, $response->code);
         $this->assertTrue($response->data);
     }
@@ -262,22 +259,19 @@ class Consents extends TestCase
     public function testConfirmDataDelete_onError()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => (object) [
-                'code' => 400,
-                'error' => ["testError"]
-            ]
+            '_request' => $this->_createResponse(400, [], ["testError"])
         ]);
-        
+
         $consentsMock->expects($this->once())
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params) {
                             $this->assertEquals(['consentId' => 'testconsentId'], $params);
                         }));
-                        
+
         $response = $consentsMock->confirmDataDelete('testconsentId');
-        
+
         $this->assertEquals(400, $response->code);
-        $this->assertEquals('testError', $response->error[0]);
+        $this->assertEquals('testError', $response->errors[0]);
     }
     
     /**
@@ -295,17 +289,21 @@ class Consents extends TestCase
     public function testConfirmDataDelete_UseConfig()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => (object) [
-                'code' => 200,
-                'data' => "testData",
-            ]
+            '_request' => $this->_createResponse(200, "testData")
         ]);
+
+        $consentsMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['consentId' => 'testconsentId'], $params);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+                        }));
 
         $response = $consentsMock->confirmDataDelete('testconsentId', [
             'apiKey' => 'testapikey',
             'apiSecret' => 'testapisecret'
         ]);
-        
+
         $this->assertEquals(200, $response->code);
         $this->assertTrue($response->data);
     }
@@ -313,14 +311,11 @@ class Consents extends TestCase
     public function testConfirmConsentChange()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => (object) [
-                'code' => 200,
-                'data' => "testData",
-            ]
+            '_request' => $this->_createResponse(200, "testData")
         ]);
 
         $response = $consentsMock->confirmConsentChange('testconsentId');
-        
+
         $this->assertEquals(200, $response->code);
         $this->assertTrue($response->data);
     }
@@ -328,16 +323,13 @@ class Consents extends TestCase
     public function testConfirmConsentChange_onError()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => (object) [
-                'code' => 400,
-                'error' => ["testError"],
-            ]
+            '_request' => $this->_createResponse(400, [], ["testError"])
         ]);
 
         $response = $consentsMock->confirmConsentChange('testconsentId');
-        
+
         $this->assertEquals(400, $response->code);
-        $this->assertEquals("testError", $response->error[0]);
+        $this->assertEquals("testError", $response->errors[0]);
     }
 
     /**
@@ -355,17 +347,21 @@ class Consents extends TestCase
     public function testConfirmConsentChange_UseConfig()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => (object) [
-                'code' => 200,
-                'data' => "testData",
-            ]
+            '_request' => $this->_createResponse(200, "testData")
         ]);
+
+        $consentsMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['consentId' => 'testconsentId'], $params);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+                        }));
 
         $response = $consentsMock->confirmConsentChange('testconsentId', [
             'apiKey' => 'testapikey',
             'apiSecret' => 'testapisecret'
         ]);
-        
+
         $this->assertEquals(200, $response->code);
         $this->assertTrue($response->data);
     }
