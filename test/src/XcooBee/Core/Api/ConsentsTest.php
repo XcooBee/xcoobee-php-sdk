@@ -305,37 +305,45 @@ class Consents extends TestCase
     /**
      * @param int $requestCode
      * @param array $requestData
+     * @param array $requestError
      * @param array $expectedResponse
-     *
+     * @param string $xid
+     * 
      * @dataProvider consentProvider
      */
-    public function testGetCookieConsent($requestCode, $requestData, $expectedResponse, $xid)
-    {
+    public function testGetCookieConsent($requestCode, $requestData, $requestError, $expectedResponse, $xid) {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => $this->_createResponse($requestCode, $requestData),
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
+            '_getUserId' => 'testUserID'
         ]);
 
         $response = $consentsMock->getCookieConsent($xid, 'testCampaignId');
         $this->assertEquals($requestCode, $response->code);
         $this->assertEquals($expectedResponse, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
 
-    public function testGetCookieConsent_defaultCampaign()
+    /**
+     * @param int $requestCode
+     * @param array $requestData
+     * @param array $requestError
+     * @param array $expectedResponse
+     * @param string $xid
+     * 
+     * @dataProvider consentProvider
+     */
+    public function testGetCookieConsent_defaultCampaign($requestCode, $requestData, $requestError, $expectedResponse, $xid)
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => $this->_createResponse(200, (object) [
-                        'consents' => (object) ['data' => [(object) [
-                                    'consent_type' => 'web_application_tracking',
-                                    'user_xcoobee_id' => 'testxID',
-                                    'request_data_types' => ['application_cookie', 'usage_cookie', 'advertising_cookie']
-                                ]]]
-            ]),
-            '_getDefaultCampaignId' => 'testCampaignId',
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
+            '_getUserId' => 'testUserID',
+            '_getDefaultCampaignId' => 'testCampaignId'
         ]);
 
-        $response = $consentsMock->getCookieConsent('testxID');
-        $this->assertEquals(200, $response->code);
-        $this->assertEquals(['application' => true, 'usage' => true, 'advertising' => true], $response->data);
+        $response = $consentsMock->getCookieConsent($xid);
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($expectedResponse, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
 
     /**
@@ -353,32 +361,33 @@ class Consents extends TestCase
     public function consentProvider()
     {
         return [[
-        200,
-        (object) [
-            'consents' => (object) ['data' => [(object) [
-                        'consent_type' => 'web_application_tracking',
-                        'user_xcoobee_id' => 'testxID',
-                        'request_data_types' => ['application_cookie', 'usage_cookie', 'advertising_cookie']
-                    ],
-                    (object) [
-                        'consent_type' => 'website_tracking',
-                        'user_xcoobee_id' => 'testxID',
-                        'request_data_types' => ['usage_cookie', 'advertising_cookie']
-                    ],
-                    (object) [
-                        'consent_type' => 'test_consent_type',
-                        'user_xcoobee_id' => 'testxID',
-                        'request_data_types' => ['application_cookie', 'usage_cookie',]
-                    ],
-                    (object) [
-                        'consent_type' => 'website_tracking',
-                        'user_xcoobee_id' => 'demoxID',
-                        'request_data_types' => ['usage_cookie']
-                    ],
-                ]]
-        ],
-        ['application' => true, 'usage' => true, 'advertising' => true],
-        'testxID'
+                200,
+                (object) [
+                    'consents' => (object) ['data' => [(object) [
+                                'consent_type' => 'web_application_tracking',
+                                'user_xcoobee_id' => 'testxID',
+                                'request_data_types' => ['application_cookie', 'usage_cookie', 'advertising_cookie']
+                            ],
+                            (object) [
+                                'consent_type' => 'website_tracking',
+                                'user_xcoobee_id' => 'testxID',
+                                'request_data_types' => ['usage_cookie', 'advertising_cookie']
+                            ],
+                            (object) [
+                                'consent_type' => 'test_consent_type',
+                                'user_xcoobee_id' => 'testxID',
+                                'request_data_types' => ['application_cookie', 'usage_cookie',]
+                            ],
+                            (object) [
+                                'consent_type' => 'website_tracking',
+                                'user_xcoobee_id' => 'demoxID',
+                                'request_data_types' => ['usage_cookie']
+                            ],
+                        ]]
+                ],
+                [],
+                ['application' => true, 'usage' => true, 'advertising' => true],
+                'testxID'
             ],
             [
                 200,
@@ -400,6 +409,7 @@ class Consents extends TestCase
                             ],
                         ]]
                 ],
+                [],
                 ['application' => false, 'usage' => false, 'advertising' => false],
                 'demoxId'
             ],
@@ -418,6 +428,7 @@ class Consents extends TestCase
                             ]
                         ]]
                 ],
+                [],
                 ['application' => true, 'usage' => false, 'advertising' => true],
                 'testxID'
             ],
@@ -430,7 +441,15 @@ class Consents extends TestCase
                                 'request_data_types' => ['application_cookie', 'usage_cookie']
                             ]]]
                 ],
+                [],
                 ['application' => true, 'usage' => true, 'advertising' => false],
+                'testxID'
+            ],
+            [
+                400,
+                [],
+                ['testError'],
+                [],
                 'testxID'
             ]
         ];
