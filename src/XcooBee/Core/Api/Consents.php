@@ -253,6 +253,16 @@ class Consents extends Api
         return $this->_request($query, ['consentId' => $consentId], $config);    
     }
     
+    /**
+     * query the XcooBee system for existing user consent
+     * @param string $xid
+     * @param string $campaignId
+     * @param array $config
+     * 
+     * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getCookieConsent($xid, $campaignId = null, $config = [])
     {
         if ($campaignId === null) {
