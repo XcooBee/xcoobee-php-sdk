@@ -774,6 +774,15 @@ standard JSON response object
 
 You normally use this as follow up call to `uploadFiles()`. This will start your processing. You specify the bee(s) that you want to hire and the parameter that are needed for the bee to work on your file(s). If you want to be kept up to date you can supply subscriptions. Please note that subscriptions will deduct points from your balance and will cause errors when your balance is insufficient.
 
+
+options:
+
+```
+bees          => array of bee system names, e.g. "xcoobee_digital_signature_detection"
+parameters    => optional: the parameters object. For each bee by bee name.
+subscriptions => optional: the subscriptions object. Specifies the subscriptions.
+```
+
 ### Parameters Object
 
 Parameters can be bee specific or apply to the overall job.
@@ -795,8 +804,6 @@ xcoobee_testbee.height = 599
 xcoobee_testbee.width = 1200
 ```
 
-
-
 ### Subscriptions
 Subscriptions can be attached to the overall process or for each bee. You will need to specify a `target` and an `events` argument at minimum. The `target` endpoint has to be reachable by the XcooBee system via **HTTP/S POST**. The `events` determines which events you are subscribing to.
 Thus the three keys for each subscription are:
@@ -815,49 +822,51 @@ subscriptions example:
 Process Subscriptions:
 process.target = "https://mysite.com/beehire/notification/"
 process.signed = true
-process.events = "error,success,deliver,present,download,delete,reroute"
+process.events = ["error", "success", "deliver", "present", "download", "delete", "reroute"]
 
 Bee subscriptions:
 xcoobee_testbee.target = "https://somesite.com/testbee/notification/"
-xcoobee_testbee.events = "success,error"
+xcoobee_testbee.events = ["error", "success"]
 ```
 
+### Subscription events
 
-options:
-
-```
-bees          => array of bee system names, e.g. "xcoobee_digital_signature_detection"
-parameters    => optional: the parameters object. For each bee by bee name.
-subscriptions => optional: the subscriptions object. Specifies the subscriptions.
-```
-
-
-### response
-standard JSON response object
-- status 200 if success: 
-    - data object will contain true
-- status 400 if error
-
-## listBees(searchText)
-
-This function will help you search through the bees in the system that your account is able to hire. This is a simple keyword search interface.
-
-options:
-
-```
-searchtext   => string of keywords to search for in the bee system name or label in the language of your account.
-```
-
-### response
-standard JSON response object
-- status 200 if success: 
-    - data object will contain basic bee data: bee-systemname, bee-label, bee-cost, cost-type
-- status 400 if error
-
-## Bee Processing Events
 The event system for bees can distinguish between process level and bee level events.
 
-success event example:
+#### Bee Level events
+- **error**
+    - There was an error in the hiring cycle for this bee
+    - Event type sent in POST header - `BeeSuccess`
+- **success**
+    - The bee completed the hiring cycle successfully
+    - Event type sent in POST header - `BeeError`
+
+#### Process Level events
+- **error**
+    - There was an error in the processing of the transaction. If there are multiple errors each of them is send in separate post.
+    - Event type sent in POST header - `ProcessError`
+- **success**
+    - The overall transaction completed successfully
+    - Event type sent in POST header - `ProcessSuccess`
+- **deliver**
+    - Is there was a transfer of a file, the file was delivered to the inbox of the recipient
+    - Event type sent in POST header - `ProcessFileDelivered`
+- **present**
+    - If there was a transfer of a file, the file was seen by the user
+    - Event type sent in POST header - `ProcessFilePresented`
+- **download**
+    - If there was a transfer of a file and the user downloaded the file
+    - Event type sent in POST header - `ProcessFileDownloaded`
+- **delete**
+    - This event occurs when user deletes the file
+    - Event type sent in POST header - `ProcessFileDeleted`
+- **reroute**
+    - When user has automated inbox rules and the document has been sent to a different place a reroute event is triggered
+     - Event type sent in POST header - `ProcessReroute`
+
+
+#### Event payload examples:
+- success event example:
 ```
 {
     "date": "2017-12-04T16:50:40.698Z",
@@ -872,8 +881,7 @@ success event example:
 }    
 ```
 
-
-error event example:
+- error event example:
 ```
 {
     "date": "2017-10-24T15: 22: 39.209Z",
@@ -890,19 +898,29 @@ error event example:
 ```
 
 
-### Process Level
-- error     => an error occured
-- success   => everything completed
-- deliver   => when destination: file was delivered to inbox
-- present   => when destination: user saw the file
-- download  => when destination: user downloaded file
-- delete    => when destination: user deleted file
-- reroute   => when destination: user triggered additional workflow
+### response
+standard JSON response object
+- status 200 if success: 
+    - data object will contain true
+- status 400 if error
 
-### Bee Level
-- error     => an error occured
-- success   => everything completed
 
+
+## listBees(searchText)
+
+This function will help you search through the bees in the system that your account is able to hire. This is a simple keyword search interface.
+
+options:
+
+```
+searchtext   => string of keywords to search for in the bee system name or label in the language of your account.
+```
+
+### response
+standard JSON response object
+- status 200 if success: 
+    - data object will contain basic bee data: bee-systemname, bee-label, bee-cost, cost-type
+- status 400 if error
 
 # Troubleshooting
 
