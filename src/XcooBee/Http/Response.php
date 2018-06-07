@@ -47,6 +47,9 @@ class Response {
         }
 
         $xcoobeeResponse->code = $response->getStatusCode();
+        if($xcoobeeResponse->code === 200 && $xcoobeeResponse->errors){
+            $xcoobeeResponse->code = 400;
+        }
 
         return $xcoobeeResponse;
     }
