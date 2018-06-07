@@ -216,7 +216,76 @@ class Consents extends Api
 
         return $response;
     }
-	
+    
+    /**
+     * confirm that data has been changed
+     * 
+     * @param string $consentId
+     * @param array $config
+     * 
+     * @return \XcooBee\Http\Response
+     * 
+     * @throws XcooBeeException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function confirmConsentChange($consentId, $config = []) {
+        if (!$consentId) {
+            throw new XcooBeeException('No "consent" provided');
+        }
+
+        $mutation = 'mutation confirmConsentChange($consentId: String!) {
+                confirm_consent_change(consent_cursor: $consentId) {
+                    consent_cursor
+                }
+            }';
+
+        $ConsentChangeResponse = $this->_request($mutation, ['consentId' => $consentId], $config);
+        if ($ConsentChangeResponse->code !== 200) {
+            return $ConsentChangeResponse;
+        }
+
+        $response = new Response();
+        $response->code = 200;
+        $response->data = true;
+
+        return $response;
+    }
+
+    /**
+     * confirm that data has been purged from company systems
+     * 
+     * @param string $consentId
+     * @param array $config
+     * 
+     * @return \XcooBee\Http\Response
+     * 
+     * @throws XcooBeeException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function confirmDataDelete($consentId, $config = [])
+    {
+        if (!$consentId) {
+            throw new XcooBeeException('No "consent" provided');
+        }
+
+        $mutation = 'mutation confirmDataDelete($consentId: String!) {
+                confirm_consent_deletion(consent_cursor: $consentId) {
+                    consent_cursor
+                }
+            }';
+
+        $confirmDataResponse = $this->_request($mutation, ['consentId' => $consentId], $config);
+        if ($confirmDataResponse->code !== 200) {
+            return $confirmDataResponse;
+        }
+
+        $response = new Response();
+        $response->code = 200;
+        $response->data = true;
+
+        return $response;
+    }
+    
     /**
      * @param string $consentId
      *
