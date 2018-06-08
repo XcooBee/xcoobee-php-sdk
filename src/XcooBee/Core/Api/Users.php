@@ -14,15 +14,17 @@ class Users extends Api {
      * 
      * @param array $config
      * @return UserModel
+     * 
+     * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getUser($config = []) 
     {    
-        if(!$config){
+        if($config){
             return $this->_getUser($config);
         }
         
-        $store = new PersistedData();
+        $store = PersistedData::getInstance();
         $user = $store->getStore(PersistedData::CURRENT_USER_KEY);
         if ($user === null) {
             $user = $this->_getUser($config);
@@ -55,10 +57,11 @@ class Users extends Api {
      *
      * @param String $message
      * @param String $consentId
-     * @param String $breachid
+     * @param String $breachId
      * @param array $config
      * 
      * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function sendUserMessage($message, $consentId, $breachId = null, $config = []) 
@@ -91,6 +94,7 @@ class Users extends Api {
      * @param array $config
      * 
      * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getConversations($first = null, $after = null, $config = []) 
@@ -117,11 +121,12 @@ class Users extends Api {
      * get conversation data
      *
      * @param string $userId
-     * @param array $config
      * @param Int $first
      * @param Int $after
+     * @param array $config
      * 
      * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getConversation($userId, $first = null, $after = null, $config = []) 

@@ -43,14 +43,6 @@ class Client
     }
 
     /**
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    protected function _refreshAuthToken(){
-        return $this->_fetchToken();
-    }
-
-    /**
      * @param array $config
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException

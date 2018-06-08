@@ -25,15 +25,19 @@ class System extends Api
     /**
      * method to check if pgp key and Campaign is correct.
      *
+     * @param array $config
+     * 
      * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function ping() 
+    public function ping($config = []) 
     {
-        $user = $this->_users->getUser();
+        $user = $this->_users->getUser($config);
         $response = new Response();
         if ($user->pgp_public_key) {
-            $campaignInfo = $this->_consent->getCampaignInfo();
+            $campaignId = array_key_exists('campaignId', $config) ? $config['campaignId'] : null;
+            $campaignInfo = $this->_consent->getCampaignInfo($campaignId, $config);
             if (!empty($campaignInfo->data->campaign)) {
                 $response->code = 200;
             } else {
@@ -59,6 +63,7 @@ class System extends Api
      * @param array $config
      *  
      * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function listEventSubscriptions($campaignId = null, $config = []) 
@@ -92,6 +97,7 @@ class System extends Api
      * @param array $config
      *  
      * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function addEventSubscription($events, $campaignId = null, $config = []) 
@@ -134,6 +140,7 @@ class System extends Api
      * @param array $config
      *  
      * @return \XcooBee\Http\Response
+     * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function deleteEventSubscription($events, $campaignId = null, $config = []) 
@@ -169,6 +176,7 @@ class System extends Api
      * @param string $event
      *
      * @return array 
+     * @throws XcooBeeException
      * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */

@@ -26,6 +26,7 @@ class Bees extends Api
      * @param string $searchText
      * @param array $config
      * @return mixed
+     * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function listBees($searchText = "", $config = []){
@@ -62,6 +63,7 @@ class Bees extends Api
      * @param array $config
      * 
      * @return mixed
+     * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function uploadFiles($files, $endpoint = 'outbox', $config = [])
@@ -86,11 +88,13 @@ class Bees extends Api
      * @param array $bees
      * @param array $options
      * @param array $subscriptions
-     *
+     * @param array $config
+     * 
      * @return mixed
+     * @throws XcooBeeException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function takeOff(array $bees, $options, $subscriptions = [])
+    public function takeOff(array $bees, $options, $subscriptions = [], $config = [])
     {
         $query = 'mutation addDirective($params: DirectiveInput!) {
             add_directive(params: $params) {
@@ -128,7 +132,7 @@ class Bees extends Api
             }
         }
 
-        return $this->_request($query, ['params' => $params]);
+        return $this->_request($query, ['params' => $params], $config);
     }
 
     protected function _getPolicy($intent, $endpointId = "", $files = [], $config = [])
