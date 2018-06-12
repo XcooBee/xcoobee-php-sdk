@@ -5,10 +5,14 @@ namespace XcooBee\Core\Api;
 use XcooBee\Store\PersistedData;
 use XcooBee\Models\UserModel;
 use XcooBee\Exception\XcooBeeException;
-use XcooBee\Core\Api\Consents;
 
-class Users extends Api {
-
+class Users extends Api
+{
+    public function __construct($xcoobee)
+    {
+        parent::__construct($xcoobee);
+    }
+    
     /**
      * Return current user
      * 
@@ -155,8 +159,7 @@ class Users extends Api {
 
     protected function _getUserIdByConsent($consentId, $config = []) 
     {
-        $consents = new Consents();
-        $consent = $consents->getConsentData($consentId, $config = []);
+        $consent = $this->_xcoobee->consents->getConsentData($consentId, $config = []);
         if (!empty($consent->data->consent)) {
 
             return $consent->data->consent->user_cursor;

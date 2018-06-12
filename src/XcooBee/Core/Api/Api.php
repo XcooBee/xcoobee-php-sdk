@@ -5,14 +5,19 @@ namespace XcooBee\Core\Api;
 use XcooBee\Http\GraphQLClient;
 use XcooBee\Store\PersistedData;
 use XcooBee\Core\Configuration;
+use \XcooBee\XcooBee;
 
 class Api
 {
     /** @var GraphQLClient */
     protected $_client;
-
-    public function __construct()
+    
+    /** @var XcooBee */
+    protected $_xcoobee;
+    
+    public function __construct(XcooBee $xcoobee)
     {
+        $this->_xcoobee = $xcoobee;
         $this->_client = new GraphQLClient();
     }
 
@@ -25,8 +30,7 @@ class Api
      */
     protected function _getUserId($config = [])
     {
-        $user = new Users();
-        $currentUser = $user->getUser($config);
+        $currentUser = $this->_xcoobee->users->getUser($config);
 
         return $currentUser->userId;
     }

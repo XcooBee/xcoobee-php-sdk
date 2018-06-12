@@ -7,19 +7,9 @@ use XcooBee\Exception\XcooBeeException;
 
 class System extends Api 
 {
-
-    /** @var Users */
-    protected $_users;
-
-    /** @var Consent */
-    protected $_consent;
-
-    public function __construct() 
+    public function __construct($xcoobee) 
     {
-        parent::__construct();
-
-        $this->_users = new Users();
-        $this->_consent = new Consents();
+        parent::__construct($xcoobee);
     }
 
     /**
@@ -33,11 +23,11 @@ class System extends Api
      */
     public function ping($config = []) 
     {
-        $user = $this->_users->getUser($config);
+        $user = $this->_xcoobee->users->getUser($config);
         $response = new Response();
         if ($user->pgp_public_key) {
             $campaignId = array_key_exists('campaignId', $config) ? $config['campaignId'] : null;
-            $campaignInfo = $this->_consent->getCampaignInfo($campaignId, $config);
+            $campaignInfo = $this->_xcoobee->consents->getCampaignInfo($campaignId, $config);
             if (!empty($campaignInfo->data->campaign)) {
                 $response->code = 200;
             } else {

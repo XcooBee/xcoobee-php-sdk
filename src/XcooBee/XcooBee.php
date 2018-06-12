@@ -2,7 +2,6 @@
 
 namespace XcooBee;
 
-
 use XcooBee\Core\Configuration;
 use XcooBee\Models\ConfigModel;
 use XcooBee\Core\Api\System;
@@ -28,13 +27,14 @@ class XcooBee
     /** @var Users */
     public $users;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->configuration = new Configuration();
-
-        $this->system   = new System();
-        $this->bees     = new Bees();
-        $this->consents = new Consents();
-        $this->users    = new Users();
+        
+        $this->system   = new System($this);
+        $this->bees     = new Bees($this);
+        $this->consents = new Consents($this);
+        $this->users    = new Users($this);
     }
 
     /**

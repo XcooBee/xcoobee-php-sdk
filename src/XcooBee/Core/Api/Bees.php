@@ -7,16 +7,13 @@ use XcooBee\Http\FileUploader;
 
 class Bees extends Api
 {
-    /** @var Users */
-    protected $_users;
     /** @var FileUploader */
     protected $_fileUploader;
 
-    public function __construct()
+    public function __construct($xcoobee)
     {
-        parent::__construct();
+        parent::__construct($xcoobee);
 
-        $this->_users = new Users();
         $this->_fileUploader = new FileUploader();
     }
 
@@ -69,7 +66,7 @@ class Bees extends Api
     public function uploadFiles($files, $endpoint = 'outbox', $config = [])
     {
         $endpoint = !$endpoint ? $endpoint : 'outbox';
-        $user = $this->_users->getUser($config);
+        $user = $this->_xcoobee->users->getUser($config);
         $endpointId = $this->_getOutboxEndpoint($user->userId, $endpoint, $config);
         $policies = $this->_getPolicy($endpoint, $endpointId, $files , $config);
         $result = [];
