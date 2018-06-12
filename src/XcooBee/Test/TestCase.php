@@ -55,7 +55,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function _getXcooBeeMock()
     {
-        $reflection = new \ReflectionClass('\XcooBee\XcooBee');
-        return $reflection->newInstanceWithoutConstructor();
+        return $this->_getMock(XcooBee::class, []);
     }
 }

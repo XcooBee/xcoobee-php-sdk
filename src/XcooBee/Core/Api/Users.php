@@ -20,7 +20,6 @@ class Users extends Api
      * @return UserModel
      * 
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getUser($config = []) 
     {    
@@ -48,6 +47,10 @@ class Users extends Api
             }
         }';
         $response = $this->_request($query, [], $config);
+        if($response->code !== 200){
+            throw new XcooBeeException('invalid "user detail" provided');
+        }
+        
         $user = new UserModel();
         $user->userId = $response->data->user->cursor;
         $user->xcoobeeId = $response->data->user->xcoobee_id;
@@ -66,7 +69,6 @@ class Users extends Api
      * 
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function sendUserMessage($message, $consentId, $breachId = null, $config = []) 
     {
@@ -99,7 +101,6 @@ class Users extends Api
      * 
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getConversations($first = null, $after = null, $config = []) 
     {
@@ -131,7 +132,6 @@ class Users extends Api
      * 
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getConversation($userId, $first = null, $after = null, $config = []) 
     {

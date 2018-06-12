@@ -4,7 +4,6 @@ namespace XcooBee\Core\Api;
 
 use XcooBee\Http\GraphQLClient;
 use XcooBee\Store\PersistedData;
-use XcooBee\Core\Configuration;
 use \XcooBee\XcooBee;
 
 class Api
@@ -60,8 +59,8 @@ class Api
      */
     protected function _getDefaultCampaignId() 
     {
-        $configuration = new Configuration();
+        $store = PersistedData::getInstance()->getStore(PersistedData::CURRENT_CONFIG_KEY);
 
-        return $configuration->getConfig()->campaignId;
+        return $store->campaignId;
     }
 }

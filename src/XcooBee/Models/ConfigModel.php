@@ -15,7 +15,7 @@ class ConfigModel
     public $pgpSecret   = null;
     public $pgpPassword = null;
     public $campaignId  = null;
-    public $encode      = true;
+    public $encrypt      = true;
 
     /**
      * Creates config model from passed params
@@ -26,7 +26,7 @@ class ConfigModel
                 'pgpSecret'     => '',
                 'pgpPassword'   => '',
                 'campaignId'    => '',
-                'encode'        => true,
+                'encrypt'        => true,
             ]
      *
      * @return self
@@ -52,8 +52,8 @@ class ConfigModel
         if (array_key_exists('campaignId', $data)) {
             $model->campaignId = $data['campaignId'];
         }
-        if (array_key_exists('encode', $data)) {
-            $model->encode = !!$data['encode'];
+        if (array_key_exists('encrypt', $data)) {
+            $model->encrypt = !!$data['encrypt'];
         }
 
         return $model;
@@ -84,7 +84,7 @@ class ConfigModel
             $configArray[$column[0]] = $column[1];
         }
 
-        if ($configArray['encode'] && file_exists($homeDirPath . self::PGP_SECRET_FILE)) {
+        if ($configArray['encrypt'] && file_exists($homeDirPath . self::PGP_SECRET_FILE)) {
             $configArray['pgpSecret'] = file_get_contents($homeDirPath . self::PGP_SECRET_FILE);
         }
 

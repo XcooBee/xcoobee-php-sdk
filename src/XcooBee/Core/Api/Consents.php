@@ -20,7 +20,6 @@ class Consents extends Api
      * 
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function listCampaigns($config = [])
     {
@@ -47,7 +46,6 @@ class Consents extends Api
      * @param array $config
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getCampaignInfo($campaignId = null, $config = [])
     {
@@ -75,77 +73,6 @@ class Consents extends Api
     }
 
     /**
-     * Create campaign from passed data
-     *
-     * @param array $data
-     * 
-     * @return \XcooBee\Http\Response
-     * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function createCampaign($data)
-    {
-        $mutation = 'mutation createCampaign($config: ConsentCampaignCreateConfig) {
-                create_consent_campaign(config: $config) {
-                    ref_id
-                }
-            }';
-
-        return $this->_request($mutation, ['config' => $data]);
-    }
-
-    /**
-     * Modify campaign with new data
-     *
-     * @param string $campaignId
-     * @param array $data
-     * 
-     * @return \XcooBee\Http\Response
-     * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function modifyCampaign($campaignId, $data)
-    {
-        $mutation = 'mutation modifyCampaign($config: ConsentCampaignUpdateConfig) {
-                modify_consent_campaign(config: $config) {
-                    ref_id
-                }
-            }';
-
-        return $this->_request($mutation, ['config' => array_merge(['campaign_cursor' => $campaignId], $data)]);
-    }
-
-    /**
-     * Set status of campaign to active
-     *
-     * @param string $campaignId
-     * 
-     * @return \XcooBee\Http\Response
-     * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function activateCampaign($campaignId = null)
-    {
-        if ($campaignId === null) {
-            $campaignId = $this->_getDefaultCampaignId();
-        }
-
-        if (!$campaignId) {
-            throw new XcooBeeException('No "campaignId" provided');
-        }
-
-        $mutation = 'mutation activateCampaign($config: ActivateCampaignConfig) {
-                activate_consent_campaign(config: $config) {
-                    ref_id
-                }
-            }';
-
-        return $this->_request($mutation, ['config' => [
-            'campaign_cursor' => $campaignId,
-        ]]);
-    }
-
-    /**
      * @param string $xid
      * @param string $refId
      * @param string $campaignId
@@ -153,7 +80,6 @@ class Consents extends Api
      * 
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function requestConsent($xid, $refId = null, $campaignId = null, $config = [])
     {
@@ -183,7 +109,6 @@ class Consents extends Api
      * 
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function setUserDataResponse($message, $consentId, $requestRef = null, $filename = null, $config = [])
     {
@@ -226,7 +151,6 @@ class Consents extends Api
      * @return \XcooBee\Http\Response
      * 
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function confirmConsentChange($consentId, $config = []) {
         if (!$consentId) {
@@ -260,8 +184,6 @@ class Consents extends Api
      * @return \XcooBee\Http\Response
      * 
      * @throws XcooBeeException
-     * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function confirmDataDelete($consentId, $config = [])
     {
@@ -292,7 +214,6 @@ class Consents extends Api
      *
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getConsentData($consentId, $config = [])
     {
@@ -331,7 +252,6 @@ class Consents extends Api
      * 
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getCookieConsent($xid, $campaignId = null, $config = [])
     {

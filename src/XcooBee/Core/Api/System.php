@@ -19,7 +19,6 @@ class System extends Api
      * 
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function ping($config = []) 
     {
@@ -54,7 +53,6 @@ class System extends Api
      *  
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function listEventSubscriptions($campaignId = null, $config = []) 
     {
@@ -88,7 +86,6 @@ class System extends Api
      *  
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function addEventSubscription($events, $campaignId = null, $config = []) 
     {
@@ -131,7 +128,6 @@ class System extends Api
      *  
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function deleteEventSubscription($events, $campaignId = null, $config = []) 
     {
@@ -167,8 +163,6 @@ class System extends Api
      *
      * @return array 
      * @throws XcooBeeException
-     * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function _getSubscriptionEvent($event) 
     {

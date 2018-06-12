@@ -29,7 +29,36 @@ class SystemTest extends TestCase
         $response = $systemMock->ping();
         $this->assertEquals(200, $response->code);
     }
-
+    
+    public function testPing_useConfig()
+    {
+        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
+        $XcooBeeMock->consents = $this->_getMock(Consents::class, [
+            'getCampaignInfo' => (object) [
+                    'data' => (object) [
+                            'campaign' => (object) [
+                                    'xcoobee_targets' => [],
+                            ],
+                    ],
+            ]
+        ]);
+        $XcooBeeMock->users = $this->_getMock(Users::class, [
+            'getUser' => (object) ['pgp_public_key' => 'test']
+        ]);
+        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+                '_getDefaultCampaignId' => null,
+        ]);
+        $XcooBeeMock->users->expects($this->once())
+                ->method('getUser')
+                ->will($this->returnCallback(function ($config) {
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                }));
+        $this->_setProperty($systemMock, '_xcoobee', $XcooBeeMock);
+        
+        $response = $systemMock->ping(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret']);
+        $this->assertEquals(200, $response->code);
+    }
+    
     public function testPing_NoCampaignProvided()
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );

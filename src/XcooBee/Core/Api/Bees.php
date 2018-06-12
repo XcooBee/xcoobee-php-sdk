@@ -24,7 +24,6 @@ class Bees extends Api
      * @param array $config
      * @return mixed
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function listBees($searchText = "", $config = []){
         $query = 'query getBees($searchText: String) {
@@ -61,7 +60,6 @@ class Bees extends Api
      * 
      * @return mixed
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function uploadFiles($files, $endpoint = 'outbox', $config = [])
     {
@@ -89,7 +87,6 @@ class Bees extends Api
      * 
      * @return mixed
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function takeOff(array $bees, $options, $subscriptions = [], $config = [])
     {

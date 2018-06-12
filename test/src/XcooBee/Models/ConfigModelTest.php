@@ -16,7 +16,7 @@ class ConfigModel extends TestCase
             'pgpSecret'     => 'testPgpSecret',
             'pgpPassword'   => 'testPgpPass',
             'campaignId'    => 'testCampaign',
-            'encode'        => true,
+            'encrypt'        => true,
         ]);
 
         $this->assertEquals('testKey', $config->apiKey);
@@ -24,7 +24,7 @@ class ConfigModel extends TestCase
         $this->assertEquals('testPgpSecret', $config->pgpSecret);
         $this->assertEquals('testPgpPass', $config->pgpPassword);
         $this->assertEquals('testCampaign', $config->campaignId);
-        $this->assertTrue($config->encode);
+        $this->assertTrue($config->encrypt);
     }
 
     public function testCreateFromData_PartialDataPassed()
@@ -33,7 +33,7 @@ class ConfigModel extends TestCase
             'apiKey'        => 'testKey',
             'apiSecret'     => 'testSecret',
             'campaignId'    => 'testCampaign',
-            'encode'        => false,
+            'encrypt'        => false,
         ]);
 
         $this->assertEquals('testKey', $config->apiKey);
@@ -41,7 +41,7 @@ class ConfigModel extends TestCase
         $this->assertEquals('testCampaign', $config->campaignId);
         $this->assertNull($config->pgpSecret);
         $this->assertNull($config->pgpPassword);
-        $this->assertFalse($config->encode);
+        $this->assertFalse($config->encrypt);
     }
 
     /**
@@ -61,7 +61,7 @@ class ConfigModel extends TestCase
         $this->assertEquals('testCampaign', $config->campaignId);
         $this->assertEquals('testPgpSecret', $config->pgpSecret);
         $this->assertEquals('testPgpPass', $config->pgpPassword);
-        $this->assertTrue($config->encode);
+        $this->assertTrue($config->encrypt);
     }
 
     public function testCreateFromFile_GetConfigWithoutPgpSecret()
@@ -73,7 +73,7 @@ class ConfigModel extends TestCase
         $this->assertEquals('testCampaign', $config->campaignId);
         $this->assertEquals('testPgpPass', $config->pgpPassword);
         $this->assertNull($config->pgpSecret);
-        $this->assertFalse($config->encode);
+        $this->assertFalse($config->encrypt);
     }
 
     /**

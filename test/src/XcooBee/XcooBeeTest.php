@@ -30,7 +30,7 @@ class XcooBee extends TestCase
             'pgpSecret'     => 'testPgpSecret',
             'pgpPassword'   => 'testPgpPass',
             'campaignId'    => 'testCampaign',
-            'encode'        => true,
+            'encrypt'        => true,
         ]));
 
         /** @var ConfigModel $config */
@@ -41,6 +41,6 @@ class XcooBee extends TestCase
         $this->assertEquals('testPgpSecret', $config->pgpSecret);
         $this->assertEquals('testPgpPass', $config->pgpPassword);
         $this->assertEquals('testCampaign', $config->campaignId);
-        $this->assertTrue($config->encode);
+        $this->assertTrue($config->encrypt);
     }
 }
