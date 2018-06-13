@@ -922,6 +922,75 @@ standard JSON response object
     - data object will contain basic bee data: bee-systemname, bee-label, bee-cost, cost-type
 - status 400 if error
 
+
+# Inbox API
+
+The inbox API governs the access to your inbox. You can list, download, and delete items from your inbox.
+
+## listInbox([startid])
+
+This method will present a paged list of inbox items that you can download. The listing will be for the user connected to you API key. You cannot check any other user's inbox using this method. You can return up to 100 items in one call.
+Calling this method more than once per minute will result in HTTP 429 error (exceeding call limits).
+
+You will the following data-points:
+- sender, 
+- filename
+- filesize (in bytes)
+- receipt_date
+- expiration_date
+- last_download_date
+
+Inbox items are listed in order of arrival with most recent  items first.
+
+options:
+```
+startid       => optional: the message id from which to start the listing
+
+```
+
+### response
+standard JSON response object
+- status 200 if success: 
+    - data object will contain list of inbox items in array: sender, filename, filesize, receipt_date, expiration_date, last_download_date
+- status 400 if error
+
+
+## getInboxItem(messageid)
+
+This method will return a file and file meta tags. Once downloaded, the last_downloaded date for the item will be populated.
+
+
+options:
+```
+messageid       => required: the message id for the file to be downloaded
+
+```
+
+### response
+standard JSON response object
+- status 200 if success: 
+    - data object will contain the file and file_meta object (userref, file_type, file_tags)
+- status 400 if error
+
+
+## deleteInboxItem(messageid)
+
+This method will delete a file that corresponds to your messageid. If the file does not exist, an error will be returned.
+
+
+options:
+```
+messageid       => required: the message id for the file to be deleted
+
+```
+
+### response
+standard JSON response object
+- status 200 if success: 
+    - data object will contain true
+- status 400 if error
+
+
 # Troubleshooting
 
 ## Error 401
