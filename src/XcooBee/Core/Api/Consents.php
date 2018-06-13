@@ -49,14 +49,7 @@ class Consents extends Api
      */
     public function getCampaignInfo($campaignId = null, $config = [])
     {
-        if ($campaignId === null) {
-            $campaignId = $this->_getDefaultCampaignId();
-        }
-
-        if (!$campaignId) {
-            throw new XcooBeeException('No "campaignId" provided');
-        }
-
+        $campaignId = $this->_getCampaignID($campaignId, $config);
         $query = 'query getCampaignInfo($campaignId: String!) {
                 campaign(campaign_cursor: $campaignId) {
                     campaign_name
@@ -83,14 +76,7 @@ class Consents extends Api
      */
     public function requestConsent($xid, $refId = null, $campaignId = null, $config = [])
     {
-        if ($campaignId === null) {
-            $campaignId = $this->_getDefaultCampaignId();
-        }
-
-        if (!$campaignId) {
-            throw new XcooBeeException('No "campaignId" provided');
-        }
-
+        $campaignId = $this->_getCampaignID($campaignId, $config);
         $mutation = 'mutation requestConsent($config: AdditionalRequestConfig) {
                 send_consent_request(config: $config) {
                     ref_id
@@ -255,14 +241,7 @@ class Consents extends Api
      */
     public function getCookieConsent($xid, $campaignId = null, $config = [])
     {
-        if ($campaignId === null) {
-            $campaignId = $this->_getDefaultCampaignId();
-        }
-
-        if (!$campaignId) {
-            throw new XcooBeeException('No "campaignId" provided');
-        }
-
+        $campaignId = $this->_getCampaignID($campaignId, $config);
         $query = 'query listConsents($userId: String!, $campaignId: String!, $status: ConsentStatus) {
             consents(campaign_owner_cursor: $userId, campaign_cursor: $campaignId, status: $status) {
                 data {

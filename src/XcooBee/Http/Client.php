@@ -13,12 +13,12 @@ class Client
 
     protected $_client;
 	
-	/** @var XcooBee */
+    /** @var XcooBee */
     protected $_xcoobee;
 	
     public function __construct(XcooBee $xcoobee)
     {
-		$this->_xcoobee = $xcoobee;
+        $this->_xcoobee = $xcoobee;
         $this->_client = new HttpClient([
             'base_uri' => self::API_URL,
             'timeout'  => self::TIME_OUT,

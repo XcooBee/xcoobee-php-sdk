@@ -83,18 +83,6 @@ class Consents extends TestCase
         $consentsMock->listCampaigns(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret']);
     }
     
-    /**
-     * @expectedException \XcooBee\Exception\XcooBeeException
-     */
-    public function testGetCampaignInfo_NoCampaignProvided()
-    {
-        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_getDefaultCampaignId' => null,
-        ]);
-
-        $consentsMock->getCampaignInfo();
-    }
-    
     public function testRequestConsent()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
@@ -124,18 +112,6 @@ class Consents extends TestCase
             }));
 
         $consentsMock->requestConsent('~testXcooBeeId', 'testReferance', 'testCampaignId');
-    }
-    
-    /**
-     * @expectedException \XcooBee\Exception\XcooBeeException
-     */
-    public function testRequestConsent_NoCampaignProvided()
-    {
-        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_getDefaultCampaignId' => null,
-        ]);
-
-        $consentsMock->requestConsent('test');
     }
 
     public function testGetConsentData() 
@@ -464,18 +440,6 @@ class Consents extends TestCase
         $this->assertEquals($requestCode, $response->code);
         $this->assertEquals($expectedResponse, $response->data);
         $this->assertEquals($requestError, $response->errors);
-    }
-
-    /**
-     * @expectedException \XcooBee\Exception\XcooBeeException
-     */
-    public function testGetCookieConsent_noCampaign()
-    {
-        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_getDefaultCampaignId' => null,
-        ]);
-
-        $consentsMock->getCookieConsent('testxID');
     }
 
     public function consentProvider()

@@ -5,6 +5,7 @@ namespace XcooBee\Core\Api;
 use XcooBee\Http\GraphQLClient;
 use XcooBee\Store\PersistedData;
 use \XcooBee\XcooBee;
+use XcooBee\Exception\XcooBeeException;
 
 class Api
 {
@@ -17,7 +18,7 @@ class Api
     public function __construct(XcooBee $xcoobee)
     {
         $this->_xcoobee = $xcoobee;
-        $this->_client = new GraphQLClient();
+        $this->_client = new GraphQLClient($xcoobee);
     }
 
     /**
@@ -62,5 +63,29 @@ class Api
         $store = $this->_xcoobee->getStore()->getStore(PersistedData::CURRENT_CONFIG_KEY);
 
         return $store->campaignId;
+    }
+    
+    /**
+     * Get Campaign id
+     * 
+     * @param String $campaignId
+     * @param array $config
+     * 
+     * @throws XcooBeeException
+     */
+    protected function _getCampaignId($campaignId, $config = [])
+    {
+        if($campaignId){
+            return $campaignId;
+        }
+        if(array_key_exists('campaignId', $config)){
+            return $config['campaignId'];
+        }
+        
+        if ($campaignId = $this->_getDefaultCampaignId()) {
+            return $campaignId;
+        }
+        
+        return $campaignId;
     }
 }

@@ -32,7 +32,7 @@ class XcooBee
     
     public function __construct()
     {
-        $this->configuration = new Configuration();
+        $this->configuration = new Configuration($this);
         
         $this->system   = new System($this);
         $this->bees     = new Bees($this);

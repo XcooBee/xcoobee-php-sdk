@@ -2,12 +2,20 @@
 
 namespace XcooBee\Core;
 
-
 use XcooBee\Models\ConfigModel;
 use XcooBee\Store\PersistedData;
+use \XcooBee\XcooBee;
 
 class Configuration
 {
+    /** @var XcooBee */
+    protected $_xcoobee;
+    
+    public function __construct(XcooBee $xcoobee)
+    {
+        $this->_xcoobee = $xcoobee;
+    }
+    
     /**
      * Set configuration data
      *
