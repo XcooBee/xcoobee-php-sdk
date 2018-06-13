@@ -14,7 +14,7 @@ class Bees extends Api
     {
         parent::__construct($xcoobee);
 
-        $this->_fileUploader = new FileUploader();
+        $this->_fileUploader = new FileUploader($xcoobee);
     }
 
     /**

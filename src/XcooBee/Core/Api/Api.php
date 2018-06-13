@@ -59,7 +59,7 @@ class Api
      */
     protected function _getDefaultCampaignId() 
     {
-        $store = PersistedData::getInstance()->getStore(PersistedData::CURRENT_CONFIG_KEY);
+        $store = $this->_xcoobee->getStore()->getStore(PersistedData::CURRENT_CONFIG_KEY);
 
         return $store->campaignId;
     }

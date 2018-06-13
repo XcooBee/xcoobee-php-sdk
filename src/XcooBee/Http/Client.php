@@ -4,6 +4,7 @@ namespace XcooBee\Http;
 
 use GuzzleHttp\Client as HttpClient;
 use XcooBee\Store\PersistedData;
+use \XcooBee\XcooBee;
 
 class Client
 {
@@ -11,9 +12,13 @@ class Client
     const TIME_OUT = 3000;
 
     protected $_client;
-
-    public function __construct()
+	
+	/** @var XcooBee */
+    protected $_xcoobee;
+	
+    public function __construct(XcooBee $xcoobee)
     {
+		$this->_xcoobee = $xcoobee;
         $this->_client = new HttpClient([
             'base_uri' => self::API_URL,
             'timeout'  => self::TIME_OUT,
@@ -53,12 +58,12 @@ class Client
             return $this->_fetchToken($config);
         }
         
-        $token = PersistedData::getInstance()->getStore(PersistedData::AUTH_TOKEN_KEY);
+        $token = $this->_xcoobee->getStore()->getStore(PersistedData::AUTH_TOKEN_KEY);
 
         if($token === null){
-            $config = PersistedData::getInstance()->getStore(PersistedData::CURRENT_CONFIG_KEY);
+            $config = $this->_xcoobee->getStore()->getStore(PersistedData::CURRENT_CONFIG_KEY);
             $token = $this->_fetchToken($config);
-            PersistedData::getInstance()->setStore(PersistedData::AUTH_TOKEN_KEY, $token);
+            $this->_xcoobee->getStore()->setStore(PersistedData::AUTH_TOKEN_KEY, $token);
         }
 
         return $token;

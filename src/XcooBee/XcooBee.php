@@ -8,6 +8,7 @@ use XcooBee\Core\Api\System;
 use XcooBee\Core\Api\Bees;
 use XcooBee\Core\Api\Consents;
 use XcooBee\Core\Api\Users;
+use XcooBee\Store\PersistedData;
 
 class XcooBee
 {
@@ -26,7 +27,9 @@ class XcooBee
     public $consents;
     /** @var Users */
     public $users;
-
+    /** @var PersistedData */
+    private $_store;
+    
     public function __construct()
     {
         $this->configuration = new Configuration();
@@ -35,6 +38,7 @@ class XcooBee
         $this->bees     = new Bees($this);
         $this->consents = new Consents($this);
         $this->users    = new Users($this);
+        $this->_store    = PersistedData::getInstance($this);
     }
 
     /**
@@ -63,5 +67,15 @@ class XcooBee
     public function clearConfig()
     {
         $this->configuration->clearConfig();
+    }
+    
+    /**
+     * Get PersistedData
+     *
+     * @return PersistedData
+     */
+    public function getStore()
+    {
+        return $this->_store;
     }
 }

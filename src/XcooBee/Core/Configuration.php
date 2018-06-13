@@ -15,14 +15,14 @@ class Configuration
      */
     public function setConfig(ConfigModel $config)
     {
-        PersistedData::getInstance()->setStore(PersistedData::CURRENT_CONFIG_KEY, $config);
+        $this->_xcoobee->getStore()->setStore(PersistedData::CURRENT_CONFIG_KEY, $config);
 
-        $currentConfig = PersistedData::getInstance()->getStore(PersistedData::CURRENT_CONFIG_KEY);
-        $previousConfig = PersistedData::getInstance()->getStore(PersistedData::PREVIOUS_CONFIG_KEY);
+        $currentConfig = $this->_xcoobee->getStore()->getStore(PersistedData::CURRENT_CONFIG_KEY);
+        $previousConfig = $this->_xcoobee->getStore()->getStore(PersistedData::PREVIOUS_CONFIG_KEY);
         
         if(($currentConfig != $previousConfig) || ($previousConfig == null)) {
-            PersistedData::getInstance()->setStore(PersistedData::CURRENT_CONFIG_KEY, $config);
-            PersistedData::getInstance()->setStore(PersistedData::PREVIOUS_CONFIG_KEY, $config);
+            $this->_xcoobee->getStore()->setStore(PersistedData::CURRENT_CONFIG_KEY, $config);
+            $this->_xcoobee->getStore()->setStore(PersistedData::PREVIOUS_CONFIG_KEY, $config);
         }
     }
 
@@ -33,7 +33,7 @@ class Configuration
      */
     public function getConfig()
     {
-        return PersistedData::getInstance()->getStore(PersistedData::CURRENT_CONFIG_KEY);
+        return $this->_xcoobee->getStore()->getStore(PersistedData::CURRENT_CONFIG_KEY);
     }
 
     /**
@@ -41,6 +41,6 @@ class Configuration
      */
     public function clearConfig()
     {
-        PersistedData::getInstance()->clearStore();
+        $this->_xcoobee->getStore()->clearStore();
     }
 }

@@ -27,7 +27,7 @@ class Users extends Api
             return $this->_getUser($config);
         }
         
-        $store = PersistedData::getInstance();
+        $store = $this->_xcoobee->getStore();
         $user = $store->getStore(PersistedData::CURRENT_USER_KEY);
         if ($user === null) {
             $user = $this->_getUser($config);
