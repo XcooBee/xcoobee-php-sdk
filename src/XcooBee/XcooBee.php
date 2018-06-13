@@ -8,7 +8,7 @@ use XcooBee\Core\Api\System;
 use XcooBee\Core\Api\Bees;
 use XcooBee\Core\Api\Consents;
 use XcooBee\Core\Api\Users;
-use XcooBee\Store\PersistedData;
+use XcooBee\Store\CachedData;
 
 class XcooBee
 {
@@ -27,7 +27,7 @@ class XcooBee
     public $consents;
     /** @var Users */
     public $users;
-    /** @var PersistedData */
+    /** @var CachedData */
     private $_store;
     
     public function __construct()
@@ -38,7 +38,7 @@ class XcooBee
         $this->bees     = new Bees($this);
         $this->consents = new Consents($this);
         $this->users    = new Users($this);
-        $this->_store    = PersistedData::getInstance($this);
+        $this->_store    = CachedData::getInstance($this);
     }
 
     /**
@@ -70,9 +70,9 @@ class XcooBee
     }
     
     /**
-     * Get PersistedData
+     * Get CachedData
      *
-     * @return PersistedData
+     * @return CachedData
      */
     public function getStore()
     {

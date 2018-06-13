@@ -47,10 +47,10 @@ class Consents extends Api
      * @return \XcooBee\Http\Response
      * @throws XcooBeeException
      */
-    public function getCampaignInfo($campaignId = null, $config = [])
+    public function getCampaign($campaignId = null, $config = [])
     {
         $campaignId = $this->_getCampaignID($campaignId, $config);
-        $query = 'query getCampaignInfo($campaignId: String!) {
+        $query = 'query getCampaign($campaignId: String!) {
                 campaign(campaign_cursor: $campaignId) {
                     campaign_name
                     date_c

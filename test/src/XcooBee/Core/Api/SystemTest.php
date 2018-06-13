@@ -10,7 +10,7 @@ class SystemTest extends TestCase
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
         $XcooBeeMock->consents = $this->_getMock(Consents::class, [
-            'getCampaignInfo' => (object) [
+            'getCampaign' => (object) [
                     'data' => (object) [
                             'campaign' => (object) [
                                     'xcoobee_targets' => [],
@@ -34,7 +34,7 @@ class SystemTest extends TestCase
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
         $XcooBeeMock->consents = $this->_getMock(Consents::class, [
-            'getCampaignInfo' => (object) [
+            'getCampaign' => (object) [
                     'data' => (object) [
                             'campaign' => (object) [
                                     'xcoobee_targets' => [],
@@ -63,7 +63,7 @@ class SystemTest extends TestCase
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
         $XcooBeeMock->consents = $this->_getMock(Consents::class, [
-            'getCampaignInfo' => (object) [
+            'getCampaign' => (object) [
                     'data' => null
             ]
         ]);

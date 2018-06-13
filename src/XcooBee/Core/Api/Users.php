@@ -2,7 +2,7 @@
 
 namespace XcooBee\Core\Api;
 
-use XcooBee\Store\PersistedData;
+use XcooBee\Store\CachedData;
 use XcooBee\Models\UserModel;
 use XcooBee\Exception\XcooBeeException;
 
@@ -28,10 +28,10 @@ class Users extends Api
         }
         
         $store = $this->_xcoobee->getStore();
-        $user = $store->getStore(PersistedData::CURRENT_USER_KEY);
+        $user = $store->getStore(CachedData::CURRENT_USER_KEY);
         if ($user === null) {
             $user = $this->_getUser($config);
-            $store->setStore(PersistedData::CURRENT_USER_KEY, $user);
+            $store->setStore(CachedData::CURRENT_USER_KEY, $user);
         }
 
         return $user;

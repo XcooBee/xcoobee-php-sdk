@@ -6,7 +6,7 @@ namespace XcooBee\Store;
 use Stash\Pool;
 use Stash\Driver\FileSystem;
 
-class PersistedData
+class CachedData
 {
     const CURRENT_CONFIG_KEY = "CURRENT_CONFIG";
     const PREVIOUS_CONFIG_KEY = "PREVIOUS_CONFIG";
@@ -24,9 +24,9 @@ class PersistedData
     }
 
     /**
-     * Returns instance of PersistedData
+     * Returns instance of CachedData
      *
-     * @return null|PersistedData
+     * @return null|CachedData
      */
     public static function getInstance()
     {

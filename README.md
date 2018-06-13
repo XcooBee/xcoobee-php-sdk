@@ -65,7 +65,7 @@ apiSecret   => the api-secret
 pgpSecret   => the pgp-secret key
 pgpPassword => the pgp-password 
 campaignId  => the default campaign_id
-encode      => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+encrypt      => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
 
 #### clearConfig()
@@ -100,7 +100,7 @@ apiKey=8sihfsd89f7
 apiSecret=8937438hf
 campaignId=ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be
 pgpPassword=somethingsecret
-encode=0
+encrypt=0
 ```
 
 options: 
@@ -110,7 +110,7 @@ apiKey         => the api-key
 apiSecret      => the api-secret
 campaignId     => the default campaign_id
 pgpPassword    => the password for your pgp key
-encode         => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+encrypt         => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
 
 
@@ -324,7 +324,7 @@ standard JSON response object
 
 # Consent Administration Calls For Consent
 
-## getCampaignInfo([campaign_id], [config])
+## getCampaign([campaign_id], [config])
 get basic info on campaign (setup, datatypes and options). The information will not return the users registered with the campaign.
 
 options: 

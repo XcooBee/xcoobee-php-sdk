@@ -3,7 +3,7 @@
 namespace XcooBee\Http;
 
 use GuzzleHttp\Client as HttpClient;
-use XcooBee\Store\PersistedData;
+use XcooBee\Store\CachedData;
 use \XcooBee\XcooBee;
 
 class Client
@@ -58,12 +58,12 @@ class Client
             return $this->_fetchToken($config);
         }
         
-        $token = $this->_xcoobee->getStore()->getStore(PersistedData::AUTH_TOKEN_KEY);
+        $token = $this->_xcoobee->getStore()->getStore(CachedData::AUTH_TOKEN_KEY);
 
         if($token === null){
-            $config = $this->_xcoobee->getStore()->getStore(PersistedData::CURRENT_CONFIG_KEY);
+            $config = $this->_xcoobee->getStore()->getStore(CachedData::CURRENT_CONFIG_KEY);
             $token = $this->_fetchToken($config);
-            $this->_xcoobee->getStore()->setStore(PersistedData::AUTH_TOKEN_KEY, $token);
+            $this->_xcoobee->getStore()->setStore(CachedData::AUTH_TOKEN_KEY, $token);
         }
 
         return $token;
