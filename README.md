@@ -933,14 +933,15 @@ This method will present a paged list of inbox items that you can download. The 
 Calling this method more than once per minute will result in HTTP 429 error (exceeding call limits).
 
 You will the following data-points:
-- sender, 
+- trans_id
+- sender
 - filename
 - filesize (in bytes)
 - receipt_date
 - expiration_date
-- last_download_date
+- download_date
 
-Inbox items are listed in order of arrival with most recent  items first.
+Inbox items are listed in order of arrival with most recent items first.
 
 options:
 ```
@@ -951,18 +952,18 @@ startid       => optional: the message id from which to start the listing
 ### response
 standard JSON response object
 - status 200 if success: 
-    - data object will contain list of inbox items in array: sender, filename, filesize, receipt_date, expiration_date, last_download_date
+    - data object will contain list of inbox items in array: trans_id, sender, filename, filesize, receipt_date, expiration_date, download_date
 - status 400 if error
 
 
 ## getInboxItem(messageid)
 
-This method will return a file and file meta tags. Once downloaded, the last_downloaded date for the item will be populated.
+This method will return a file and file meta tags. Upon first downloaded, the `download_date` for the item will be populated.
 
 
 options:
 ```
-messageid       => required: the message id for the file to be downloaded
+messageid       => required: the message id for the file to be downloaded. The message id is a string composed of [filename].[trans_id]
 
 ```
 
@@ -980,7 +981,7 @@ This method will delete a file that corresponds to your messageid. If the file d
 
 options:
 ```
-messageid       => required: the message id for the file to be deleted
+messageid       => required: the message id for the file to be deleted. The message id is a string composed of [filename].[trans_id]
 
 ```
 
