@@ -508,7 +508,7 @@ Use this call to confirm that data has been changed in company systems according
 
 options:
 ```
-consentid     => the consent for which data is to be confirmed
+consentId     => the consent for which data is to be confirmed
 config        => optional: the config object
 ```
 
@@ -524,7 +524,7 @@ Send by company to confirm that data has been purged from company systems
 
 options:
 ```
-consentid     => the consent for which data has been deleted
+consentId     => the consent for which data has been deleted
 config        => optional: the config object
 ```
 
@@ -543,7 +543,7 @@ Companies can respond to user data requested via this call. Standard hiring poin
 options:
 ```
 message          => the text to be sent to the user as user data
-consentid        => the consent for which data has been deleted
+consentId        => the consent for which data has been deleted
 request_ref      => unique identifier of the data request, you will receive this on `UserDataRequest` event
 filename         => pointer to the file which contains user's data. 
 config           => optional: the config object
@@ -927,61 +927,61 @@ standard JSON response object
 
 The inbox API governs the access to your inbox. You can list, download, and delete items from your inbox.
 
-## listInbox([startid])
+## listInbox([startId])
 
 This method will present a paged list of inbox items that you can download. The listing will be for the user connected to you API key. You cannot check any other user's inbox using this method. You can return up to 100 items in one call.
 Calling this method more than once per minute will result in HTTP 429 error (exceeding call limits).
 
 You will the following data-points:
-- trans_id
+- messageId
 - sender
-- filename
-- filesize (in bytes)
-- receipt_date
-- expiration_date
-- download_date
+- fileName
+- fileSize (in bytes)
+- receiptDate
+- expirationDate
+- downloadDate
 
 Inbox items are listed in order of arrival with most recent items first.
 
 options:
 ```
-startid       => optional: the message id from which to start the listing
+startId       => optional: the message id from which to start the listing
 
 ```
 
 ### response
 standard JSON response object
 - status 200 if success: 
-    - data object will contain list of inbox items in array: trans_id, sender, filename, filesize, receipt_date, expiration_date, download_date
+    - data object will contain list of inbox items in array: messageId, sender, fileName, fileSize, receiptDate, expirationDate, download_date
 - status 400 if error
 
 
-## getInboxItem(messageid)
+## getInboxItem(messageId)
 
 This method will return a file and file meta tags. Upon first downloaded, the `download_date` for the item will be populated.
 
 
 options:
 ```
-messageid       => required: the message id for the file to be downloaded. The message id is a string composed of [filename].[trans_id]
+messageId       => required: the message id for the file to be downloaded. 
 
 ```
 
 ### response
 standard JSON response object
 - status 200 if success: 
-    - data object will contain the file and file_meta object (userref, file_type, file_tags)
+    - data object will contain the file and file_meta object (userRef, fileType, fileTags)
 - status 400 if error
 
 
-## deleteInboxItem(messageid)
+## deleteInboxItem(messageId)
 
 This method will delete a file that corresponds to your messageid. If the file does not exist, an error will be returned.
 
 
 options:
 ```
-messageid       => required: the message id for the file to be deleted. The message id is a string composed of [filename].[trans_id]
+messageId       => required: the message id for the file to be deleted. 
 
 ```
 
