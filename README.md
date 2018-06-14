@@ -65,7 +65,7 @@ apiSecret   => the api-secret
 pgpSecret   => the pgp-secret key
 pgpPassword => the pgp-password 
 campaignId  => the default campaign_id
-encrypt      => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+encrypt     => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
 
 #### clearConfig()
@@ -110,7 +110,7 @@ apiKey         => the api-key
 apiSecret      => the api-secret
 campaignId     => the default campaign_id
 pgpPassword    => the password for your pgp key
-encrypt         => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+encrypt        => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
 
 
