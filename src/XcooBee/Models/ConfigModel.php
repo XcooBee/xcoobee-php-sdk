@@ -26,7 +26,7 @@ class ConfigModel
                 'pgpSecret'     => '',
                 'pgpPassword'   => '',
                 'campaignId'    => '',
-                'encrypt'        => true,
+                'encrypt'       => true,
             ]
      *
      * @return self

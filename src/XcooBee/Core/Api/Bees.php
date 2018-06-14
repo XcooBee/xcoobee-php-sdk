@@ -4,13 +4,15 @@ namespace XcooBee\Core\Api;
 
 use XcooBee\Core\Validation;
 use XcooBee\Http\FileUploader;
+use XcooBee\XcooBee;
+use XcooBee\Http\Response;
 
 class Bees extends Api
 {
     /** @var FileUploader */
     protected $_fileUploader;
 
-    public function __construct($xcoobee)
+    public function __construct(XcooBee $xcoobee)
     {
         parent::__construct($xcoobee);
 
@@ -22,7 +24,7 @@ class Bees extends Api
      *
      * @param string $searchText
      * @param array $config
-     * @return mixed
+     * @return Response
      * @throws XcooBeeException
      */
     public function listBees($searchText = "", $config = []){
@@ -58,7 +60,7 @@ class Bees extends Api
      * @param string $endpoint
      * @param array $config
      * 
-     * @return mixed
+     * @return Response
      * @throws XcooBeeException
      */
     public function uploadFiles($files, $endpoint = 'outbox', $config = [])
@@ -85,7 +87,7 @@ class Bees extends Api
      * @param array $subscriptions
      * @param array $config
      * 
-     * @return mixed
+     * @return Response
      * @throws XcooBeeException
      */
     public function takeOff(array $bees, $options, $subscriptions = [], $config = [])

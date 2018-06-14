@@ -7,17 +7,12 @@ use XcooBee\Exception\XcooBeeException;
 
 class System extends Api 
 {
-    public function __construct($xcoobee) 
-    {
-        parent::__construct($xcoobee);
-    }
-
     /**
      * method to check if pgp key and Campaign is correct.
      *
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function ping($config = []) 
@@ -51,12 +46,13 @@ class System extends Api
      * @param string $campaignId
      * @param array $config
      *  
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function listEventSubscriptions($campaignId = null, $config = []) 
     {
-        $campaignId = $this->_getCampaignID($campaignId, $config);
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
         $query = 'query listEventSubscriptions($campaignId: String!) {
             event_subscriptions(campaign_cursor: $campaignId) {
                 data {
@@ -77,12 +73,13 @@ class System extends Api
      * @param string $campaignId
      * @param array $config
      *  
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function addEventSubscription($events, $campaignId = null, $config = []) 
     {
-        $campaignId = $this->_getCampaignID($campaignId, $config);
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
         $mutation = 'mutation addEventSubscription($config: AddSubscriptionsConfig!) {
             add_event_subscriptions(config: $config) {
                 data{
@@ -112,12 +109,13 @@ class System extends Api
      * @param string $campaignId
      * @param array $config
      *  
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function deleteEventSubscription($events, $campaignId = null, $config = []) 
     {
-        $campaignId = $this->_getCampaignID($campaignId, $config);
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
         $mutation = 'mutation deleteEventSubscription($config: DeleteSubscriptionsConfig!) {
             delete_event_subscriptions(config: $config) {
                 deleted_number

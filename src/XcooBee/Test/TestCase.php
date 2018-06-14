@@ -2,7 +2,7 @@
 
 namespace XcooBee\Test;
 
-use \XcooBee\XcooBee;
+use XcooBee\XcooBee;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {

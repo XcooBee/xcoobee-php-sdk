@@ -2,7 +2,6 @@
 
 namespace XcooBee\Store;
 
-
 use Stash\Pool;
 use Stash\Driver\FileSystem;
 

@@ -5,14 +5,10 @@ namespace XcooBee\Core\Api;
 use XcooBee\Store\CachedData;
 use XcooBee\Models\UserModel;
 use XcooBee\Exception\XcooBeeException;
+use XcooBee\Http\Response;
 
 class Users extends Api
 {
-    public function __construct($xcoobee)
-    {
-        parent::__construct($xcoobee);
-    }
-    
     /**
      * Return current user
      * 
@@ -67,7 +63,7 @@ class Users extends Api
      * @param String $breachId
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function sendUserMessage($message, $consentId, $breachId = null, $config = []) 
@@ -84,11 +80,11 @@ class Users extends Api
         
         $noteType = $breachId ? 'breach' : 'consent';
         return $this->_request($mutation, ['config' => [
-                        'note_type' => $noteType,
-                        'user_cursor' => $userId,
-                        'breach_cursor' => $breachId,
-                        'consent_cursor' => $consentId,
-                        'message' => $message
+                        'note_type'         => $noteType,
+                        'user_cursor'       => $userId,
+                        'breach_cursor'     => $breachId,
+                        'consent_cursor'    => $consentId,
+                        'message'           => $message
         ]], $config);
     }
 
@@ -99,7 +95,7 @@ class Users extends Api
      * @param Int $after
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function getConversations($first = null, $after = null, $config = []) 
@@ -130,7 +126,7 @@ class Users extends Api
      * @param Int $after
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function getConversation($userId, $first = null, $after = null, $config = []) 
@@ -159,7 +155,7 @@ class Users extends Api
 
     protected function _getUserIdByConsent($consentId, $config = []) 
     {
-        $consent = $this->_xcoobee->consents->getConsentData($consentId, $config = []);
+        $consent = $this->_xcoobee->consents->getConsentData($consentId, $config);
         if (!empty($consent->data->consent)) {
 
             return $consent->data->consent->user_cursor;

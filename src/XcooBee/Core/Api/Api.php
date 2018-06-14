@@ -3,8 +3,8 @@
 namespace XcooBee\Core\Api;
 
 use XcooBee\Http\GraphQLClient;
-use XcooBee\Store\PersistedData;
-use \XcooBee\XcooBee;
+use XcooBee\Store\CachedData;
+use XcooBee\XcooBee;
 use XcooBee\Exception\XcooBeeException;
 
 class Api
@@ -60,7 +60,7 @@ class Api
      */
     protected function _getDefaultCampaignId() 
     {
-        $store = $this->_xcoobee->getStore()->getStore(PersistedData::CURRENT_CONFIG_KEY);
+        $store = $this->_xcoobee->getStore()->getStore(CachedData::CURRENT_CONFIG_KEY);
 
         return $store->campaignId;
     }
@@ -73,7 +73,7 @@ class Api
      * 
      * @throws XcooBeeException
      */
-    protected function _getCampaignId($campaignId, $config = [])
+    protected function _getCampaignId($campaignId, $config)
     {
         if($campaignId){
             return $campaignId;
@@ -86,6 +86,6 @@ class Api
             return $campaignId;
         }
         
-        return $campaignId;
+        throw new XcooBeeException('No "campaignId" provided');
     }
 }

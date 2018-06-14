@@ -38,7 +38,7 @@ class XcooBee
         $this->bees     = new Bees($this);
         $this->consents = new Consents($this);
         $this->users    = new Users($this);
-        $this->_store    = CachedData::getInstance($this);
+        $this->_store   = CachedData::getInstance($this);
     }
 
     /**
@@ -76,6 +76,7 @@ class XcooBee
      */
     public function getStore()
     {
+        
         return $this->_store;
     }
 }

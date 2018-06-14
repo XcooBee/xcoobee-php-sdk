@@ -7,18 +7,12 @@ use XcooBee\Http\Response;
 
 class Consents extends Api
 {
-    
-    public function __construct($xcoobee)
-    {
-        parent::__construct($xcoobee);
-    }
-    
     /**
      * List all campaigns
      *
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function listCampaigns($config = [])
@@ -44,12 +38,13 @@ class Consents extends Api
      * 
      * @param string $campaignId
      * @param array $config
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function getCampaign($campaignId = null, $config = [])
     {
-        $campaignId = $this->_getCampaignID($campaignId, $config);
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
         $query = 'query getCampaign($campaignId: String!) {
                 campaign(campaign_cursor: $campaignId) {
                     campaign_name
@@ -71,12 +66,13 @@ class Consents extends Api
      * @param string $campaignId
      * @param string $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function requestConsent($xid, $refId = null, $campaignId = null, $config = [])
     {
-        $campaignId = $this->_getCampaignID($campaignId, $config);
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
         $mutation = 'mutation requestConsent($config: AdditionalRequestConfig) {
                 send_consent_request(config: $config) {
                     ref_id
@@ -93,7 +89,7 @@ class Consents extends Api
      * @param array $filename
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function setUserDataResponse($message, $consentId, $requestRef = null, $filename = null, $config = [])
@@ -106,15 +102,18 @@ class Consents extends Api
         if ($requestRef && $filename) {
             $this->_xcoobee->bees->uploadFiles($filename, 'outbox', $config);
             $xcoobeeId = $this->_getXcoobeeIdByConsent($consentId, $config);
-            $hireBeeResponse = $this->_xcoobee->bees->takeOff([
-                'transfer' => [],
-                    ], [
-                'process' => [
-                    'fileNames' => $filename,
-                    'userReference' => $requestRef,
-                    'destinations' => [$xcoobeeId],
+            $hireBeeResponse = $this->_xcoobee->bees->takeOff(
+                [
+                    'transfer' => [],
+                ], [
+                    'process' => [
+                        'fileNames' => $filename,
+                        'userReference' => $requestRef,
+                        'destinations' => [$xcoobeeId],
+                    ],
                 ],
-            ], [], $config);
+                [], 
+                $config);
 
             if ($hireBeeResponse->code !== 200) {
                 return $hireBeeResponse;
@@ -134,7 +133,7 @@ class Consents extends Api
      * @param string $consentId
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * 
      * @throws XcooBeeException
      */
@@ -167,7 +166,7 @@ class Consents extends Api
      * @param string $consentId
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * 
      * @throws XcooBeeException
      */
@@ -198,7 +197,7 @@ class Consents extends Api
     /**
      * @param string $consentId
      *
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function getConsentData($consentId, $config = [])
@@ -236,12 +235,13 @@ class Consents extends Api
      * @param string $campaignId
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
      */
     public function getCookieConsent($xid, $campaignId = null, $config = [])
     {
-        $campaignId = $this->_getCampaignID($campaignId, $config);
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
         $query = 'query listConsents($userId: String!, $campaignId: String!, $status: ConsentStatus) {
             consents(campaign_owner_cursor: $userId, campaign_cursor: $campaignId, status: $status) {
                 data {
