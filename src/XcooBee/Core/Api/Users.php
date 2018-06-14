@@ -157,15 +157,20 @@ class Users extends Api
     {
         $store = $this->_xcoobee->getStore();
         $consent = $store->getConsent($consentId);
-        if($consent == null){
-            $consent = $this->_xcoobee->consents->getConsentData($consentId, $config);
+
+        if($consent){
+            return $consent->user_cursor;
+        }
+        
+        $consent = $this->_xcoobee->consents->getConsentData($consentId, $config);
+        $consent = $consent->data->consent;
+
+        if($consent){
             $store->setConsent($consentId, $consent);
+    
+            return $consent->user_cursor;
         }
-        if (!empty($consent->data->consent)) {
-
-            return $consent->data->consent->user_cursor;
-        }
-
+       
         return false;
     }
 
