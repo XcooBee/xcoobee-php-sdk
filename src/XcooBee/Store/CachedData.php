@@ -7,8 +7,7 @@ use Stash\Driver\FileSystem;
 
 class CachedData
 {
-    const CURRENT_CONFIG_KEY = "CURRENT_CONFIG";
-    const PREVIOUS_CONFIG_KEY = "PREVIOUS_CONFIG";
+    const CONFIG_KEY = "CONFIG_KEY";
     const CURRENT_USER_KEY = "CURRENT_USER";
     const AUTH_TOKEN_KEY = "AUTH_TOKEN";
     const CONSENT_KEY = "CONSENT_KEY_";

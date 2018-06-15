@@ -62,7 +62,7 @@ class Client
         $token = $store->getStore(CachedData::AUTH_TOKEN_KEY);
 
         if($token === null){
-            $config = $store->getStore(CachedData::CURRENT_CONFIG_KEY);
+            $config = $store->getStore(CachedData::CONFIG_KEY);
             $token = $this->_fetchToken($config);
             $store->setStore(CachedData::AUTH_TOKEN_KEY, $token);
         }

@@ -23,15 +23,9 @@ class Configuration
      */
     public function setConfig(ConfigModel $config)
     {
-        $store = $this->_xcoobee->getStore();
-        $store->setStore(CachedData::CURRENT_CONFIG_KEY, $config);
-
-        $currentConfig = $store->getStore(CachedData::CURRENT_CONFIG_KEY);
-        $previousConfig = $store->getStore(CachedData::PREVIOUS_CONFIG_KEY);
-        
-        if(($currentConfig != $previousConfig) || ($previousConfig == null)) {
-            $store->setStore(CachedData::CURRENT_CONFIG_KEY, $config);
-            $store->setStore(CachedData::PREVIOUS_CONFIG_KEY, $config);
+        $savedConfig = $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY);
+        if($savedConfig != $config){
+            $this->_xcoobee->getStore()->setStore(CachedData::CONFIG_KEY, $config);
         }
     }
 
@@ -42,7 +36,7 @@ class Configuration
      */
     public function getConfig()
     {
-        return $this->_xcoobee->getStore()->getStore(CachedData::CURRENT_CONFIG_KEY);
+        return $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY);
     }
 
     /**
