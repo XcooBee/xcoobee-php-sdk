@@ -100,7 +100,7 @@ class Users extends Api
      */
     public function getConversations($first = null, $after = null, $config = []) 
     {
-        $query = 'query getConversations($userId: String!,$first : Int, $after: String) {
+        $query = 'query getConversations($userId: String!, $first : Int, $after: String) {
             conversations(user_cursor: $userId , first : $first , after : $after) {
                 data {
                     display_name,
