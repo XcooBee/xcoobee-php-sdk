@@ -52,7 +52,7 @@ class Inbox extends Api
      * @return Response
      * @throws XcooBeeException
      */
-    public function getInboxItem($filename)
+    public function getInboxItem($messageId)
     {
         $query = 'query getInboxItem($userId: String!, $filename: String!) {
             inbox_item(user_cursor: $userId, filename: $filename) {
@@ -75,7 +75,7 @@ class Inbox extends Api
             }
         }';
 
-        return $this->_request($query, ['userId' => $this->_getUserId(), 'filename' => $filename]);
+        return $this->_request($query, ['userId' => $this->_getUserId(), 'filename' => $messageId]);
     }
 
     /**
@@ -86,7 +86,7 @@ class Inbox extends Api
      * @return Response
      * @throws XcooBeeException
      */
-    public function deleteInboxItem($filename)
+    public function deleteInboxItem($messageId)
     {
         $query = 'mutation deleteInboxItem($userId: String!, $filename: String!) {
             remove_inbox_item(user_cursor: $userId, filename: $filename) {
@@ -94,7 +94,7 @@ class Inbox extends Api
             }
         }';
 
-        return $this->_request($query, ['userId' => $this->_getUserId(), 'filename' => $filename]);
+        return $this->_request($query, ['userId' => $this->_getUserId(), 'filename' => $messageId]);
     }
 
 }
