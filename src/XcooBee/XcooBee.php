@@ -9,6 +9,7 @@ use XcooBee\Core\Api\System;
 use XcooBee\Core\Api\Bees;
 use XcooBee\Core\Api\Consents;
 use XcooBee\Core\Api\Users;
+use XcooBee\Core\Api\Inbox;
 
 class XcooBee
 {
@@ -27,6 +28,8 @@ class XcooBee
     public $consents;
     /** @var Users */
     public $users;
+    /** @var Inbox */
+    public $inbox;
 
     public function __construct(){
         $this->configuration = new Configuration();
@@ -35,6 +38,7 @@ class XcooBee
         $this->bees     = new Bees();
         $this->consents = new Consents();
         $this->users    = new Users();
+        $this->inbox    = new Inbox($this);
     }
 
     /**
