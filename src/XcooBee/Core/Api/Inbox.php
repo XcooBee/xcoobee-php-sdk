@@ -57,7 +57,7 @@ class Inbox extends Api
         $query = 'query getInboxItem($userId: String!, $filename: String!) {
             inbox_item(user_cursor: $userId, filename: $filename) {
                download_link
-               info {c
+               info {
                     original_name
                     filename
                     file_size
