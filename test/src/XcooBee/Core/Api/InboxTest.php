@@ -12,6 +12,12 @@ class Inbox extends TestCase
         $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
             '_request' => true,
         ]);
+        
+        $inboxMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params) {
+                            $this->assertEquals(['after' => null], $params);
+                        }));
 
         $inboxMock->listInbox();
     }
