@@ -6,7 +6,7 @@ use XcooBee\Test\TestCase;
 use \XcooBee\Core\Api\Consents as Consent;
 use \XcooBee\Http\Response;
 
-class Consents extends TestCase
+class ConsentsTest extends TestCase
 {
     public function testGetCampaign()
     {
@@ -151,8 +151,7 @@ class Consents extends TestCase
      */
     public function testGetConsentData_NoConsentProvided() 
     {
-        $xcooBeeMock = $this->_getXcooBeeMock();
-        $consents = new Consent($xcooBeeMock);
+        $consents = new Consent($this->_getXcooBeeMock());
 
         $consents->getConsentData(null);
     }

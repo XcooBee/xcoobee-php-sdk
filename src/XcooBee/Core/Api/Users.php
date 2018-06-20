@@ -156,9 +156,8 @@ class Users extends Api
     protected function _getUserIdByConsent($consentId, $config = []) 
     {
         $store = $this->_xcoobee->getStore();
-        $consent = $store->getConsent($consentId);
 
-        if($consent){
+        if ($consent = $store->getConsent($consentId)) {
             return $consent->user_cursor;
         }
         

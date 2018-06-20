@@ -6,7 +6,7 @@ use XcooBee\Core\Api\Users;
 use XcooBee\Http\FileUploader;
 use XcooBee\Test\TestCase;
 
-class Bees extends TestCase
+class BeesTest extends TestCase
 {
     public function testUploadFiles_Upload2Files()
     {

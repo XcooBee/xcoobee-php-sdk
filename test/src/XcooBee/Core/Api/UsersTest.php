@@ -5,7 +5,7 @@ namespace Test\XcooBee\Core\Api;
 use XcooBee\Test\TestCase;
 use \XcooBee\Core\Api\Users as User;
 
-class Users extends TestCase {
+class UsersTest extends TestCase {
 
     public function testGetConversation() 
     {
@@ -128,7 +128,7 @@ class Users extends TestCase {
         ]);
     }
     
-    public function testSendUserMessageWithBreachid() 
+    public function testSendUserMessageWithBreachId() 
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,

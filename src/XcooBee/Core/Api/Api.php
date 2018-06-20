@@ -60,9 +60,7 @@ class Api
      */
     protected function _getDefaultCampaignId() 
     {
-        $store = $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY);
-
-        return $store->campaignId;
+        return $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY)->campaignId;
     }
     
     /**

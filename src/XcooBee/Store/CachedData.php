@@ -75,7 +75,7 @@ class CachedData
      */
     public function setConsent($consentId, $consent)
     {
-        $this->setStore(self::CONSENT_KEY.$consentId, $consent);
+        $this->setStore(self::CONSENT_KEY . $consentId, $consent);
     }
     
     /**
@@ -86,6 +86,6 @@ class CachedData
      */
     public function getConsent($consentId)
     {
-        return $this->getStore(self::CONSENT_KEY.$consentId);
+        return $this->getStore(self::CONSENT_KEY . $consentId);
     }
 }
