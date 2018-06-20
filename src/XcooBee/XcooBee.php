@@ -8,6 +8,7 @@ use XcooBee\Core\Api\System;
 use XcooBee\Core\Api\Bees;
 use XcooBee\Core\Api\Consents;
 use XcooBee\Core\Api\Users;
+use XcooBee\Core\Api\Inbox;
 use XcooBee\Store\CachedData;
 
 class XcooBee
@@ -27,6 +28,8 @@ class XcooBee
     public $consents;
     /** @var Users */
     public $users;
+    /** @var Inbox */
+    public $inbox;
     /** @var CachedData */
     private $_store;
     
@@ -38,6 +41,7 @@ class XcooBee
         $this->bees     = new Bees($this);
         $this->consents = new Consents($this);
         $this->users    = new Users($this);
+        $this->inbox    = new Inbox($this);
         $this->_store   = CachedData::getInstance($this);
     }
 
