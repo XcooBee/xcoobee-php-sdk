@@ -30,9 +30,7 @@ class Api
      */
     protected function _getUserId($config = [])
     {
-        $currentUser = $this->_xcoobee->users->getUser($config);
-
-        return $currentUser->userId;
+        return $this->_xcoobee->users->getUser($config)->userId;
     }
 
     /**
