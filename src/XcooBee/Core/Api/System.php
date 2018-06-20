@@ -20,8 +20,7 @@ class System extends Api
         $user = $this->_xcoobee->users->getUser($config);
         $response = new Response();
         if ($user->pgp_public_key) {
-            $campaignId = array_key_exists('campaignId', $config) ? $config['campaignId'] : null;
-            $campaignInfo = $this->_xcoobee->consents->getCampaign($campaignId, $config);
+            $campaignInfo = $this->_xcoobee->consents->getCampaign(null, $config);
             if (!empty($campaignInfo->data->campaign)) {
                 $response->code = 200;
             } else {
