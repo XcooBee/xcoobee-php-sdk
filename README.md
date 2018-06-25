@@ -205,7 +205,7 @@ standard JSON response object
 - status 400 if error
 
 
-## addEventSubscription(arrayOfEventAndHandlerPairs,[campaign_id],[config])
+## addEventSubscription(arrayOfEventAndHandlerPairs,[campaignId],[config])
 
 You can register subscriptions to hooks by calling the addEventSubscription function and providing the event and handler pairs `eventname => handler`.
 
@@ -240,7 +240,7 @@ standard JSON response object
 
 
 
-## listEventSubscriptions([campaign_id],[config])
+## listEventSubscriptions([campaignId],[config])
 
 list current subscriptions.
 
@@ -257,7 +257,7 @@ standard JSON response object
     - data will contain current subscriptions dataset: type, campaign, last
 - status 400 if error
 
-## deleteEventSubscription(arrayOfEventNames, [campaign_id] ,[config])
+## deleteEventSubscription(arrayOfEventNames, [campaignId] ,[config])
 
 delete existing subscriptions.
 If you do not supply a campaign_id the event will for the default campaign id will be deleted. If the subscription does not exists we will still return success.
@@ -324,7 +324,7 @@ standard JSON response object
 
 # Consent Administration Calls For Consent
 
-## getCampaignInfo([campaign_id], [config])
+## getCampaignInfo([campaignId], [config])
 get basic info on campaign (setup, datatypes and options). The information will not return the users registered with the campaign.
 
 options: 
@@ -455,7 +455,7 @@ standard JSON response object
     - data object will contain consent data object: user, datatypes, consenttypes, expiration
 - status 400 if error
    
-## getCookieConsent(xid,[campaign_id],[config])
+## getCookieConsent(xid,[campaignId],[config])
 
 This is a shortcut mechanism to query the XcooBee system for existing user consent for consent type `Website Tracking (1400), Web Application Tracking (1410)` for specific use data types (`application cookie (1600), usage cookie (1610), and advertising cookie (1620)`). We will retrieve only active consent for the cookies on the website identified in the campaign id and return whether user has agreed to any cookies.
 
@@ -481,7 +481,7 @@ standard JSON response object
     - data object will contain website cookie consent CSV: application,usage,advertising
 - status 400 if error
 
-## requestConsent(xid,[refId],[campaign_id],[config])
+## requestConsent(xid,[refId],[campaignId],[config])
 
 Sends out the consent or consent and data request to a specific user using the data in the campaign. The campaign definition determines what data (only consent or consent + data) we will ask from the user.
 
@@ -536,7 +536,7 @@ standard JSON response object
 - status 400 if error
 
 
-## setUserDataResponse(message, consentId [,request_ref, filename, config])
+## setUserDataResponse(message, consentId [requestRef, filename, config])
 
 Companies can respond to user data requested via this call. Standard hiring points will be deducted for this. The call will send a `message` to user's communication center. You also need to send a file with user's data in order to close data request.
 
