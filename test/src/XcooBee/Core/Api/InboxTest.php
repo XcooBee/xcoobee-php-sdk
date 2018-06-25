@@ -4,7 +4,7 @@ namespace Test\XcooBee\Core\Api;
 
 use XcooBee\Test\TestCase;
 
-class Inbox extends TestCase
+class InboxTest extends TestCase
 {
 
     public function testListInbox()

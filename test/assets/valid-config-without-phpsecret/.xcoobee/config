@@ -2,4 +2,4 @@ apiKey=testKey
 apiSecret=testSecret
 pgpPassword=testPgpPass
 campaignId=testCampaign
-encode=0
+encrypt=0

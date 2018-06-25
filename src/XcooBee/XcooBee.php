@@ -2,7 +2,6 @@
 
 namespace XcooBee;
 
-
 use XcooBee\Core\Configuration;
 use XcooBee\Models\ConfigModel;
 use XcooBee\Core\Api\System;
@@ -10,6 +9,7 @@ use XcooBee\Core\Api\Bees;
 use XcooBee\Core\Api\Consents;
 use XcooBee\Core\Api\Users;
 use XcooBee\Core\Api\Inbox;
+use XcooBee\Store\CachedData;
 
 class XcooBee
 {
@@ -30,15 +30,19 @@ class XcooBee
     public $users;
     /** @var Inbox */
     public $inbox;
-
-    public function __construct(){
-        $this->configuration = new Configuration();
-
-        $this->system   = new System();
-        $this->bees     = new Bees();
-        $this->consents = new Consents();
-        $this->users    = new Users();
+    /** @var CachedData */
+    private $_store;
+    
+    public function __construct()
+    {
+        $this->configuration = new Configuration($this);
+        
+        $this->system   = new System($this);
+        $this->bees     = new Bees($this);
+        $this->consents = new Consents($this);
+        $this->users    = new Users($this);
         $this->inbox    = new Inbox($this);
+        $this->_store   = CachedData::getInstance($this);
     }
 
     /**
@@ -67,5 +71,16 @@ class XcooBee
     public function clearConfig()
     {
         $this->configuration->clearConfig();
+    }
+    
+    /**
+     * Get CachedData
+     *
+     * @return CachedData
+     */
+    public function getStore()
+    {
+        
+        return $this->_store;
     }
 }

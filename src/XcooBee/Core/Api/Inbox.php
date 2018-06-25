@@ -24,6 +24,9 @@ class Inbox extends Api
                     original_name
                     filename
                     file_size
+                    file_type
+                    file_tags
+                    user_ref
                     sender {
                        from
                        from_xcoobee_id
@@ -61,6 +64,9 @@ class Inbox extends Api
                     original_name
                     filename
                     file_size
+                    file_type
+                    file_tags
+                    user_ref
                     sender {
                         from
                         from_xcoobee_id

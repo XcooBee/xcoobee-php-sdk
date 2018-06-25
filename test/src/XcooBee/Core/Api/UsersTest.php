@@ -5,7 +5,7 @@ namespace Test\XcooBee\Core\Api;
 use XcooBee\Test\TestCase;
 use \XcooBee\Core\Api\Users as User;
 
-class Users extends TestCase {
+class UsersTest extends TestCase {
 
     public function testGetConversation() 
     {
@@ -42,9 +42,10 @@ class Users extends TestCase {
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
-    public function testgetConversation_noUserID() 
+    public function testgetConversation_noUserID()
     {
-        $users = new User();
+        $xcooBeeMock = $this->_getXcooBeeMock();
+        $users = new User($xcooBeeMock);
 
         $users->getConversation(null);
     }
@@ -127,7 +128,7 @@ class Users extends TestCase {
         ]);
     }
     
-    public function TestSendUserMessageWithBreachid() 
+    public function testSendUserMessageWithBreachId() 
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
@@ -149,7 +150,7 @@ class Users extends TestCase {
         $usersMock->sendUserMessage('test message', 'testconsentId', 'testBreachID');
     }
 
-    public function TestSendUserMessageBreachidNotProvided() 
+    public function testSendUserMessageBreachidNotProvided() 
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
@@ -174,7 +175,7 @@ class Users extends TestCase {
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
-    public function TestSendUserMessageInvalidConsent() 
+    public function testSendUserMessageInvalidConsent() 
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_getUserIdByConsent' => false
@@ -186,9 +187,10 @@ class Users extends TestCase {
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
-    public function TestSendUserMessageNodataProvided() 
+    public function testSendUserMessageNodataProvided() 
     {
-        $users = new User();
+        $xcooBeeMock = $this->_getXcooBeeMock();
+        $users = new User($xcooBeeMock);
 
         $users->getConversation(null, null, null);
     }

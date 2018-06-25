@@ -7,27 +7,13 @@ use XcooBee\Http\Response;
 
 class Consents extends Api
 {
-    /** @var Users */
-    protected $_users;
-    
-    /** @var Bees */
-    protected $_bees;
-    
-    public function __construct() 
-    {
-        parent::__construct();
-
-        $this->_users = new Users();
-        $this->_bees = new Bees();
-    }
-    
     /**
      * List all campaigns
      *
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return Response
+     * @throws XcooBeeException
      */
     public function listCampaigns($config = [])
     {
@@ -52,21 +38,14 @@ class Consents extends Api
      * 
      * @param string $campaignId
      * @param array $config
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getCampaignInfo($campaignId = null, $config = [])
+    public function getCampaign($campaignId = null, $config = [])
     {
-        if ($campaignId === null) {
-            $campaignId = $this->_getDefaultCampaignId();
-        }
-
-        if (!$campaignId) {
-            throw new XcooBeeException('No "campaignId" provided');
-        }
-
-        $query = 'query getCampaignInfo($campaignId: String!) {
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
+        $query = 'query getCampaign($campaignId: String!) {
                 campaign(campaign_cursor: $campaignId) {
                     campaign_name
                     date_c
@@ -82,90 +61,18 @@ class Consents extends Api
     }
 
     /**
-     * Create campaign from passed data
-     *
-     * @param array $data
-     * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function createCampaign($data)
-    {
-        $mutation = 'mutation createCampaign($config: ConsentCampaignCreateConfig) {
-                create_consent_campaign(config: $config) {
-                    ref_id
-                }
-            }';
-
-        return $this->_request($mutation, ['config' => $data]);
-    }
-
-    /**
-     * Modify campaign with new data
-     *
-     * @param string $campaignId
-     * @param array $data
-     * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function modifyCampaign($campaignId, $data)
-    {
-        $mutation = 'mutation modifyCampaign($config: ConsentCampaignUpdateConfig) {
-                modify_consent_campaign(config: $config) {
-                    ref_id
-                }
-            }';
-
-        return $this->_request($mutation, ['config' => array_merge(['campaign_cursor' => $campaignId], $data)]);
-    }
-
-    /**
-     * Set status of campaign to active
-     *
-     * @param string $campaignId
-     * @return \XcooBee\Http\Response
-     * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function activateCampaign($campaignId = null)
-    {
-        if ($campaignId === null) {
-            $campaignId = $this->_getDefaultCampaignId();
-        }
-
-        if (!$campaignId) {
-            throw new XcooBeeException('No "campaignId" provided');
-        }
-
-        $mutation = 'mutation activateCampaign($config: ActivateCampaignConfig) {
-                activate_consent_campaign(config: $config) {
-                    ref_id
-                }
-            }';
-
-        return $this->_request($mutation, ['config' => [
-            'campaign_cursor' => $campaignId,
-        ]]);
-    }
-
-    /**
      * @param string $xid
      * @param string $refId
      * @param string $campaignId
      * @param string $config
-     * @return \XcooBee\Http\Response
+     * 
+     * @return Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function requestConsent($xid, $refId = null, $campaignId = null, $config = [])
     {
-        if ($campaignId === null) {
-            $campaignId = $this->_getDefaultCampaignId();
-        }
-
-        if (!$campaignId) {
-            throw new XcooBeeException('No "campaignId" provided');
-        }
-
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
         $mutation = 'mutation requestConsent($config: AdditionalRequestConfig) {
                 send_consent_request(config: $config) {
                     ref_id
@@ -181,29 +88,32 @@ class Consents extends Api
      * @param string $requestRef
      * @param array $filename
      * @param array $config
-     * @return \XcooBee\Http\Response
+     * 
+     * @return Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function setUserDataResponse($message, $consentId, $requestRef = null, $filename = null, $config = [])
     {
-        $messageResponse = $this->_users->sendUserMessage($message, $consentId, null, $config);
+        $messageResponse = $this->_xcoobee->users->sendUserMessage($message, $consentId, null, $config);
         if ($messageResponse->code !== 200) {
             return $messageResponse;
         }
 
         if ($requestRef && $filename) {
-            $this->_bees->uploadFiles($filename, $config);
+            $this->_xcoobee->bees->uploadFiles($filename, 'outbox', $config);
             $xcoobeeId = $this->_getXcoobeeIdByConsent($consentId, $config);
-            $hireBeeResponse = $this->_bees->takeOff([
-                'transfer' => ['message' => 'Test post'],
-                    ], [
-                'process' => [
-                    'fileNames' => $filename,
-                    'userReference' => $requestRef,
-                    'destinations' => [$xcoobeeId],
+            $hireBeeResponse = $this->_xcoobee->bees->takeOff(
+                [
+                    'transfer' => [],
+                ], [
+                    'process' => [
+                        'fileNames' => $filename,
+                        'userReference' => $requestRef,
+                        'destinations' => [$xcoobeeId],
+                    ],
                 ],
-            ]);
+                [], 
+                $config);
 
             if ($hireBeeResponse->code !== 200) {
                 return $hireBeeResponse;
@@ -223,10 +133,9 @@ class Consents extends Api
      * @param string $consentId
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * 
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function confirmConsentChange($consentId, $config = []) {
         if (!$consentId) {
@@ -257,10 +166,9 @@ class Consents extends Api
      * @param string $consentId
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * 
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function confirmDataDelete($consentId, $config = [])
     {
@@ -289,9 +197,8 @@ class Consents extends Api
     /**
      * @param string $consentId
      *
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getConsentData($consentId, $config = [])
     {
@@ -328,20 +235,13 @@ class Consents extends Api
      * @param string $campaignId
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
+     * @return Response
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getCookieConsent($xid, $campaignId = null, $config = [])
     {
-        if ($campaignId === null) {
-            $campaignId = $this->_getDefaultCampaignId();
-        }
-
-        if (!$campaignId) {
-            throw new XcooBeeException('No "campaignId" provided');
-        }
-
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
         $query = 'query listConsents($userId: String!, $campaignId: String!, $status: ConsentStatus) {
             consents(campaign_owner_cursor: $userId, campaign_cursor: $campaignId, status: $status) {
                 data {
@@ -385,8 +285,7 @@ class Consents extends Api
     
     protected function _getXcoobeeIdByConsent($consentId, $config = []) 
     {
-        $consents = new Consents();
-        $consent = $consents->getConsentData($consentId, $config = []);
+        $consent = $this->getConsentData($consentId, $config = []);
         if (!empty($consent->data->consent)) {
             return $consent->data->consent->user_xcoobee_id;
         }

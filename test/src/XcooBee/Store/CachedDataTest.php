@@ -3,10 +3,10 @@
 namespace Test\XcooBee\Store;
 
 
-use XcooBee\Store\PersistedData as Store;
+use XcooBee\Store\CachedData as Store;
 use XcooBee\Test\TestCase;
 
-class PersistedData extends TestCase
+class CachedData extends TestCase
 {
     protected function tearDown()
     {

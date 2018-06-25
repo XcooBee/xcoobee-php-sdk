@@ -2,11 +2,12 @@
 
 namespace XcooBee\Test;
 
+use XcooBee\XcooBee;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Return mpcked object
+     * Return mocked object
      *
      * @param $className
      * @param $methods
@@ -45,5 +46,15 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $refProperty = $refObject->getProperty($key);
         $refProperty->setAccessible(true);
         $refProperty->setValue($object, $value);
+    }
+    
+    /**
+     * Return XcooBee mocked object
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function _getXcooBeeMock()
+    {
+        return $this->_getMock(XcooBee::class, []);
     }
 }

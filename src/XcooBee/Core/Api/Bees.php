@@ -4,20 +4,19 @@ namespace XcooBee\Core\Api;
 
 use XcooBee\Core\Validation;
 use XcooBee\Http\FileUploader;
+use XcooBee\XcooBee;
+use XcooBee\Http\Response;
 
 class Bees extends Api
 {
-    /** @var Users */
-    protected $_users;
     /** @var FileUploader */
     protected $_fileUploader;
 
-    public function __construct()
+    public function __construct(XcooBee $xcoobee)
     {
-        parent::__construct();
+        parent::__construct($xcoobee);
 
-        $this->_users = new Users();
-        $this->_fileUploader = new FileUploader();
+        $this->_fileUploader = new FileUploader($xcoobee);
     }
 
     /**
@@ -25,8 +24,8 @@ class Bees extends Api
      *
      * @param string $searchText
      * @param array $config
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return Response
+     * @throws XcooBeeException
      */
     public function listBees($searchText = "", $config = []){
         $query = 'query getBees($searchText: String) {
@@ -61,13 +60,13 @@ class Bees extends Api
      * @param string $endpoint
      * @param array $config
      * 
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return Response
+     * @throws XcooBeeException
      */
     public function uploadFiles($files, $endpoint = 'outbox', $config = [])
     {
         $endpoint = !$endpoint ? $endpoint : 'outbox';
-        $user = $this->_users->getUser($config);
+        $user = $this->_xcoobee->users->getUser($config);
         $endpointId = $this->_getOutboxEndpoint($user->userId, $endpoint, $config);
         $policies = $this->_getPolicy($endpoint, $endpointId, $files , $config);
         $result = [];
@@ -86,11 +85,12 @@ class Bees extends Api
      * @param array $bees
      * @param array $options
      * @param array $subscriptions
-     *
-     * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param array $config
+     * 
+     * @return Response
+     * @throws XcooBeeException
      */
-    public function takeOff(array $bees, $options, $subscriptions = [])
+    public function takeOff(array $bees, $options, $subscriptions = [], $config = [])
     {
         $query = 'mutation addDirective($params: DirectiveInput!) {
             add_directive(params: $params) {
@@ -128,7 +128,7 @@ class Bees extends Api
             }
         }
 
-        return $this->_request($query, ['params' => $params]);
+        return $this->_request($query, ['params' => $params], $config);
     }
 
     protected function _getPolicy($intent, $endpointId = "", $files = [], $config = [])
