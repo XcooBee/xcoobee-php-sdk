@@ -146,10 +146,6 @@ class System extends Api
                     hmac
                     date_c
                 }
-                page_info {
-                    end_cursor
-                    has_next_page
-                }
             }
         }';
 
