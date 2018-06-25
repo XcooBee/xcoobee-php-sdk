@@ -132,6 +132,14 @@ class System extends Api
             ]], $config);
     }
     
+    /**
+     * get all events
+     *
+     * @param array $config
+     *  
+     * @return Response
+     * @throws XcooBeeException
+     */
     public function getEvents($config = [])
     {
         $query = 'query getEvents($userId: String!) {
