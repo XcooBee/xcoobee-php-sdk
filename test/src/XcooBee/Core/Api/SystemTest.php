@@ -293,4 +293,39 @@ class SystemTest extends TestCase
             'apiSecret' => 'testapisecret'
         ]);
     }
+    
+    public function testGetEvents()
+    {
+        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+            '_request' => true,
+            '_getUserId' => "testUserId"
+        ]);
+
+        $systemMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params) {
+                            $this->assertEquals(['userId' => 'testUserId'], $params);
+                        }));
+        $systemMock->getEvents();
+    }
+
+    public function testGetEvents_useConfig()
+    {
+        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+            '_request' => true,
+            '_getUserId' => "testUserId"
+        ]);
+
+        $systemMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+                        }));
+
+        $systemMock->getEvents([
+            'apiKey' => 'testapikey',
+            'apiSecret' => 'testapisecret'
+        ]);
+    }
+    
 }

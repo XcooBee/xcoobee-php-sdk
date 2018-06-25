@@ -131,7 +131,31 @@ class System extends Api
                 'events' => $mappedEvents,
             ]], $config);
     }
+    
+    public function getEvents($config = [])
+    {
+        $query = 'query getEvents($userId: String!) {
+            events(user_cursor: $userId) {
+                data {
+                    event_id
+                    reference_cursor
+                    reference_type
+                    owner_cursor
+                    event_type
+                    payload
+                    hmac
+                    date_c
+                }
+                page_info {
+                    end_cursor
+                    has_next_page
+                }
+            }
+        }';
 
+        return $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
+    }
+    
     /**
      * get events
      * 
