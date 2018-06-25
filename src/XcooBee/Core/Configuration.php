@@ -2,12 +2,20 @@
 
 namespace XcooBee\Core;
 
-
 use XcooBee\Models\ConfigModel;
-use XcooBee\Store\PersistedData;
+use XcooBee\Store\CachedData;
+use XcooBee\XcooBee;
 
 class Configuration
 {
+    /** @var XcooBee */
+    protected $_xcoobee;
+    
+    public function __construct(XcooBee $xcoobee)
+    {
+        $this->_xcoobee = $xcoobee;
+    }
+    
     /**
      * Set configuration data
      *
@@ -15,14 +23,9 @@ class Configuration
      */
     public function setConfig(ConfigModel $config)
     {
-        PersistedData::getInstance()->setStore(PersistedData::CURRENT_CONFIG_KEY, $config);
-
-        $currentConfig = PersistedData::getInstance()->getStore(PersistedData::CURRENT_CONFIG_KEY);
-        $previousConfig = PersistedData::getInstance()->getStore(PersistedData::PREVIOUS_CONFIG_KEY);
-        
-        if(($currentConfig != $previousConfig) || ($previousConfig == null)) {
-            PersistedData::getInstance()->setStore(PersistedData::CURRENT_CONFIG_KEY, $config);
-            PersistedData::getInstance()->setStore(PersistedData::PREVIOUS_CONFIG_KEY, $config);
+        $savedConfig = $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY);
+        if($savedConfig != $config){
+            $this->_xcoobee->getStore()->setStore(CachedData::CONFIG_KEY, $config);
         }
     }
 
@@ -33,7 +36,7 @@ class Configuration
      */
     public function getConfig()
     {
-        return PersistedData::getInstance()->getStore(PersistedData::CURRENT_CONFIG_KEY);
+        return $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY);
     }
 
     /**
@@ -41,6 +44,6 @@ class Configuration
      */
     public function clearConfig()
     {
-        PersistedData::getInstance()->clearStore();
+        $this->_xcoobee->getStore()->clearStore();
     }
 }

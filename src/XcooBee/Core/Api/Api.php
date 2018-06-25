@@ -3,17 +3,22 @@
 namespace XcooBee\Core\Api;
 
 use XcooBee\Http\GraphQLClient;
-use XcooBee\Store\PersistedData;
-use XcooBee\Core\Configuration;
+use XcooBee\Store\CachedData;
+use XcooBee\XcooBee;
+use XcooBee\Exception\XcooBeeException;
 
 class Api
 {
     /** @var GraphQLClient */
     protected $_client;
-
-    public function __construct()
+    
+    /** @var XcooBee */
+    protected $_xcoobee;
+    
+    public function __construct(XcooBee $xcoobee)
     {
-        $this->_client = new GraphQLClient();
+        $this->_xcoobee = $xcoobee;
+        $this->_client = new GraphQLClient($xcoobee);
     }
 
     /**
@@ -25,10 +30,7 @@ class Api
      */
     protected function _getUserId($config = [])
     {
-        $user = new Users();
-        $currentUser = $user->getUser($config);
-
-        return $currentUser->userId;
+        return $this->_xcoobee->users->getUser($config)->userId;
     }
 
     /**
@@ -56,8 +58,30 @@ class Api
      */
     protected function _getDefaultCampaignId() 
     {
-        $configuration = new Configuration();
-
-        return $configuration->getConfig()->campaignId;
+        return $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY)->campaignId;
+    }
+    
+    /**
+     * Get Campaign id
+     * 
+     * @param String $campaignId
+     * @param array $config
+     * 
+     * @throws XcooBeeException
+     */
+    protected function _getCampaignId($campaignId, $config)
+    {
+        if($campaignId){
+            return $campaignId;
+        }
+        if(array_key_exists('campaignId', $config)){
+            return $config['campaignId'];
+        }
+        
+        if ($campaignId = $this->_getDefaultCampaignId()) {
+            return $campaignId;
+        }
+        
+        throw new XcooBeeException('No "campaignId" provided');
     }
 }

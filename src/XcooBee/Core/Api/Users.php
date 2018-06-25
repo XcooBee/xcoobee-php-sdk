@@ -2,31 +2,32 @@
 
 namespace XcooBee\Core\Api;
 
-use XcooBee\Store\PersistedData;
+use XcooBee\Store\CachedData;
 use XcooBee\Models\UserModel;
 use XcooBee\Exception\XcooBeeException;
-use XcooBee\Core\Api\Consents;
+use XcooBee\Http\Response;
 
-class Users extends Api {
-
+class Users extends Api
+{
     /**
      * Return current user
      * 
      * @param array $config
      * @return UserModel
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * 
+     * @throws XcooBeeException
      */
     public function getUser($config = []) 
     {    
-        if(!$config){
+        if($config){
             return $this->_getUser($config);
         }
         
-        $store = new PersistedData();
-        $user = $store->getStore(PersistedData::CURRENT_USER_KEY);
+        $store = $this->_xcoobee->getStore();
+        $user = $store->getStore(CachedData::CURRENT_USER_KEY);
         if ($user === null) {
             $user = $this->_getUser($config);
-            $store->setStore(PersistedData::CURRENT_USER_KEY, $user);
+            $store->setStore(CachedData::CURRENT_USER_KEY, $user);
         }
 
         return $user;
@@ -42,6 +43,10 @@ class Users extends Api {
             }
         }';
         $response = $this->_request($query, [], $config);
+        if($response->code !== 200){
+            throw new XcooBeeException('invalid "user detail" provided');
+        }
+        
         $user = new UserModel();
         $user->userId = $response->data->user->cursor;
         $user->xcoobeeId = $response->data->user->xcoobee_id;
@@ -55,11 +60,11 @@ class Users extends Api {
      *
      * @param String $message
      * @param String $consentId
-     * @param String $breachid
+     * @param String $breachId
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return Response
+     * @throws XcooBeeException
      */
     public function sendUserMessage($message, $consentId, $breachId = null, $config = []) 
     {
@@ -75,11 +80,11 @@ class Users extends Api {
         
         $noteType = $breachId ? 'breach' : 'consent';
         return $this->_request($mutation, ['config' => [
-                        'note_type' => $noteType,
-                        'user_cursor' => $userId,
-                        'breach_cursor' => $breachId,
-                        'consent_cursor' => $consentId,
-                        'message' => $message
+                        'note_type'         => $noteType,
+                        'user_cursor'       => $userId,
+                        'breach_cursor'     => $breachId,
+                        'consent_cursor'    => $consentId,
+                        'message'           => $message
         ]], $config);
     }
 
@@ -90,12 +95,12 @@ class Users extends Api {
      * @param Int $after
      * @param array $config
      * 
-     * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return Response
+     * @throws XcooBeeException
      */
     public function getConversations($first = null, $after = null, $config = []) 
     {
-        $query = 'query getConversations($userId: String!,$first : Int, $after: String) {
+        $query = 'query getConversations($userId: String!, $first : Int, $after: String) {
             conversations(user_cursor: $userId , first : $first , after : $after) {
                 data {
                     display_name,
@@ -117,12 +122,12 @@ class Users extends Api {
      * get conversation data
      *
      * @param string $userId
-     * @param array $config
      * @param Int $first
      * @param Int $after
+     * @param array $config
      * 
-     * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return Response
+     * @throws XcooBeeException
      */
     public function getConversation($userId, $first = null, $after = null, $config = []) 
     {
@@ -150,13 +155,21 @@ class Users extends Api {
 
     protected function _getUserIdByConsent($consentId, $config = []) 
     {
-        $consents = new Consents();
-        $consent = $consents->getConsentData($consentId, $config = []);
-        if (!empty($consent->data->consent)) {
+        $store = $this->_xcoobee->getStore();
 
-            return $consent->data->consent->user_cursor;
+        if ($consent = $store->getConsent($consentId)) {
+            return $consent->user_cursor;
         }
+        
+        $consent = $this->_xcoobee->consents->getConsentData($consentId, $config);
+        $consent = $consent->data->consent;
 
+        if($consent){
+            $store->setConsent($consentId, $consent);
+    
+            return $consent->user_cursor;
+        }
+       
         return false;
     }
 

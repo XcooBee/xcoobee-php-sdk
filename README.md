@@ -65,7 +65,7 @@ apiSecret   => the api-secret
 pgpSecret   => the pgp-secret key
 pgpPassword => the pgp-password 
 campaignId  => the default campaign_id
-encode      => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+encrypt     => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
 
 #### clearConfig()
@@ -100,7 +100,7 @@ apiKey=8sihfsd89f7
 apiSecret=8937438hf
 campaignId=ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be
 pgpPassword=somethingsecret
-encode=0
+encrypt=0
 ```
 
 options: 
@@ -110,7 +110,7 @@ apiKey         => the api-key
 apiSecret      => the api-secret
 campaignId     => the default campaign_id
 pgpPassword    => the password for your pgp key
-encode         => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+encrypt        => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
 
 
@@ -324,7 +324,7 @@ standard JSON response object
 
 # Consent Administration Calls For Consent
 
-## getCampaignInfo([campaign_id], [config])
+## getCampaign([campaign_id], [config])
 get basic info on campaign (setup, datatypes and options). The information will not return the users registered with the campaign.
 
 options: 
@@ -351,72 +351,6 @@ standard JSON response object
     - data will contain array of campaign objects
 - status 400 if error
 
-## createCampaign(data)
-Create campaign from passed data
-
-options: 
-
-```
-data => object with data to create campaign. e.g. 
-
-data.name ='test'
-data.title[0].locale = 'en-us'
-data.title[0].value = 'test'
-data.description[0].locale = 'en-us'
-data.description[0].value = 'test'
-data.requests[0].name = 'test'
-data.requests[0].request_data_types[0] = 'first_name'
-data.requests[0].request_data_types[1] = 'last_name'
-data.requests[0].request_data_types[2] = 'xcoobee_id'
-data.requests[0].required_data_types[0] = 'first_name'
-data.requests[0].required_data_types[1] = 'last_name'
-data.requests[0].required_data_types[2] = 'xcoobee_id'
-data.requests[0].consent_types[0] = 'deliver_a_product'
-```
-
-### response
-
-standard JSON response object
-- status 200 if success: 
-    - data will contain campaign ref id
-- status 400 if error
-
-## modifyCampaign(campaignId, data)
-Modify campaign with new data
-
-options: 
-
-```
-campaignId  => the campaign id to use
-data        => object with data to modify campaign. e.g. 
-
-data.name ='test'
-data.title[0].value = 'TEST'
-```
-
-### response
-
-standard JSON response object
-- status 200 if success: 
-    - data will contain campaign ref id
-- status 400 if error
-
-## activateCampaign([campaignId])
-Set status of campaign to active
-
-options: 
-
-```
-campaign_id => optional: the campaign id to use if not default
-```
-
-### response
-
-standard JSON response object
-- status 200 if success: 
-    - data will contain campaign ref id
-- status 400 if error
-     
 ## getDataPackage(packagePointer,[config])
 
 When data is hosted for you at XcooBee you can request the data package each time you need to use it. You will need to provide `packagePointer`. This call will only respond to authorized call source.

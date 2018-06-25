@@ -7,33 +7,20 @@ use XcooBee\Exception\XcooBeeException;
 
 class System extends Api 
 {
-
-    /** @var Users */
-    protected $_users;
-
-    /** @var Consent */
-    protected $_consent;
-
-    public function __construct() 
-    {
-        parent::__construct();
-
-        $this->_users = new Users();
-        $this->_consent = new Consents();
-    }
-
     /**
      * method to check if pgp key and Campaign is correct.
      *
-     * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param array $config
+     * 
+     * @return Response
+     * @throws XcooBeeException
      */
-    public function ping() 
+    public function ping($config = []) 
     {
-        $user = $this->_users->getUser();
+        $user = $this->_xcoobee->users->getUser($config);
         $response = new Response();
         if ($user->pgp_public_key) {
-            $campaignInfo = $this->_consent->getCampaignInfo();
+            $campaignInfo = $this->_xcoobee->consents->getCampaign(null, $config);
             if (!empty($campaignInfo->data->campaign)) {
                 $response->code = 200;
             } else {
@@ -58,19 +45,13 @@ class System extends Api
      * @param string $campaignId
      * @param array $config
      *  
-     * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return Response
+     * @throws XcooBeeException
      */
     public function listEventSubscriptions($campaignId = null, $config = []) 
     {
-        if ($campaignId === null) {
-            $campaignId = $this->_getDefaultCampaignId();
-        }
-
-        if (!$campaignId) {
-            throw new XcooBeeException('No "campaignId" provided');
-        }
-
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
         $query = 'query listEventSubscriptions($campaignId: String!) {
             event_subscriptions(campaign_cursor: $campaignId) {
                 data {
@@ -91,19 +72,13 @@ class System extends Api
      * @param string $campaignId
      * @param array $config
      *  
-     * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return Response
+     * @throws XcooBeeException
      */
     public function addEventSubscription($events, $campaignId = null, $config = []) 
     {
-        if ($campaignId === null) {
-            $campaignId = $this->_getDefaultCampaignId();
-        }
-
-        if (!$campaignId) {
-            throw new XcooBeeException('No "campaignId" provided');
-        }
-
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
         $mutation = 'mutation addEventSubscription($config: AddSubscriptionsConfig!) {
             add_event_subscriptions(config: $config) {
                 data{
@@ -133,19 +108,13 @@ class System extends Api
      * @param string $campaignId
      * @param array $config
      *  
-     * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return Response
+     * @throws XcooBeeException
      */
     public function deleteEventSubscription($events, $campaignId = null, $config = []) 
     {
-        if ($campaignId === null) {
-            $campaignId = $this->_getDefaultCampaignId();
-        }
-
-        if (!$campaignId) {
-            throw new XcooBeeException('No "campaignId" provided');
-        }
-
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+        
         $mutation = 'mutation deleteEventSubscription($config: DeleteSubscriptionsConfig!) {
             delete_event_subscriptions(config: $config) {
                 deleted_number
@@ -170,7 +139,6 @@ class System extends Api
      *
      * @return array 
      * @throws XcooBeeException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function _getSubscriptionEvent($event) 
     {

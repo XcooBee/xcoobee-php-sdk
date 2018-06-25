@@ -2,15 +2,18 @@
 
 namespace Test\XcooBee\Core\Api;
 
-
 use XcooBee\Core\Api\Users;
 use XcooBee\Http\FileUploader;
 use XcooBee\Test\TestCase;
 
-class Bees extends TestCase
+class BeesTest extends TestCase
 {
     public function testUploadFiles_Upload2Files()
     {
+        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
+        $XcooBeeMock->users = $this->_getMock(Users::class, [
+            'getUser' => (object) ['userId' => 'test']
+        ]);
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_getOutboxEndpoint' => 'test',
             '_getPolicy' => (object) [
@@ -20,10 +23,7 @@ class Bees extends TestCase
                 ]
             ]
         ]);
-
-        $this->_setProperty($beesMock, '_users', $this->_getMock(Users::class, [
-            'getUser' => (object) ['userId' => 'test']
-        ]));
+        $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);
         $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
             'uploadFile' => true,
         ]));
@@ -37,6 +37,10 @@ class Bees extends TestCase
     
     public function testUploadFiles_Upload2Files_UseConfig()
     {
+        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
+        $XcooBeeMock->users = $this->_getMock(Users::class, [
+            'getUser' => (object) ['userId' => 'test']
+        ]);
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_getOutboxEndpoint' => 'test',
             '_getPolicy' => (object) [
@@ -46,10 +50,7 @@ class Bees extends TestCase
                 ]
             ]
         ]);
-
-        $this->_setProperty($beesMock, '_users', $this->_getMock(Users::class, [
-            'getUser' => (object) ['userId' => 'test']
-        ]));
+        $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);
         $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
             'uploadFile' => true,
         ]));
