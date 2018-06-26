@@ -726,7 +726,7 @@ Overall job parameters to be used for the hiring are specified with the `process
 general process parameters example:
 ```
 process.userReference="myownreference"
-process.destinations=["~xcoobeeIds",{"xcoobee_id":"~jonny","accesskey":"isfnsfhis"},"emails"]
+process.destinations=["~xcoobeeIds",{"xcoobeeId":"~jonny","accesskey":"isfnsfhis"},"emails"]
 process.Integrations.XcooBeeInbox=[{"filename": "fileinInbox.png"}]
 ```
 
@@ -886,13 +886,13 @@ startId       => optional: the message id from which to start the listing
 ### response
 standard JSON response object
 - status 200 if success: 
-    - data object will contain list of inbox items in array: messageId, sender, fileName, fileSize, receiptDate, expirationDate, download_date
+    - data object will contain list of inbox items in array: messageId, sender, fileName, fileSize, receiptDate, expirationDate, downloadDate
 - status 400 if error
 
 
 ## getInboxItem(messageId)
 
-This method will return a file and file meta tags. Upon first downloaded, the `download_date` for the item will be populated.
+This method will return a file and file meta tags. Upon first downloaded, the `downloadDate` for the item will be populated.
 
 
 options:
