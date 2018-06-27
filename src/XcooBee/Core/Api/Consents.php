@@ -262,7 +262,7 @@ class Consents extends Api
         if ($consents->code !== 200) {
             return $consents;
         }
-        $csvContent = ['application' => false, 'usage' => false, 'advertising' => false];
+        $csvContent = ['application' => false, 'usage' => false, 'advertising' => false, 'statistics' => false];
         foreach ($consents->data->consents->data as $consent) {
             if ($xid === $consent->user_xcoobee_id && in_array($consent->consent_type, ['website_tracking', 'web_application_tracking'])) {
                 if (in_array('application_cookie', $consent->request_data_types)) {
@@ -273,6 +273,9 @@ class Consents extends Api
                 }
                 if (in_array('advertising_cookie', $consent->request_data_types)) {
                     $csvContent['advertising'] = true;
+                }
+                if (in_array('statistics_cookie', $consent->request_data_types)) {
+                    $csvContent['statistics'] = true;
                 }
             }
         }
