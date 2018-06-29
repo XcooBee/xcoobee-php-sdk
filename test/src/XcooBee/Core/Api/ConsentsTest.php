@@ -454,12 +454,12 @@ class ConsentsTest extends TestCase
                             (object) [
                                 'consent_type' => 'website_tracking',
                                 'user_xcoobee_id' => 'testxID',
-                                'request_data_types' => ['usage_cookie', 'advertising_cookie']
+                                'request_data_types' => ['usage_cookie', 'advertising_cookie', 'statistics_cookie']
                             ],
                             (object) [
                                 'consent_type' => 'test_consent_type',
                                 'user_xcoobee_id' => 'testxID',
-                                'request_data_types' => ['application_cookie', 'usage_cookie',]
+                                'request_data_types' => ['application_cookie', 'usage_cookie', 'statistics_cookie']
                             ],
                             (object) [
                                 'consent_type' => 'website_tracking',
@@ -469,7 +469,7 @@ class ConsentsTest extends TestCase
                         ]]
                 ],
                 [],
-                ['application' => true, 'usage' => true, 'advertising' => true],
+                ['application' => true, 'usage' => true, 'advertising' => true, 'statistics' => true],
                 'testxID'
             ],
             [
@@ -483,7 +483,7 @@ class ConsentsTest extends TestCase
                             (object) [
                                 'consent_type' => 'test_consent_type',
                                 'user_xcoobee_id' => 'testxID',
-                                'request_data_types' => ['advertising_cookie']
+                                'request_data_types' => ['advertising_cookie', 'statistics_cookie']
                             ],
                             (object) [
                                 'consent_type' => 'web_application_tracking',
@@ -493,7 +493,7 @@ class ConsentsTest extends TestCase
                         ]]
                 ],
                 [],
-                ['application' => false, 'usage' => false, 'advertising' => false],
+                ['application' => false, 'usage' => false, 'advertising' => false, 'statistics' => false],
                 'demoxId'
             ],
             [
@@ -512,7 +512,7 @@ class ConsentsTest extends TestCase
                         ]]
                 ],
                 [],
-                ['application' => true, 'usage' => false, 'advertising' => true],
+                ['application' => true, 'usage' => false, 'advertising' => true, 'statistics' => false],
                 'testxID'
             ],
             [
@@ -521,11 +521,11 @@ class ConsentsTest extends TestCase
                     'consents' => (object) ['data' => [(object) [
                                 'consent_type' => 'web_application_tracking',
                                 'user_xcoobee_id' => 'testxID',
-                                'request_data_types' => ['application_cookie', 'usage_cookie']
+                                'request_data_types' => ['application_cookie', 'usage_cookie', 'statistics_cookie']
                             ]]]
                 ],
                 [],
-                ['application' => true, 'usage' => true, 'advertising' => false],
+                ['application' => true, 'usage' => true, 'advertising' => false, 'statistics' => true],
                 'testxID'
             ],
             [
