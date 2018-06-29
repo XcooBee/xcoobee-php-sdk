@@ -4,6 +4,8 @@ namespace XcooBee\Core\Api;
 
 use XcooBee\Exception\XcooBeeException;
 use XcooBee\Http\Response;
+use DateTime;
+use DateInterval;
 
 class Inbox extends Api
 {
@@ -47,12 +49,13 @@ class Inbox extends Api
         }
         $inboxItems->data->inbox->data = array_map(function($item) {
             return [
-                'fileName' => $item->original_name,
-                'messageId' => $item->filename,
-                'fileSize' => $item->file_size,
-                'sender' => $item->sender,
-                'receiptDate' => $item->date,
-                'downloadDate' => $item->downloaded,
+                'fileName'          => $item->original_name,
+                'messageId'         => $item->filename,
+                'fileSize'          => $item->file_size,
+                'sender'            => $item->sender,
+                'receiptDate'       => $item->date,
+                'expirationDate'    => $this->_getExpirationDate($item->date),
+                'downloadDate'      => $item->downloaded,
             ];
         }, $inboxItems->data->inbox->data);
 
@@ -112,5 +115,12 @@ class Inbox extends Api
 
         return $this->_request($query, ['userId' => $this->_getUserId(), 'filename' => $messageId]);
     }
-
+    
+    protected function _getExpirationDate($date)
+    {
+        $date = new DateTime($date); 
+        $date->add(new DateInterval('P30D'));
+        return $date->format('Y-m-d\Th:i:sT');
+    }
+    
 }
