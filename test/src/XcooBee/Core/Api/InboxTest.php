@@ -130,7 +130,7 @@ class InboxTest extends TestCase
                                 'filename' => 'testFileName',
                                 'file_size' => 'testFileSize',
                                 'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
-                                'date' => 'testMessageDate',
+                                'date' => '2018-06-01T07:12:42Z',
                                 'downloaded' => 'testDownloaddate'
                             ],
                             (object) [
@@ -138,7 +138,7 @@ class InboxTest extends TestCase
                                 'filename' => 'testFileName',
                                 'file_size' => 'testFileSize',
                                 'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
-                                'date' => 'testMessageDate',
+                                'date' => '2018-06-01T07:12:42Z',
                                 'downloaded' => 'testDownloaddate'
                             ],
                             (object) [
@@ -146,7 +146,7 @@ class InboxTest extends TestCase
                                 'filename' => 'testFileName',
                                 'file_size' => 'testFileSize',
                                 'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
-                                'date' => 'testMessageDate',
+                                'date' => '2018-06-01T07:12:42Z',
                                 'downloaded' => 'testDownloaddate'
                             ],
                         ]

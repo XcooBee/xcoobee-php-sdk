@@ -48,7 +48,7 @@ class Inbox extends Api
             return $inboxItems;
         }
         $inboxItems->data->inbox->data = array_map(function($item) {
-            return [
+            return (object) [
                 'fileName'          => $item->original_name,
                 'messageId'         => $item->filename,
                 'fileSize'          => $item->file_size,
