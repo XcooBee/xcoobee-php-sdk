@@ -4,7 +4,6 @@ namespace Test\XcooBee\Core\Api;
 
 use XcooBee\Test\TestCase;
 use \XcooBee\Core\Api\Consents as Consent;
-use \XcooBee\Http\Response;
 
 class ConsentsTest extends TestCase
 {
@@ -536,16 +535,6 @@ class ConsentsTest extends TestCase
                 'testxID'
             ]
         ];
-    }
-    
-    protected function _createResponse($code, $data = null, $errors = []) 
-    {
-        $response = new Response();
-        $response->code = $code;
-        $response->data = $data;
-        $response->errors = $errors;
-
-        return $response;
     }
     
 }

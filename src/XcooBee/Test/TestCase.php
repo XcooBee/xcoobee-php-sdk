@@ -3,6 +3,7 @@
 namespace XcooBee\Test;
 
 use XcooBee\XcooBee;
+use \XcooBee\Http\Response;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
@@ -57,4 +58,15 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         return $this->_getMock(XcooBee::class, []);
     }
+    
+    protected function _createResponse($code, $data = null, $errors = []) 
+    {
+        $response = new Response();
+        $response->code = $code;
+        $response->data = $data;
+        $response->errors = $errors;
+
+        return $response;
+    }
+    
 }

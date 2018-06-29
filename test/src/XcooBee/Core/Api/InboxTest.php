@@ -4,15 +4,23 @@ namespace Test\XcooBee\Core\Api;
 
 use XcooBee\Test\TestCase;
 
-class InboxTest extends TestCase
+class InboxTest extends TestCase 
 {
 
-    public function testListInbox()
+    /**
+     * @param array $inboxItems
+     * @param int $requestCode
+     * @param array $requestData
+     * @param array $requestError
+     * 
+     * @dataProvider inboxItemsProvider
+     */
+    public function testListInbox($requestCode, $requestData, $requestError)
     {
         $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError)
         ]);
-        
+
         $inboxMock->expects($this->once())
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params) {
@@ -22,10 +30,18 @@ class InboxTest extends TestCase
         $inboxMock->listInbox();
     }
 
-    public function testListInbox_withStartId()
+    /**
+     * @param array $inboxItems
+     * @param int $requestCode
+     * @param array $requestData
+     * @param array $requestError
+     * 
+     * @dataProvider inboxItemsProvider
+     */
+    public function testListInbox_withStartId($requestCode, $requestData, $requestError)
     {
         $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError)
         ]);
 
         $inboxMock->expects($this->once())
@@ -37,11 +53,19 @@ class InboxTest extends TestCase
         $inboxMock->listInbox('2015-08-09T11:39:31Z');
     }
 
-    public function testGetInboxItem()
+    /**
+     * @param array $inboxItems
+     * @param int $requestCode
+     * @param array $requestData
+     * @param array $requestError
+     * 
+     * @dataProvider inboxItemProvider
+     */
+    public function testGetInboxItem($requestCode, $requestData, $requestError)
     {
         $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
-            '_request' => true,
-            '_getUserId' => "testUserId"
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
+            '_getUserId' => 'testUserId'
         ]);
 
         $inboxMock->expects($this->once())
@@ -51,7 +75,7 @@ class InboxTest extends TestCase
                         }));
         $inboxMock->getInboxItem('testFileName');
     }
-    
+
     public function testDeleteInboxItem()
     {
         $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
@@ -66,4 +90,80 @@ class InboxTest extends TestCase
                         }));
         $inboxMock->deleteInboxItem('testFileName');
     }
+
+    public function inboxItemProvider()
+    {
+        return [
+            [
+                200,
+                (object) [
+                    'inbox_item' => (object) [
+                        'download_link' => 'testDownloadLink',
+                        'info' => [
+                            'file_type' => 'testOriginalName',
+                            'file_tags' => 'testFileName',
+                            'user_ref' => 'testFileSize',
+                        ]
+                    ]
+                ],
+                []
+            ],
+            [
+                400,
+                (object) [
+                    'inbox_item' => []
+                ],
+                ['testErrorMessage']
+            ]
+        ];
+    }
+
+    public function inboxItemsProvider() 
+    {
+        return [
+            [
+                200,
+                (object) [
+                    'inbox' => (object) [
+                        'data' => [(object) [
+                                'original_name' => 'testOriginalName',
+                                'filename' => 'testFileName',
+                                'file_size' => 'testFileSize',
+                                'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
+                                'date' => 'testMessageDate',
+                                'downloaded' => 'testDownloaddate'
+                            ],
+                            (object) [
+                                'original_name' => 'testOriginalName',
+                                'filename' => 'testFileName',
+                                'file_size' => 'testFileSize',
+                                'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
+                                'date' => 'testMessageDate',
+                                'downloaded' => 'testDownloaddate'
+                            ],
+                            (object) [
+                                'original_name' => 'testOriginalName',
+                                'filename' => 'testFileName',
+                                'file_size' => 'testFileSize',
+                                'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
+                                'date' => 'testMessageDate',
+                                'downloaded' => 'testDownloaddate'
+                            ],
+                        ]
+                    ]
+                ],
+                []
+            ],
+            [
+                400,
+                (object) [
+                    'inbox' => (object) [
+                        'data' => []
+                    ]
+                ],
+                ['testError']
+            ]
+        ];
+    }
+
 }
