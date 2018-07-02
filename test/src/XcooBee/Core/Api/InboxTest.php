@@ -13,6 +13,7 @@ class InboxTest extends TestCase
      * @param array $requestData
      * @param array $requestError
      * @param array $expectedResponse
+     * 
      * @dataProvider inboxItemsProvider
      */
     public function testListInbox($requestCode, $requestData, $requestError, $expectedResponse)
@@ -38,10 +39,11 @@ class InboxTest extends TestCase
      * @param int $requestCode
      * @param array $requestData
      * @param array $requestError
+     * @param array $expectedResponse
      * 
      * @dataProvider inboxItemsProvider
      */
-    public function testListInbox_withStartId($requestCode, $requestData, $requestError)
+    public function testListInbox_withStartId($requestCode, $requestData, $requestError, $expectedResponse)
     {
         $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
             '_request' => $this->_createResponse($requestCode, $requestData, $requestError)
@@ -53,7 +55,10 @@ class InboxTest extends TestCase
                             $this->assertEquals(['after' => '2015-08-09T11:39:31Z'], $params);
                         }));
 
-        $inboxMock->listInbox('2015-08-09T11:39:31Z');
+        $response = $inboxMock->listInbox('2015-08-09T11:39:31Z');
+        
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($expectedResponse, $response->data->inbox->data[0] );
     }
 
     /**
@@ -61,10 +66,11 @@ class InboxTest extends TestCase
      * @param int $requestCode
      * @param array $requestData
      * @param array $requestError
+     * @param array $expectedResponse
      * 
      * @dataProvider inboxItemProvider
      */
-    public function testGetInboxItem($requestCode, $requestData, $requestError)
+    public function testGetInboxItem($requestCode, $requestData, $requestError, $expectedResponse)
     {
         $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
             '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
@@ -76,7 +82,10 @@ class InboxTest extends TestCase
                 ->will($this->returnCallback(function ($query, $params) {
                             $this->assertEquals(['userId' => "testUserId", 'filename' => 'testFileName'], $params);
                         }));
-        $inboxMock->getInboxItem('testFileName');
+        $response = $inboxMock->getInboxItem('testFileName');
+        
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($expectedResponse, $response->data->inbox_item);
     }
 
     public function testDeleteInboxItem()
@@ -109,14 +118,23 @@ class InboxTest extends TestCase
                         ]
                     ]
                 ],
-                []
+                [],
+                (object) [
+                    'download_link' => 'testDownloadLink',
+                    'info' => [
+                        'fileType' => 'testOriginalName',
+                        'fileTags' => 'testFileName',
+                        'userRef' => 'testFileSize',
+                    ]
+                ]
             ],
             [
                 400,
                 (object) [
                     'inbox_item' => []
                 ],
-                ['testErrorMessage']
+                ['testErrorMessage'],
+                []
             ]
         ];
     }
