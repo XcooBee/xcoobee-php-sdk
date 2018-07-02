@@ -29,9 +29,8 @@ class InboxTest extends TestCase
                         }));
 
         $response = $inboxMock->listInbox();
-
         $this->assertEquals($requestCode, $response->code);
-        $this->assertEquals($expectedResponse, $response->data->inbox->data[0] );
+        $this->assertEquals($expectedResponse, $response->data->inbox->data);
     }
 
     /**
@@ -58,7 +57,7 @@ class InboxTest extends TestCase
         $response = $inboxMock->listInbox('2015-08-09T11:39:31Z');
         
         $this->assertEquals($requestCode, $response->code);
-        $this->assertEquals($expectedResponse, $response->data->inbox->data[0] );
+        $this->assertEquals($expectedResponse, $response->data->inbox->data);
     }
 
     /**
@@ -153,28 +152,12 @@ class InboxTest extends TestCase
                                 'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
                                 'date' => '2018-06-01T07:12:42Z',
                                 'downloaded' => '2018-06-01T07:12:42Z'
-                            ],
-                            (object) [
-                                'original_name' => 'testOriginalName',
-                                'filename' => 'testFileName',
-                                'file_size' => 'testFileSize',
-                                'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
-                                'date' => '2018-06-01T07:12:42Z',
-                                'downloaded' => '2018-06-01T07:12:42Z'
-                            ],
-                            (object) [
-                                'original_name' => 'testOriginalName',
-                                'filename' => 'testFileName',
-                                'file_size' => 'testFileSize',
-                                'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
-                                'date' => '2018-06-01T07:12:42Z',
-                                'downloaded' => '2018-06-01T07:12:42Z'
-                            ],
+                            ]
                         ]
                     ]
                 ],
                 [],
-                (object) [
+                [(object) [
                     'fileName' => 'testOriginalName',
                     'messageId' => 'testFileName',
                     'fileSize' => 'testFileSize',
@@ -182,14 +165,13 @@ class InboxTest extends TestCase
                     'receiptDate' => '2018-06-01T07:12:42Z',
                     'expirationDate' => '2018-07-01T07:12:42Z',
                     'downloadDate' => '2018-06-01T07:12:42Z'
-                ]
-                
+                ]] 
             ],
             [
                 400,
                 (object) [
                     'inbox' => (object) [
-                        'data' => [[]]
+                        'data' => []
                     ]
                 ],
                 ['testError'],
