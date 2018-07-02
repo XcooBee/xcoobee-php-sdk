@@ -3,7 +3,7 @@
 namespace XcooBee\Test;
 
 use XcooBee\XcooBee;
-use \XcooBee\Http\Response;
+use XcooBee\Http\Response;
 
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {

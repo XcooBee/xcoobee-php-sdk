@@ -12,10 +12,10 @@ class InboxTest extends TestCase
      * @param int $requestCode
      * @param array $requestData
      * @param array $requestError
-     * 
+     * @param array $expectedResponse
      * @dataProvider inboxItemsProvider
      */
-    public function testListInbox($requestCode, $requestData, $requestError)
+    public function testListInbox($requestCode, $requestData, $requestError, $expectedResponse)
     {
         $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
             '_request' => $this->_createResponse($requestCode, $requestData, $requestError)
@@ -27,7 +27,10 @@ class InboxTest extends TestCase
                             $this->assertEquals(['after' => null], $params);
                         }));
 
-        $inboxMock->listInbox();
+        $response = $inboxMock->listInbox();
+
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($expectedResponse, $response->data->inbox->data[0] );
     }
 
     /**
@@ -131,7 +134,7 @@ class InboxTest extends TestCase
                                 'file_size' => 'testFileSize',
                                 'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
                                 'date' => '2018-06-01T07:12:42Z',
-                                'downloaded' => 'testDownloaddate'
+                                'downloaded' => '2018-06-01T07:12:42Z'
                             ],
                             (object) [
                                 'original_name' => 'testOriginalName',
@@ -139,7 +142,7 @@ class InboxTest extends TestCase
                                 'file_size' => 'testFileSize',
                                 'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
                                 'date' => '2018-06-01T07:12:42Z',
-                                'downloaded' => 'testDownloaddate'
+                                'downloaded' => '2018-06-01T07:12:42Z'
                             ],
                             (object) [
                                 'original_name' => 'testOriginalName',
@@ -147,21 +150,32 @@ class InboxTest extends TestCase
                                 'file_size' => 'testFileSize',
                                 'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
                                 'date' => '2018-06-01T07:12:42Z',
-                                'downloaded' => 'testDownloaddate'
+                                'downloaded' => '2018-06-01T07:12:42Z'
                             ],
                         ]
                     ]
                 ],
-                []
+                [],
+                (object) [
+                    'fileName' => 'testOriginalName',
+                    'messageId' => 'testFileName',
+                    'fileSize' => 'testFileSize',
+                    'sender' => ['from' => 'testFromId', 'from_xcoobee_id' => 'testXcooBeeId'],
+                    'receiptDate' => '2018-06-01T07:12:42Z',
+                    'expirationDate' => '2018-07-01T07:12:42Z',
+                    'downloadDate' => '2018-06-01T07:12:42Z'
+                ]
+                
             ],
             [
                 400,
                 (object) [
                     'inbox' => (object) [
-                        'data' => []
+                        'data' => [[]]
                     ]
                 ],
-                ['testError']
+                ['testError'],
+                []
             ]
         ];
     }

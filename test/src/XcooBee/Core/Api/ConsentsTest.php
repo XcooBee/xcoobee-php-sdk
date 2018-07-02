@@ -3,7 +3,7 @@
 namespace Test\XcooBee\Core\Api;
 
 use XcooBee\Test\TestCase;
-use \XcooBee\Core\Api\Consents as Consent;
+use XcooBee\Core\Api\Consents as Consent;
 
 class ConsentsTest extends TestCase
 {
