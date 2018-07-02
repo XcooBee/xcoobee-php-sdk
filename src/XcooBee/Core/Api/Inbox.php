@@ -4,6 +4,8 @@ namespace XcooBee\Core\Api;
 
 use XcooBee\Exception\XcooBeeException;
 use XcooBee\Http\Response;
+use DateTime;
+use DateInterval;
 
 class Inbox extends Api
 {
@@ -24,9 +26,6 @@ class Inbox extends Api
                     original_name
                     filename
                     file_size
-                    file_type
-                    file_tags
-                    user_ref
                     sender {
                        from
                        from_xcoobee_id
@@ -34,8 +33,6 @@ class Inbox extends Api
                        validation_score
                     }
                     date
-                    trans_id
-                    trans_name
                     downloaded
                 }
                 page_info {
@@ -44,7 +41,25 @@ class Inbox extends Api
                 }
             }
         }';
-        return $this->_request($query, ['after' => $startId]);
+
+        $inboxItems = $this->_request($query, ['after' => $startId]);
+
+        if ($inboxItems->code != 200) {
+            return $inboxItems;
+        }
+        $inboxItems->data->inbox->data = array_map(function($item) {
+            return (object) [
+                'fileName'          => $item->original_name,
+                'messageId'         => $item->filename,
+                'fileSize'          => $item->file_size,
+                'sender'            => $item->sender,
+                'receiptDate'       => $item->date,
+                'expirationDate'    => $this->_getExpirationDate($item->date),
+                'downloadDate'      => $item->downloaded,
+            ];
+        }, $inboxItems->data->inbox->data);
+
+        return $inboxItems;
     }
 
     /**
@@ -61,27 +76,25 @@ class Inbox extends Api
             inbox_item(user_cursor: $userId, filename: $filename) {
                download_link
                info {
-                    original_name
-                    filename
-                    file_size
                     file_type
                     file_tags
                     user_ref
-                    sender {
-                        from
-                        from_xcoobee_id
-                        name
-                        validation_score
-                    }
-                    date
-                    trans_id
-                    trans_name
-                    downloaded
                 }
             }
         }';
 
-        return $this->_request($query, ['userId' => $this->_getUserId(), 'filename' => $messageId]);
+        $inboxItem = $this->_request($query, ['userId' => $this->_getUserId(), 'filename' => $messageId]);
+        if ($inboxItem->code != 200) {
+            return $inboxItem;
+        }
+        $fields = [
+            'file_type' => 'fileType',
+            'file_tags' => 'fileTags',
+            'user_ref' => 'userRef',
+        ];
+        $inboxItem->data->inbox_item->info = array_combine($fields, (array) $inboxItem->data->inbox_item->info);
+
+        return $inboxItem;
     }
 
     /**
@@ -102,5 +115,12 @@ class Inbox extends Api
 
         return $this->_request($query, ['userId' => $this->_getUserId(), 'filename' => $messageId]);
     }
-
+    
+    protected function _getExpirationDate($date)
+    {
+        $date = new DateTime($date); 
+        $date->add(new DateInterval('P30D'));
+        return $date->format('Y-m-d\Th:i:sT');
+    }
+    
 }

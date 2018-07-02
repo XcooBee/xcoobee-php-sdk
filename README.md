@@ -38,7 +38,7 @@ The basic information in the configuration is:
 - your api-key
 - your api-secret
 - your pgp-secret
-- your default campaign_id
+- your default campaign id
 
 
 The SDK will attempt to determine the configuration object based on the following schema:
@@ -64,7 +64,7 @@ apiKey      => the api-key
 apiSecret   => the api-secret
 pgpSecret   => the pgp-secret key
 pgpPassword => the pgp-password 
-campaignId  => the default campaign_id
+campaignId  => the default campaign id
 encrypt     => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
 
@@ -108,7 +108,7 @@ options:
 ```
 apiKey         => the api-key
 apiSecret      => the api-secret
-campaignId     => the default campaign_id
+campaignId     => the default campaign id
 pgpPassword    => the password for your pgp key
 encrypt        => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
 ```
@@ -205,7 +205,7 @@ standard JSON response object
 - status 400 if error
 
 
-## addEventSubscription(arrayOfEventAndHandlerPairs,[campaign_id],[config])
+## addEventSubscription(arrayOfEventAndHandlerPairs,[campaignId],[config])
 
 You can register subscriptions to hooks by calling the addEventSubscription function and providing the event and handler pairs `eventname => handler`.
 
@@ -227,7 +227,7 @@ options:
 
 ```
 arrayOfEventAndHandlerPairs  => array object with event and handler maps
-campaign_id                  => optional: the campaign id to use if not default
+campaignId                  => optional: the campaign id to use if not default
 config                       => optional: the config object
 ```
 
@@ -240,14 +240,14 @@ standard JSON response object
 
 
 
-## listEventSubscriptions([campaign_id],[config])
+## listEventSubscriptions([campaignId],[config])
 
 list current subscriptions.
 
 options: 
 
 ```
-campaign_id => optional: Only get subscriptions for the campaign id
+campaignId => optional: Only get subscriptions for the campaign id
 config      => optional: the config object
 ```
 ### response
@@ -257,17 +257,17 @@ standard JSON response object
     - data will contain current subscriptions dataset: type, campaign, last
 - status 400 if error
 
-## deleteEventSubscription(arrayOfEventNames, [campaign_id] ,[config])
+## deleteEventSubscription(arrayOfEventNames, [campaignId] ,[config])
 
 delete existing subscriptions.
-If you do not supply a campaign_id the event will for the default campaign id will be deleted. If the subscription does not exists we will still return success.
+If you do not supply a campaign id the event will for the default campaign id will be deleted. If the subscription does not exists we will still return success.
 
 
 options: 
 
 ```
 arrayOfEventNames  => array object with eventnames to be unsubscribed
-campaign_id        => optional: the campaign id to use if not default
+campaignId        => optional: the campaign id to use if not default
 config             => optional: the config object
 ```
 ### response
@@ -324,13 +324,13 @@ standard JSON response object
 
 # Consent Administration Calls For Consent
 
-## getCampaign([campaign_id], [config])
+## getCampaignInfo([campaignId], [config])
 get basic info on campaign (setup, datatypes and options). The information will not return the users registered with the campaign.
 
 options: 
 
 ```
-campaign_id        => optional: the campaign id to use if not default
+campaignId        => optional: the campaign id to use if not default
 config             => optional: the config object
 ```
 
@@ -378,7 +378,7 @@ Query for a specific consent given. Company can get consent definition for any c
 options: 
 
 ```
-consent_id   => the consent id for which to retrieve information
+consentId   => the consent id for which to retrieve information
 config       => optional: the config object
 ```
 
@@ -389,7 +389,7 @@ standard JSON response object
     - data object will contain consent data object: user, datatypes, consenttypes, expiration
 - status 400 if error
    
-## getCookieConsent(xid,[campaign_id],[config])
+## getCookieConsent(xid,[campaignId],[config])
 
 This is a shortcut mechanism to query the XcooBee system for existing user consent for consent type `Website Tracking (1400), Web Application Tracking (1410)` for specific use data types (`application cookie (1600), usage cookie (1610), and advertising cookie (1620)`). We will retrieve only active consent for the cookies on the website identified in the campaign id and return whether user has agreed to any cookies.
 
@@ -404,7 +404,7 @@ options:
 
 ```
 xid           => XcooBee ID of the user to check for consent         
-campaign_id   => optional: the campaign id to use if not default.
+campaignId   => optional: the campaign id to use if not default.
 config        => optional: the config object
 ```
 
@@ -415,7 +415,7 @@ standard JSON response object
     - data object will contain website cookie consent CSV: application,usage,advertising
 - status 400 if error
 
-## requestConsent(xid,[refId],[campaign_id],[config])
+## requestConsent(xid,[refId],[campaignId],[config])
 
 Sends out the consent or consent and data request to a specific user using the data in the campaign. The campaign definition determines what data (only consent or consent + data) we will ask from the user.
 
@@ -423,7 +423,7 @@ options:
 ```
 xid           => XcooBee Id of the user to check for consent 
 refId         => optional: reference Id generated by you that identifies this request to you. Max 64 chars. This will returned to you in event response.
-campaign_id   => optional: the campaign id to use if not default.
+campaignId   => optional: the campaign id to use if not default.
 config        => optional: the config object
 ```
 
@@ -470,7 +470,7 @@ standard JSON response object
 - status 400 if error
 
 
-## setUserDataResponse(message, consentId [,request_ref, filename, config])
+## setUserDataResponse(message, consentId [requestRef, filename, config])
 
 Companies can respond to user data requested via this call. Standard hiring points will be deducted for this. The call will send a `message` to user's communication center. You also need to send a file with user's data in order to close data request.
 
@@ -478,7 +478,7 @@ options:
 ```
 message          => the text to be sent to the user as user data
 consentId        => the consent for which data has been deleted
-request_ref      => unique identifier of the data request, you will receive this on `UserDataRequest` event
+requestRef      => unique identifier of the data request, you will receive this on `UserDataRequest` event
 filename         => pointer to the file which contains user's data. 
 config           => optional: the config object
 ```
@@ -726,7 +726,7 @@ Overall job parameters to be used for the hiring are specified with the `process
 general process parameters example:
 ```
 process.userReference="myownreference"
-process.destinations=["~xcoobeeIds",{"xcoobee_id":"~jonny","accesskey":"isfnsfhis"},"emails"]
+process.destinations=["~xcoobeeIds",{"xcoobeeId":"~jonny","accesskey":"isfnsfhis"},"emails"]
 process.Integrations.XcooBeeInbox=[{"filename": "fileinInbox.png"}]
 ```
 
@@ -886,13 +886,13 @@ startId       => optional: the message id from which to start the listing
 ### response
 standard JSON response object
 - status 200 if success: 
-    - data object will contain list of inbox items in array: messageId, sender, fileName, fileSize, receiptDate, expirationDate, download_date
+    - data object will contain list of inbox items in array: messageId, sender, fileName, fileSize, receiptDate, expirationDate, downloadDate
 - status 400 if error
 
 
 ## getInboxItem(messageId)
 
-This method will return a file and file meta tags. Upon first downloaded, the `download_date` for the item will be populated.
+This method will return a file and file meta tags. Upon first downloaded, the `downloadDate` for the item will be populated.
 
 
 options:
