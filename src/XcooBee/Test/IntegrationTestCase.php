@@ -8,13 +8,21 @@ use XcooBee\XcooBee;
 abstract class IntegrationTestCase extends TestCase
 {
     /** @var XcooBee */
-    public $xcoobee;
-    
+    protected $_xcoobee;
+
     const homeDir = 'F:\xampp\htdocs\xcoobee';
     
-    protected function _initXcooBee()
+    public function setup()
     {
-        $this->xcoobee = new XcooBee($this);
-        $this->xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile(self::homeDir));
+        $this->_xcoobee = new XcooBee($this);
+        $this->_xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile(self::homeDir));
+
+        parent::setUp(); 
     }
+    
+    protected function tearDown()
+    {
+        $this->_xcoobee->clearConfig();
+    }
+    
 }

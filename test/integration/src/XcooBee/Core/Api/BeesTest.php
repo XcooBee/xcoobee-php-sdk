@@ -2,12 +2,18 @@
 
 namespace Test\XcooBee\Core\Api;
 
-use XcooBee\Test\TestCase;
+use XcooBee\Test\IntegrationTestCase;
 
-class BeesTest extends TestCase
+class BeesTest extends IntegrationTestCase
 {
-    public function testTakeoff()
+    public function testListBees()
     {
-         
+        $bees = $this->_xcoobee->bees->listBees();
+        $this->assertEquals(200, $bees->code);
+    }
+    
+    public function testUploadFiles()
+    {
+        $this->_xcoobee->bees->uploadFiles([__DIR__ . '/../../../../assets/testfile.txt']);
     }
 }
