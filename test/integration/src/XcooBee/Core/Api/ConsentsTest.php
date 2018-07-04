@@ -6,10 +6,17 @@ use XcooBee\Test\IntegrationTestCase;
 
 class ConsentsTest extends IntegrationTestCase
 {
-    public function testListCampaigns()
+    /**
+     * @param int $responseData
+     * 
+     * @dataProvider CampaignsProvider
+     */
+    public function testListCampaigns($responseData)
     {
+        print_r($responseData);
         $campaigns = $this->_xcoobee->consents->listCampaigns();
         $this->assertEquals(200, $campaigns->code);
+        $this->assertEquals($responseData, $campaigns->data->campaigns->data);
     }
     
     public function testGetCampaign()
@@ -52,5 +59,36 @@ class ConsentsTest extends IntegrationTestCase
     {   
         $consent = $this->_xcoobee->consents->getCookieConsent('~Volodymyr_R');
         $this->assertEquals(200, $consent->code);
+    }
+    
+    public function CampaignsProvider()
+    {
+        return [[
+            [
+                (object)[
+                    'campaign_name' => 'This is my other test campaign',
+                    'status' => 'new'
+                ]
+            ],
+            [
+                (object)[
+                    'campaign_name' => 'This is my other test campaign',
+                    'status' => 'new'
+                ]
+            ],
+            [
+                (object)[
+                    'campaign_name' => 'ganesh test camp 2',
+                    'status' => 'new'
+                ]
+            ],
+            [
+                (object)[
+                    'campaign_name' => 'ganesh test camp 3',
+                    'status' => 'new'
+                ]
+            ]
+        ]
+        ];
     }
 }
