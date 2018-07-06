@@ -41,7 +41,7 @@ class SystemTest extends IntegrationTestCase
     public function testGetEvents()
     {
        $response = $this->_xcoobee->system->getEvents();
-       print_r($response);
+       $this->assertEquals(200, $response->code);
     }
     
 }
