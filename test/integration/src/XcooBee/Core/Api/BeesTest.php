@@ -12,28 +12,34 @@ class BeesTest extends IntegrationTestCase {
      * 
      * @dataProvider BeesProvider
      */
-    public function testListBees($responseCode, $responseData) {
+    public function testListBees($responseCode, $responseData)
+    {
         $bees = $this->_xcoobee->bees->listBees();
         $this->assertEquals($responseCode, $bees->code);
         $this->assertEquals($responseData, $bees->data->bees->data[0]);
     }
 
-    public function testUploadFiles() {
+    public function testUploadFiles()
+    {
         $this->_xcoobee->bees->uploadFiles([__DIR__ . '/../../../../assets/testfile.txt']);
     }
 
-    public function testTakeOff() {
+    public function testTakeOff()
+    {
+        
         $response = $this->_xcoobee->bees->takeOff([
-            'xcoobee_twitter_base' => ['message' => 'Test post'],
-                ], [
+            'xcoobee_message' => ['xcoobee_simple_message' => ['message' => 'Test post'], 'recipient' => ['xcoobee_id' => '~ganesh_']],
+            ], [
             'process' => [
                 'fileNames' => ['testfile.txt'],
+                'destinations' => ["~ganesh_"],
             ],
         ]);
         $this->assertEquals(200, $response->code);
     }
 
-    public function BeesProvider() {
+    public function BeesProvider()
+    {
         return [[
         200,
         (object) [
