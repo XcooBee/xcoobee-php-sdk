@@ -72,7 +72,7 @@ class Bees extends Api
         $result = [];
         foreach ($files as $key => $file) {
             $policy = 'policy' . $key;
-            $policy = $policies->data->$policy;
+            $policy = $policies->$policy;
             $result[] = $this->_fileUploader->uploadFile($file, $policy, $config);
         }
 
@@ -151,7 +151,7 @@ class Bees extends Api
         }
         $query .= '}';
 
-        return $this->_request($query, [], $config);
+        return $this->_request($query, [], $config)->data;
     }
 
     protected function _getOutboxEndpoint($userId, $intent, $config = [])
