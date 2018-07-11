@@ -17,13 +17,14 @@ class UsersTest extends IntegrationTestCase
     public function testGetConversations()
     {
         $response = $this->_xcoobee->users->getConversations();
+        $keys = array_keys($response->data->conversations->data);
         $this->assertEquals('200', $response->code);
         $this->assertEquals((object)[
-            'display_name' => 'Volodymyr Rabeshko',
-            'consent_cursor' => 'AvPfoQD56I3NJ8h+CulzdHT2z58COtEd/JMjUDZGXm7pQKIo2gdqzL24QE9iJqLmVzJQKg==',
-            'target_cursor' => 'AvPfoQD5u4CYIJpyC7lzKHKhzp8CaIUa/JJ/VTBGWmO1QPkq1ARsy7uwQE9iJqLmVyRQKg==',
-            'date_c' => '2018-07-06T12:41:57Z'
-        ], $response->data->conversations->data[0]);
+            'display_name' => 'test test122',
+            'consent_cursor' => null,
+            'target_cursor' => 'AvPfoQD544/OdJ0lDu9zenf0kp8Ca4Qc/JN+BWJGDG3lGqd81FU7zem0QE9iJqLmVyRQKg==',
+            'date_c' => '2018-05-09T09:33:53Z'
+        ], $response->data->conversations->data[end($keys)]);
     }
     
     public function testSendUserMessage()
