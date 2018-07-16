@@ -16,11 +16,9 @@ class BeesTest extends TestCase
         ]);
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_getOutboxEndpoint' => 'test',
-            '_getPolicy' => (object) [
-                'data' => (object) [
-                    'policy0' => 'test',
-                    'policy1' => 'test',
-                ]
+            '_getPolicy' => (object)  [
+                'policy0' => 'test',
+                'policy1' => 'test',
             ]
         ]);
         $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);
@@ -28,7 +26,7 @@ class BeesTest extends TestCase
             'uploadFile' => true,
         ]));
 
-        $result = $beesMock->uploadFiles(['1.txt', '2.txt']);
+        $result = $beesMock->uploadFiles([__DIR__ . '/../../../../assets/test.txt', __DIR__ . '/../../../../assets/test2.txt']);
 
         $this->assertEquals(2, count($result));
         $this->assertTrue($result[0]);
@@ -44,10 +42,8 @@ class BeesTest extends TestCase
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_getOutboxEndpoint' => 'test',
             '_getPolicy' => (object) [
-                'data' => (object) [
-                    'policy0' => 'test',
-                    'policy1' => 'test',
-                ]
+                'policy0' => 'test',
+                'policy1' => 'test',
             ]
         ]);
         $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);
@@ -55,7 +51,7 @@ class BeesTest extends TestCase
             'uploadFile' => true,
         ]));
 
-        $result = $beesMock->uploadFiles(['1.txt', '2.txt'], [
+        $result = $beesMock->uploadFiles([__DIR__ . '/../../../../assets/test.txt', __DIR__ . '/../../../../assets/test2.txt'], [
             'apiKey'=> 'testapikey' , 
             'apiSecret'=> 'testapisecret' 
         ]);

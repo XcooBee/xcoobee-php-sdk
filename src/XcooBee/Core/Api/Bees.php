@@ -66,6 +66,21 @@ class Bees extends Api
     public function uploadFiles($files, $endpoint = 'outbox', $config = [])
     {
         $endpoint = !$endpoint ? $endpoint : 'outbox';
+        $errors = [];
+        foreach ($files as $file) {
+            if (!file_exists($file)) {
+                $errors[] = ["message" => "Invalid File", 'filePath' => $file];
+            }
+        }
+
+        if ($errors) {
+            $response = new Response;
+            $response->code = 400;
+            $response->error = $errors;
+
+            return $response;
+        }
+        
         $user = $this->_xcoobee->users->getUser($config);
         $endpointId = $this->_getOutboxEndpoint($user->userId, $endpoint, $config);
         $policies = $this->_getPolicy($endpoint, $endpointId, $files , $config);
