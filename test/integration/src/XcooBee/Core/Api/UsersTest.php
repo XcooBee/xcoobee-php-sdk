@@ -19,12 +19,9 @@ class UsersTest extends IntegrationTestCase
         $response = $this->_xcoobee->users->getConversations();
         $keys = array_keys($response->data->conversations->data);
         $this->assertEquals('200', $response->code);
-        $this->assertEquals((object)[
-            'display_name' => 'test test122',
-            'consent_cursor' => null,
-            'target_cursor' => 'AvPfoQD544/OdJ0lDu9zenf0kp8Ca4Qc/JN+BWJGDG3lGqd81FU7zem0QE9iJqLmVyRQKg==',
-            'date_c' => '2018-05-09T09:33:53Z'
-        ], $response->data->conversations->data[end($keys)]);
+        $this->assertEquals('test test122', $response->data->conversations->data[end($keys)]->display_name);
+        $this->assertEquals(null, $response->data->conversations->data[end($keys)]->consent_cursor);
+        $this->assertEquals('2018-05-09T09:33:53Z', $response->data->conversations->data[end($keys)]->date_c);
     }
     
     public function testSendUserMessage()
