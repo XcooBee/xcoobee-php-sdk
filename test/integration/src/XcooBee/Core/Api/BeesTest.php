@@ -6,6 +6,7 @@ use XcooBee\Test\IntegrationTestCase;
 
 class BeesTest extends IntegrationTestCase
 {
+
     public function testListBees()
     {
         $bees = $this->_xcoobee->bees->listBees();
@@ -25,15 +26,19 @@ class BeesTest extends IntegrationTestCase
 
     public function testTakeOff()
     {
-        
-        $response = $this->_xcoobee->bees->takeOff([
-            'xcoobee_message' => ['xcoobee_simple_message' => ['message' => 'Test post'], 'recipient' => ['xcoobee_id' => '~ganesh_']],
-            ], [
-            'process' => [
-                'fileNames' => ['testfile.txt'],
-                'destinations' => ["~ganesh_"],
-            ],
-        ]);
+
+        $response = $this->_xcoobee->bees->takeOff(
+            [
+                'xcoobee_message' => [
+                    'xcoobee_simple_message' => ['message' => 'Test post'], 'recipient' => ['xcoobee_id' => '~ganesh_']
+                ]
+            ], 
+            [
+                'process' => [
+                    'fileNames' => ['testfile.txt'],
+                    'destinations' => ["~ganesh_"],
+                ],
+            ]);
         $this->assertEquals(200, $response->code);
     }
 

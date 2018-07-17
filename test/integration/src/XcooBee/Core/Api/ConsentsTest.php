@@ -6,6 +6,7 @@ use XcooBee\Test\IntegrationTestCase;
 
 class ConsentsTest extends IntegrationTestCase
 {
+
     public function testListCampaigns()
     {
         $campaigns = $this->_xcoobee->consents->listCampaigns();
@@ -23,27 +24,27 @@ class ConsentsTest extends IntegrationTestCase
         $this->assertEquals('new', $campaign->data->campaign->status);
         $this->assertEquals([], $campaign->data->campaign->xcoobee_targets);
     }
-    
+
     public function testRequestConsent()
     {
         $consent = $this->_xcoobee->consents->requestConsent('~Volodymyr_R');
         $this->assertEquals(200, $consent->code);
     }
-    
+
     public function testSetUserDataResponse()
     {
         $consent = $this->_xcoobee->consents->setUserDataResponse('test message', 'AvPfoQD56I3NJ8h+CulzdHT2z58COtEd/JMjUDZGXm7pQKIo2gdqzL24QE9iJqLmVzJQKg==');
         $this->assertEquals(200, $consent->code);
         $this->assertEquals(true, $consent->data);
     }
-    
-    public function testConfirmConsentChange()
+
+    public function testConfirmConsentChange() 
     {
         $consent = $this->_xcoobee->consents->confirmConsentChange('AvPfoQD56I3NJ8h+CulzdHT2z58COtEd/JMjUDZGXm7pQKIo2gdqzL24QE9iJqLmVzJQKg==');
         $this->assertEquals(200, $consent->code);
         $this->assertEquals(true, $consent->data);
     }
-    
+
     public function testConfirmDataDelete()
     {
         $consent = $this->_xcoobee->consents->confirmDataDelete('AvPfoQD56I3NJ8h+CulzdHT2z58COtEd/JMjUDZGXm7pQKIo2gdqzL24QE9iJqLmVzJQKg==');
@@ -63,9 +64,9 @@ class ConsentsTest extends IntegrationTestCase
         $this->assertEquals('deliver_a_product', $consent->data->consent->consent_type);
         $this->assertEquals([], $consent->data->consent->consent_details);
     }
-    
+
     public function testGetCookieConsent()
-    {   
+    {
         $consent = $this->_xcoobee->consents->getCookieConsent('~Volodymyr_R');
         $this->assertEquals(200, $consent->code);
     }
