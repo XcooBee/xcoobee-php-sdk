@@ -16,9 +16,12 @@ class BeesTest extends TestCase
         ]);
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_getOutboxEndpoint' => 'test',
-            '_getPolicy' => (object)  [
-                'policy0' => 'test',
-                'policy1' => 'test',
+            '_getPolicy' => (object) [
+                'data' => (object) [
+                    'policy0' => 'test',
+                    'policy1' => 'test',
+                ],
+                'errors' => []
             ]
         ]);
         $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);
@@ -33,6 +36,74 @@ class BeesTest extends TestCase
         $this->assertTrue($result[1]);
     }
     
+    public function testUploadFiles_InvalidExtension()
+    {
+        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
+        $XcooBeeMock->users = $this->_getMock(Users::class, [
+            'getUser' => (object) ['userId' => 'test']
+        ]);
+        $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
+            '_getOutboxEndpoint' => 'test',
+            '_getPolicy' => (object) [
+                'data' => (object) [
+                    'policy0' => [],
+                    'policy1' => [],
+                ],
+                'errors' => [
+                    (object) [
+                        'message' => 'rar files are not allowed',
+                    ],
+                    (object) [
+                        'message' => 'sql files are not allowed',
+                    ]
+                ]
+            ]
+        ]);
+        $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);
+        $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
+            'uploadFile' => true,
+        ]));
+
+        $result = $beesMock->uploadFiles([__DIR__ . '/../../../../assets/test.rar', __DIR__ . '/../../../../assets/test.sql']);
+
+        $this->assertEquals('rar files are not allowed', $result->errors[0]->message);
+        $this->assertEquals('sql files are not allowed', $result->errors[1]->message);
+    }
+    
+    public function testUploadFiles_InvalidFile()
+    {
+        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
+        $XcooBeeMock->users = $this->_getMock(Users::class, [
+            'getUser' => (object) ['userId' => 'test']
+        ]);
+        $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
+            '_getOutboxEndpoint' => 'test',
+            '_getPolicy' => (object) [
+                'data' => (object) [
+                    'policy0' => [],
+                    'policy1' => [],
+                ],
+                'errors' => [
+                    (object) [
+                        'message' => 'Invalid File',
+                    ],
+                    (object) [
+                        'message' => 'Invalid File',
+                    ]
+                ]
+            ]
+        ]);
+        $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);
+        $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
+            'uploadFile' => true,
+        ]));
+
+        $result = $beesMock->uploadFiles([__DIR__ . '/../../../../assets/invalidfile.rar', __DIR__ . '/../../../../assets/xyz.sql']);
+
+        $this->assertEquals('Invalid File', $result->errors[0]->message);
+        $this->assertEquals('Invalid File', $result->errors[1]->message);
+    }
+    
     public function testUploadFiles_Upload2Files_UseConfig()
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
@@ -42,8 +113,11 @@ class BeesTest extends TestCase
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_getOutboxEndpoint' => 'test',
             '_getPolicy' => (object) [
-                'policy0' => 'test',
-                'policy1' => 'test',
+                'data' => (object) [
+                    'policy0' => 'test',
+                    'policy1' => 'test',
+                ],
+                'errors' => []
             ]
         ]);
         $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);

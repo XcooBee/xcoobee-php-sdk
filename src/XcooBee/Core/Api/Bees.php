@@ -66,28 +66,34 @@ class Bees extends Api
     public function uploadFiles($files, $endpoint = 'outbox', $config = [])
     {
         $endpoint = !$endpoint ? $endpoint : 'outbox';
+        $response = new Response();
         $errors = [];
         foreach ($files as $file) {
             if (!file_exists($file)) {
-                $errors[] = ["message" => "Invalid File", 'filePath' => $file];
+                $errors[] = (object) ["message" => "Invalid File", 'filePath' => $file];
             }
         }
 
         if ($errors) {
-            $response = new Response;
             $response->code = 400;
-            $response->error = $errors;
+            $response->errors = $errors;
 
             return $response;
         }
-        
+
         $user = $this->_xcoobee->users->getUser($config);
         $endpointId = $this->_getOutboxEndpoint($user->userId, $endpoint, $config);
-        $policies = $this->_getPolicy($endpoint, $endpointId, $files , $config);
+        $policies = $this->_getPolicy($endpoint, $endpointId, $files, $config);
+        if ($policies->errors) {
+            $response->code = 400;
+            $response->errors = $policies->errors;
+
+            return $response;
+        }
         $result = [];
         foreach ($files as $key => $file) {
             $policy = 'policy' . $key;
-            $policy = $policies->$policy;
+            $policy = $policies->data->$policy;
             $result[] = $this->_fileUploader->uploadFile($file, $policy, $config);
         }
 
@@ -166,7 +172,7 @@ class Bees extends Api
         }
         $query .= '}';
 
-        return $this->_request($query, [], $config)->data;
+        return $this->_request($query, [], $config);
     }
 
     protected function _getOutboxEndpoint($userId, $intent, $config = [])
