@@ -77,21 +77,7 @@ class BeesTest extends TestCase
             'getUser' => (object) ['userId' => 'test']
         ]);
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
-            '_getOutboxEndpoint' => 'test',
-            '_getPolicy' => (object) [
-                'data' => (object) [
-                    'policy0' => [],
-                    'policy1' => [],
-                ],
-                'errors' => [
-                    (object) [
-                        'message' => 'Invalid File',
-                    ],
-                    (object) [
-                        'message' => 'Invalid File',
-                    ]
-                ]
-            ]
+            '_getOutboxEndpoint' => 'test'
         ]);
         $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);
         $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
