@@ -73,16 +73,9 @@ class BeesTest extends TestCase
     public function testUploadFiles_InvalidFile()
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
-        $XcooBeeMock->users = $this->_getMock(Users::class, [
-            'getUser' => (object) ['userId' => 'test']
-        ]);
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_getOutboxEndpoint' => 'test'
         ]);
-        $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);
-        $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
-            'uploadFile' => true,
-        ]));
 
         $result = $beesMock->uploadFiles([__DIR__ . '/../../../../assets/invalidfile.rar', __DIR__ . '/../../../../assets/xyz.sql']);
 
