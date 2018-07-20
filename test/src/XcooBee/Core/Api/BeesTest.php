@@ -72,7 +72,6 @@ class BeesTest extends TestCase
     
     public function testUploadFiles_InvalidFile()
     {
-        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_getOutboxEndpoint' => 'test'
         ]);
