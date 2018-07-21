@@ -20,6 +20,42 @@ class BeesTest extends TestCase
                 'data' => (object) [
                     'policy0' => 'test',
                     'policy1' => 'test',
+                ],
+                'errors' => []
+            ]
+        ]);
+        $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);
+        $this->_setProperty($beesMock, '_fileUploader', $this->_getMock(FileUploader::class, [
+            'uploadFile' => true,
+        ]));
+
+        $result = $beesMock->uploadFiles([__DIR__ . '/../../../../assets/test.txt', __DIR__ . '/../../../../assets/test2.txt']);
+
+        $this->assertEquals(2, count($result));
+        $this->assertTrue($result[0]);
+        $this->assertTrue($result[1]);
+    }
+    
+    public function testUploadFiles_InvalidExtension()
+    {
+        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
+        $XcooBeeMock->users = $this->_getMock(Users::class, [
+            'getUser' => (object) ['userId' => 'test']
+        ]);
+        $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
+            '_getOutboxEndpoint' => 'test',
+            '_getPolicy' => (object) [
+                'data' => (object) [
+                    'policy0' => [],
+                    'policy1' => [],
+                ],
+                'errors' => [
+                    (object) [
+                        'message' => 'rar files are not allowed',
+                    ],
+                    (object) [
+                        'message' => 'sql files are not allowed',
+                    ]
                 ]
             ]
         ]);
@@ -28,11 +64,22 @@ class BeesTest extends TestCase
             'uploadFile' => true,
         ]));
 
-        $result = $beesMock->uploadFiles(['1.txt', '2.txt']);
+        $result = $beesMock->uploadFiles([__DIR__ . '/../../../../assets/test.rar', __DIR__ . '/../../../../assets/test.sql']);
 
-        $this->assertEquals(2, count($result));
-        $this->assertTrue($result[0]);
-        $this->assertTrue($result[1]);
+        $this->assertEquals('rar files are not allowed', $result->errors[0]->message);
+        $this->assertEquals('sql files are not allowed', $result->errors[1]->message);
+    }
+    
+    public function testUploadFiles_InvalidFile()
+    {
+        $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
+            '_getOutboxEndpoint' => 'test'
+        ]);
+
+        $result = $beesMock->uploadFiles([__DIR__ . '/../../../../assets/invalidfile.rar', __DIR__ . '/../../../../assets/xyz.sql']);
+
+        $this->assertEquals('Invalid File', $result->errors[0]->message);
+        $this->assertEquals('Invalid File', $result->errors[1]->message);
     }
     
     public function testUploadFiles_Upload2Files_UseConfig()
@@ -47,7 +94,8 @@ class BeesTest extends TestCase
                 'data' => (object) [
                     'policy0' => 'test',
                     'policy1' => 'test',
-                ]
+                ],
+                'errors' => []
             ]
         ]);
         $this->_setProperty($beesMock, '_xcoobee', $XcooBeeMock);
@@ -55,7 +103,7 @@ class BeesTest extends TestCase
             'uploadFile' => true,
         ]));
 
-        $result = $beesMock->uploadFiles(['1.txt', '2.txt'], [
+        $result = $beesMock->uploadFiles([__DIR__ . '/../../../../assets/test.txt', __DIR__ . '/../../../../assets/test2.txt'], [
             'apiKey'=> 'testapikey' , 
             'apiSecret'=> 'testapisecret' 
         ]);
