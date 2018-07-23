@@ -47,7 +47,9 @@ class Inbox extends Api
         if ($inboxItems->code != 200) {
             return $inboxItems;
         }
-        $inboxItems->data->inbox->data = array_map(function($item) {
+        
+        $inboxItems->data->page_info = $inboxItems->data->inbox->page_info;
+        $inboxItems->data->inbox = array_map(function($item) {
             return (object) [
                 'fileName'          => $item->original_name,
                 'messageId'         => $item->filename,

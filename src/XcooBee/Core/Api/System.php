@@ -62,7 +62,14 @@ class System extends Api
             }
         }';
 
-        return $this->_request($query, ['campaignId' => $campaignId], $config);
+        $subscriptions = $this->_request($query, ['campaignId' => $campaignId], $config);
+        if($subscriptions->code != 200){
+            return $subscriptions;
+        }
+        
+        $subscriptions->data->event_subscriptions = $subscriptions->data->event_subscriptions->data;
+        
+        return $subscriptions;
     }
     
     /**
@@ -153,11 +160,17 @@ class System extends Api
                     payload
                     hmac
                     date_c
-                }
-            }
+                }s
         }';
 
-        return $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
+        $events = $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
+        if ($events->code != 200) {
+            return $events;
+        }
+
+        $events->data->events = $events->data->events->data;
+
+        return $events;
     }
     
     /**

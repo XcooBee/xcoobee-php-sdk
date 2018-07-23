@@ -27,7 +27,8 @@ class Bees extends Api
      * @return Response
      * @throws XcooBeeException
      */
-    public function listBees($searchText = "", $config = []){
+    public function listBees($searchText = "", $config = [])
+    {
         $query = 'query getBees($searchText: String) {
             bees(search: $searchText) {
                 data {
@@ -50,7 +51,16 @@ class Bees extends Api
             }
         }';
 
-        return $this->_request($query, ['searchText' => $searchText], $config);
+        $bees = $this->_request($query, ['searchText' => $searchText], $config);
+
+        if ($bees->code != 200) {
+            return $bees;
+        }
+
+        $bees->data->page_info = $bees->data->bees->page_info;
+        $bees->data->bees = $bees->data->bees->data;
+
+        return $bees;
     }
 
     /**

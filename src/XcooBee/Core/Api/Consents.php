@@ -30,7 +30,15 @@ class Consents extends Api
             }
         }';
 
-        return $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
+        $campaigns = $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
+        if ($campaigns->code != 200) {
+            return $campaigns;
+        }
+
+        $campaigns->data->page_info = $campaigns->data->campaigns->page_info;
+        $campaigns->data->campaigns = $campaigns->data->campaigns->data;
+
+        return $campaigns;
     }
 
     /**
