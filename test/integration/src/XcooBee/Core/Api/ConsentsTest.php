@@ -27,7 +27,7 @@ class ConsentsTest extends IntegrationTestCase
 
     public function testRequestConsent()
     {
-        $consent = $this->_xcoobee->consents->requestConsent('~Volodymyr_R');
+        $consent = $this->_xcoobee->consents->requestConsent('~demo_user');
         $this->assertEquals(200, $consent->code);
     }
 
@@ -56,8 +56,8 @@ class ConsentsTest extends IntegrationTestCase
     {
         $consent = $this->_xcoobee->consents->getConsentData('AvPfoQD56I3NJ8h+CulzdHT2z58COtEd/JMjUDZGXm7pQKIo2gdqzL24QE9iJqLmVzJQKg==');
         $this->assertEquals(200, $consent->code);
-        $this->assertEquals('Volodymyr Rabeshko', $consent->data->consent->user_display_name);
-        $this->assertEquals('~Volodymyr_R', $consent->data->consent->user_xcoobee_id);
+        $this->assertEquals('Test User', $consent->data->consent->user_display_name);
+        $this->assertEquals('~demo_user', $consent->data->consent->user_xcoobee_id);
         $this->assertEquals('test', $consent->data->consent->consent_name);
         $this->assertEquals('test', $consent->data->consent->consent_description);
         $this->assertEquals('active', $consent->data->consent->consent_status);
@@ -67,8 +67,9 @@ class ConsentsTest extends IntegrationTestCase
 
     public function testGetCookieConsent()
     {
-        $consent = $this->_xcoobee->consents->getCookieConsent('~Volodymyr_R');
+        $consent = $this->_xcoobee->consents->getCookieConsent('~demo_user');
         $this->assertEquals(200, $consent->code);
+        $this->assertEquals(['application' => false, 'usage' => false, 'advertising' => false, 'statistics' => false], $consent->data);
     }
 
 }
