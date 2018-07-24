@@ -10,7 +10,18 @@ class UsersTest extends TestCase {
     public function testGetConversation() 
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'conversation' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ])
         ]);
         $usersMock->expects($this->once())
                 ->method('_request')
@@ -24,7 +35,18 @@ class UsersTest extends TestCase {
     public function testGetConversation_UseConfig() 
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'conversation' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ])
         ]);
         $usersMock->expects($this->once())
                 ->method('_request')
@@ -53,7 +75,18 @@ class UsersTest extends TestCase {
     public function testGetConversations() 
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'conversations' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ]),
             '_getUserId' => 'testUserID'
         ]);
 
@@ -63,7 +96,18 @@ class UsersTest extends TestCase {
     public function testGetConversations_UseConfig() 
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'conversations' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ]),
             '_getUserId' => 'testUserID'
         ]);
         

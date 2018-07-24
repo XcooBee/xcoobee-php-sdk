@@ -30,7 +30,7 @@ class InboxTest extends TestCase
 
         $response = $inboxMock->listInbox();
         $this->assertEquals($requestCode, $response->code);
-        $this->assertEquals($expectedResponse, $response->data->inbox->data);
+        $this->assertEquals($expectedResponse, $response->data->inbox);
     }
 
     /**
@@ -57,7 +57,7 @@ class InboxTest extends TestCase
         $response = $inboxMock->listInbox('2015-08-09T11:39:31Z');
         
         $this->assertEquals($requestCode, $response->code);
-        $this->assertEquals($expectedResponse, $response->data->inbox->data);
+        $this->assertEquals($expectedResponse, $response->data->inbox);
     }
 
     /**
@@ -153,6 +153,11 @@ class InboxTest extends TestCase
                                 'date' => '2018-06-01T07:12:42Z',
                                 'downloaded' => '2018-06-01T07:12:42Z'
                             ]
+                        ],
+                        'page_info' => (object)[
+                            'end_cursor' => 'testEndCursor',
+                            'has_next_page' => null
+
                         ]
                     ]
                 ],
@@ -170,9 +175,7 @@ class InboxTest extends TestCase
             [
                 400,
                 (object) [
-                    'inbox' => (object) [
-                        'data' => []
-                    ]
+                    'inbox' => []
                 ],
                 ['testError'],
                 []

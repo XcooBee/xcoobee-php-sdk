@@ -99,7 +99,18 @@ class SystemTest extends TestCase
     public function testListEventSubscriptions() 
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'event_subscriptions' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ])
         ]);
 
         $systemMock->expects($this->once())
@@ -114,7 +125,18 @@ class SystemTest extends TestCase
     public function testListEventSubscriptions_UseDefaultCampaign() 
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'event_subscriptions' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ]),
             '_getDefaultCampaignId' => 'testCampaignId',
         ]);
 
@@ -130,7 +152,18 @@ class SystemTest extends TestCase
     public function testListEventSubscriptions_UseConfig() 
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'event_subscriptions' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ])
         ]);
 
         $systemMock->expects($this->once())
@@ -297,7 +330,18 @@ class SystemTest extends TestCase
     public function testGetEvents()
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'events' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ]),
             '_getUserId' => "testUserId"
         ]);
 
@@ -312,7 +356,18 @@ class SystemTest extends TestCase
     public function testGetEvents_useConfig()
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'events' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ]),
             '_getUserId' => "testUserId"
         ]);
 

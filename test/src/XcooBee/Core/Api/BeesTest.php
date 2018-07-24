@@ -117,7 +117,18 @@ class BeesTest extends TestCase
     {
         
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'bees' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ])
         ]);
         
         $consentsMock->listBees();
@@ -126,7 +137,18 @@ class BeesTest extends TestCase
     public function testListBees_UseConfig()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'bees' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ])
         ]);
         $consentsMock->expects($this->once())
             ->method('_request')

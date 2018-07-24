@@ -60,7 +60,18 @@ class ConsentsTest extends TestCase
     public function testListCampaigns()
     { 
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'campaigns' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ]),
             '_getUserId' => 'testUserID'
         ]);
         
@@ -70,7 +81,18 @@ class ConsentsTest extends TestCase
     public function testListCampaigns_UseConfig()
     {  
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(200, (object)[
+                'campaigns' => (object)[
+                    'data' => (object) [
+                        'Field' => 'testFieldValue'
+                    ],
+                    'page_info' => (object)[
+                        'end_cursor' => 'testEndCursor',
+                        'has_next_page' => null
+                        
+                    ]
+                ]
+            ]),
             '_getUserId'=>'testUserId'
         ]);
         $consentsMock->expects($this->once())
