@@ -257,7 +257,10 @@ class Consents extends Api
             }
         }';
 
-        return $this->_request($query, ['statusId' => $this->_getConsentStatus($statusId), 'userId' => $this->_getUserId($config)], $config);
+        return $this->_request($query, [
+            'statusId' => $this->_getConsentStatus($statusId),
+            'userId' => $this->_getUserId($config)
+        ], $config);
     }
     
     /**
@@ -342,6 +345,7 @@ class Consents extends Api
             'expired',
             'rejected'
         ];
+        
         if (array_key_exists($statusId, $availableStatus)) {
             return $availableStatus[$statusId];
         }
