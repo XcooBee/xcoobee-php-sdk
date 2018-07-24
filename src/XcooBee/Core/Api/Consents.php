@@ -329,7 +329,7 @@ class Consents extends Api
     
     protected function _getConsentStatus($statusId)
     {
-        if (!$statusId) {
+        if ($statusId === null) {
             return null;
         }
 
