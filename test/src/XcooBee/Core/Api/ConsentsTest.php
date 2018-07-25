@@ -112,7 +112,70 @@ class ConsentsTest extends TestCase
 
         $consentsMock->requestConsent('~testXcooBeeId', 'testReferance', 'testCampaignId');
     }
+    
+    public function testListConsents()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+            '_getUserId' => 'testUser'
+        ]);
+        $consentsMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params) {
+                            $this->assertEquals(['statusId' => null, 'userId' => 'testUser'], $params);
+                        }));
 
+        $consentsMock->listConsents();
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testListConsents_invalidStatus()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+            '_getUserId' => 'testUser'
+        ]);
+
+        $consentsMock->listConsents('testStatus');
+    }
+
+    public function testListConsents_withStatus()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+            '_getConsentStatus' => 'testStatus',
+            '_getUserId' => 'testUser'
+        ]);
+        $consentsMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params) {
+                            $this->assertEquals(['statusId' => 'testStatus', 'userId' => 'testUser'], $params);
+                        }));
+
+        $consentsMock->listConsents('testStatus');
+    }
+
+    public function testListConsents__UseConfig()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+            '_getUserId' => 'testUser'
+        ]);
+        $consentsMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['statusId' => null, 'userId' => 'testUser'], $params);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+                        }));
+
+        $consentsMock->listConsents(null, [
+            'apiKey' => 'testapikey',
+            'apiSecret' => 'testapisecret'
+        ]);
+    }
+    
     public function testGetConsentData() 
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
