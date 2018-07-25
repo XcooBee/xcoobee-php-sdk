@@ -275,7 +275,7 @@ class Consents extends Api
         }
 
         $consents->data->page_info = $consents->data->consents->page_info;
-        $consents->data->campaigns = $consents->data->consents->data;
+        $consents->data->consents = $consents->data->consents->data;
 
         return $consents;
     }
