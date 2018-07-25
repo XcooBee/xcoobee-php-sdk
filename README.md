@@ -370,6 +370,27 @@ standard JSON response object
         The SDK will decrypt this for you if it has access to PGP keys otherwise you have to decrypt this object
 - status 400 if error
 
+## listConsents([statusId],[config])
+
+Query for list of consents for a given campaign. Company can get general consentid for any consent that was created as part of a campaign. This is a multi-page recordset. Data returned: consentId, creation date, expiration date, xcoobeeId
+
+possible response/filter for status:
+
+0=pending, 1=active, 2=updating, 3=offer, 4=cancelled, 5=expired, 6=rejected
+
+options: 
+
+```
+statusId   => optional: numeric, one of the valid consent statuses. If not specified all will be returned
+config       => optional: the config object
+```
+
+### response
+
+standard JSON response object
+- status 200 if success: 
+    - data object will contain consent data object: consent_id, status_id, date_c, date_e, xcoobee_id
+- status 400 if error
 
 ## getConsentData(consentId,[config])
 

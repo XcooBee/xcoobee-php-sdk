@@ -238,6 +238,40 @@ class Consents extends Api
     }
     
     /**
+     * list all consents
+     * 
+     * @param int $statusId
+     * @param array $config
+     * 
+     * @return Response
+     * 
+     * @throws XcooBeeException
+     */
+    public function listConsents($statusId = null, $config = [])
+    {
+        $query = 'query listConsents($userId: String!, $statusId: ConsentStatus) {
+            consents(campaign_owner_cursor: $userId, status : $statusId) {
+                data {
+                    consent_cursor,
+                    consent_status,
+                    user_xcoobee_id,
+                    date_c,
+                    date_e,
+                }
+                page_info {
+                    end_cursor
+                    has_next_page
+                }
+            }
+        }';
+
+        return $this->_request($query, [
+            'statusId' => $this->_getConsentStatus($statusId),
+            'userId' => $this->_getUserId($config)
+        ], $config);
+    }
+    
+    /**
      * query the XcooBee system for existing user consent
      * @param string $xid
      * @param string $campaignId
@@ -302,5 +336,28 @@ class Consents extends Api
         }
 
         return false;
+    }
+    
+    protected function _getConsentStatus($statusId)
+    {
+        if ($statusId === null) {
+            return null;
+        }
+
+        $availableStatus = [
+            'pending',
+            'active',
+            'updating',
+            'offer',
+            'cancelled',
+            'expired',
+            'rejected'
+        ];
+        
+        if (array_key_exists($statusId, $availableStatus)) {
+            return $availableStatus[$statusId];
+        }
+
+        throw new XcooBeeException('invalid "statusId" provided');
     }
 }
