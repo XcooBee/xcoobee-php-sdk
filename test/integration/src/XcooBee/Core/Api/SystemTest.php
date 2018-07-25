@@ -43,7 +43,11 @@ class SystemTest extends IntegrationTestCase
     {
         $response = $this->_xcoobee->system->getEvents();
         $this->assertEquals(200, $response->code);
-        $this->assertEquals([], $response->data->events->data);
+        $this->assertEquals('campaign', $response->data->events->data[0]->reference_type);
+        $this->assertEquals(1, $response->data->events->data[0]->event_id);
+        $this->assertEquals('consent_approved', $response->data->events->data[0]->event_type);
+        $this->assertEquals('data', $response->data->events->data[0]->payload);
+        $this->assertEquals('2018-07-23T15:46:18Z', $response->data->events->data[0]->date_c);
     }
 
 }

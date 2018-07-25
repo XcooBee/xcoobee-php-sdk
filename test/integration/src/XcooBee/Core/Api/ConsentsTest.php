@@ -33,35 +33,35 @@ class ConsentsTest extends IntegrationTestCase
 
     public function testSetUserDataResponse()
     {
-        $consent = $this->_xcoobee->consents->setUserDataResponse('test message', 'AvPfoQD56I3NJ8h+CulzdHT2z58COtEd/JMjUDZGXm7pQKIo2gdqzL24QE9iJqLmVzJQKg==');
+        $consent = $this->_xcoobee->consents->setUserDataResponse('test message', $this->_consentId);
         $this->assertEquals(200, $consent->code);
         $this->assertEquals(true, $consent->data);
     }
 
     public function testConfirmConsentChange() 
     {
-        $consent = $this->_xcoobee->consents->confirmConsentChange('AvPfoQD56I3NJ8h+CulzdHT2z58COtEd/JMjUDZGXm7pQKIo2gdqzL24QE9iJqLmVzJQKg==');
+        $consent = $this->_xcoobee->consents->confirmConsentChange($this->_consentId);
         $this->assertEquals(200, $consent->code);
         $this->assertEquals(true, $consent->data);
     }
 
     public function testConfirmDataDelete()
     {
-        $consent = $this->_xcoobee->consents->confirmDataDelete('AvPfoQD56I3NJ8h+CulzdHT2z58COtEd/JMjUDZGXm7pQKIo2gdqzL24QE9iJqLmVzJQKg==');
+        $consent = $this->_xcoobee->consents->confirmDataDelete($this->_consentId);
         $this->assertEquals(200, $consent->code);
         $this->assertEquals(true, $consent->data);
     }
 
     public function testGetConsentData()
     {
-        $consent = $this->_xcoobee->consents->getConsentData('AvPfoQD56I3NJ8h+CulzdHT2z58COtEd/JMjUDZGXm7pQKIo2gdqzL24QE9iJqLmVzJQKg==');
+        $consent = $this->_xcoobee->consents->getConsentData($this->_consentId);
         $this->assertEquals(200, $consent->code);
         $this->assertEquals('Test User', $consent->data->consent->user_display_name);
         $this->assertEquals('~demo_user', $consent->data->consent->user_xcoobee_id);
         $this->assertEquals('test', $consent->data->consent->consent_name);
         $this->assertEquals('test', $consent->data->consent->consent_description);
-        $this->assertEquals('active', $consent->data->consent->consent_status);
-        $this->assertEquals('deliver_a_product', $consent->data->consent->consent_type);
+        $this->assertEquals('pending', $consent->data->consent->consent_status);
+        $this->assertEquals('web_application_tracking', $consent->data->consent->consent_type);
         $this->assertEquals([], $consent->data->consent->consent_details);
     }
 
