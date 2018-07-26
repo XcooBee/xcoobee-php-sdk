@@ -72,10 +72,10 @@ class ConsentsTest extends TestCase
         ]);
         
         $response = $consentsMock->listCampaigns();
-        
+
         $this->assertEquals($requestCode, $response->code);
-	$this->assertEquals($requestData, $response->data);
-	$this->assertEquals($requestError, $response->errors);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
     
     public function campaignsProvider()
@@ -183,10 +183,10 @@ class ConsentsTest extends TestCase
                         }));
 
         $response = $consentsMock->listConsents();
-        
+
         $this->assertEquals($requestCode, $response->code);
-	$this->assertEquals($requestData, $response->data);
-	$this->assertEquals($requestError, $response->errors);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
     
     public function consentsProvider()

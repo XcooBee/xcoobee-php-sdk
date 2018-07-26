@@ -116,7 +116,7 @@ class SystemTest extends TestCase
                         }));
 
         $response = $systemMock->listEventSubscriptions('testCampaignId');
-        
+
         $this->assertEquals($requestCode, $response->code);
         $this->assertEquals($requestData, $response->data);
         $this->assertEquals($requestError, $response->errors);
@@ -375,10 +375,10 @@ class SystemTest extends TestCase
                             $this->assertEquals(['userId' => 'testUserId'], $params);
                         }));
         $response = $systemMock->getEvents();
-        
+
         $this->assertEquals($requestCode, $response->code);
-	$this->assertEquals($requestData, $response->data);
-	$this->assertEquals($requestError, $response->errors);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
     
     public function eventsProvider()

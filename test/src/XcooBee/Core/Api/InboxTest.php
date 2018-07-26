@@ -55,7 +55,7 @@ class InboxTest extends TestCase
                         }));
 
         $response = $inboxMock->listInbox('2015-08-09T11:39:31Z');
-        
+
         $this->assertEquals($requestCode, $response->code);
         $this->assertEquals($expectedResponse, $response->data->inbox);
     }
@@ -82,7 +82,7 @@ class InboxTest extends TestCase
                             $this->assertEquals(['userId' => "testUserId", 'filename' => 'testFileName'], $params);
                         }));
         $response = $inboxMock->getInboxItem('testFileName');
-        
+
         $this->assertEquals($requestCode, $response->code);
         $this->assertEquals($expectedResponse, $response->data->inbox_item);
     }

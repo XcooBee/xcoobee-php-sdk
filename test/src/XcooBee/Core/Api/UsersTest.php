@@ -26,10 +26,10 @@ class UsersTest extends TestCase
                         }));
 
         $response = $usersMock->getConversation('testuserId');
-        
+
         $this->assertEquals($requestCode, $response->code);
-	$this->assertEquals($requestData, $response->data);
-	$this->assertEquals($requestError, $response->errors);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
     
     public function conversationProvider()
@@ -115,10 +115,10 @@ class UsersTest extends TestCase
         ]);
 
         $response = $usersMock->getConversations();
-        
+
         $this->assertEquals($requestCode, $response->code);
-	$this->assertEquals($requestData, $response->data);
-	$this->assertEquals($requestError, $response->errors);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
     
     public function conversationsProvider()
@@ -287,7 +287,7 @@ class UsersTest extends TestCase
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
-    public function testSendUserMessageNodataProvided() 
+    public function testSendUserMessageNodataProvided()
     {
         $xcooBeeMock = $this->_getXcooBeeMock();
         $users = new User($xcooBeeMock);
