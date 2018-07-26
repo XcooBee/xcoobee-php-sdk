@@ -160,7 +160,8 @@ class System extends Api
                     payload
                     hmac
                     date_c
-                }s
+                }
+            }
         }';
 
         $events = $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
