@@ -127,6 +127,12 @@ class BeesTest extends TestCase
             '_request' => $this->_createResponse($requestCode, $requestData, $requestError)
         ]);
         
+        $consentsMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['searchText' => ''], $params);
+        }));
+        
         $response = $consentsMock->listBees();
         
         $this->assertEquals($requestCode, $response->code);
