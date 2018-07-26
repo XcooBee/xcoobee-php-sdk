@@ -96,21 +96,17 @@ class SystemTest extends TestCase
         $this->assertEquals('pgp key not found.', $response->errors[0]->message);
     }
     
-    public function testListEventSubscriptions() 
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider eventsSubscriptionProvider
+    */
+    public function testListEventSubscriptions($requestCode, $requestData, $requestError) 
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => $this->_createResponse(200, (object)[
-                'event_subscriptions' => (object)[
-                    'data' => (object) [
-                        'Field' => 'testFieldValue'
-                    ],
-                    'page_info' => (object)[
-                        'end_cursor' => 'testEndCursor',
-                        'has_next_page' => null
-                        
-                    ]
-                ]
-            ])
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError)
         ]);
 
         $systemMock->expects($this->once())
@@ -119,9 +115,41 @@ class SystemTest extends TestCase
                             $this->assertEquals(['campaignId' => 'testCampaignId'], $params);
                         }));
 
-        $systemMock->listEventSubscriptions('testCampaignId');
+        $response = $systemMock->listEventSubscriptions('testCampaignId');
+        
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
+    
+    public function eventsSubscriptionProvider()
+    {
+        return [
+            [
+                200,
+                (object)[
+                    'event_subscriptions' => (object)[
+                        'data' => (object) [
+                            'Field' => 'testFieldValue'
+                        ],
+                        'page_info' => (object)[
+                            'end_cursor' => 'testEndCursor',
+                            'has_next_page' => null
 
+                        ]
+                    ]
+                ],
+                []   
+            ],
+            [
+                400,
+                (object)[],
+                ["message" => 'test error message'],
+                []    
+            ]
+        ];
+    }
+    
     public function testListEventSubscriptions_UseDefaultCampaign() 
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
@@ -327,21 +355,17 @@ class SystemTest extends TestCase
         ]);
     }
     
-    public function testGetEvents()
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider eventsProvider
+    */
+    public function testGetEvents($requestCode, $requestData, $requestError)
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => $this->_createResponse(200, (object)[
-                'events' => (object)[
-                    'data' => (object) [
-                        'Field' => 'testFieldValue'
-                    ],
-                    'page_info' => (object)[
-                        'end_cursor' => 'testEndCursor',
-                        'has_next_page' => null
-                        
-                    ]
-                ]
-            ]),
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
             '_getUserId' => "testUserId"
         ]);
 
@@ -350,9 +374,41 @@ class SystemTest extends TestCase
                 ->will($this->returnCallback(function ($query, $params) {
                             $this->assertEquals(['userId' => 'testUserId'], $params);
                         }));
-        $systemMock->getEvents();
+        $response = $systemMock->getEvents();
+        
+        $this->assertEquals($requestCode, $response->code);
+	$this->assertEquals($requestData, $response->data);
+	$this->assertEquals($requestError, $response->errors);
     }
+    
+    public function eventsProvider()
+    {
+        return [
+            [
+                200,
+                (object)[
+                    'events' => (object)[
+                        'data' => (object) [
+                            'Field' => 'testFieldValue'
+                        ],
+                        'page_info' => (object)[
+                            'end_cursor' => 'testEndCursor',
+                            'has_next_page' => null
 
+                        ]
+                    ]
+                ],
+                []   
+            ],
+            [
+                400,
+                (object)[],
+                ["message" => 'test error message'],
+                []    
+            ]
+        ];
+    }
+    
     public function testGetEvents_useConfig()
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [

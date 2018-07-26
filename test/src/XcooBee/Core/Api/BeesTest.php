@@ -113,25 +113,53 @@ class BeesTest extends TestCase
         $this->assertTrue($result[1]);
     }
     
-    public function testListBees()
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider beesProvider
+    */
+    public function testListBees($requestCode, $requestData, $requestError)
     {
         
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
-            '_request' => $this->_createResponse(200, (object)[
-                'bees' => (object)[
-                    'data' => (object) [
-                        'Field' => 'testFieldValue'
-                    ],
-                    'page_info' => (object)[
-                        'end_cursor' => 'testEndCursor',
-                        'has_next_page' => null
-                        
-                    ]
-                ]
-            ])
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError)
         ]);
         
-        $consentsMock->listBees();
+        $response = $consentsMock->listBees();
+        
+        $this->assertEquals($requestCode, $response->code);
+	$this->assertEquals($requestData, $response->data);
+	$this->assertEquals($requestError, $response->errors);
+    }
+    
+    public function beesProvider()
+    {
+        return [
+            [
+                200,
+                (object)[
+                    'bees' => (object)[
+                        'data' => (object) [
+                            'Field' => 'testFieldValue'
+                        ],
+                        'page_info' => (object)[
+                            'end_cursor' => 'testEndCursor',
+                            'has_next_page' => null
+
+                        ]
+                    ]
+                ],
+                []   
+            ],
+            [
+                400,
+                (object)[],
+                ["message" => 'test error message'],
+                []    
+            ]
+        ];
     }
     
     public function testListBees_UseConfig()
