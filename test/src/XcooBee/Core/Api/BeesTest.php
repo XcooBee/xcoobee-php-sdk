@@ -134,10 +134,10 @@ class BeesTest extends TestCase
         }));
         
         $response = $consentsMock->listBees();
-        
+
         $this->assertEquals($requestCode, $response->code);
-	$this->assertEquals($requestData, $response->data);
-	$this->assertEquals($requestError, $response->errors);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
     
     public function beesProvider()
