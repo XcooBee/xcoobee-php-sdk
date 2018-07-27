@@ -206,11 +206,18 @@ class SystemTest extends TestCase
             'apiSecret' => 'testapisecret'
         ]);
     }
-
-    public function testAddEventSubscription() 
+    
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider addeventsProvider
+    */
+    public function testAddEventSubscription($requestCode, $requestData, $requestError) 
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
             '_getSubscriptionEvent' => "testEventType"
         ]);
 
@@ -223,9 +230,13 @@ class SystemTest extends TestCase
                     ]], $params);
                 }));
 
-        $systemMock->addEventSubscription(["testEventType" => "testEventHandler"], 'testCampaignId');
+        $response = $systemMock->addEventSubscription(["testEventType" => "testEventHandler"], 'testCampaignId');
+        
+        $this->assertEquals($requestCode, $response->code);
+	$this->assertEquals($requestData, $response->data);
+	$this->assertEquals($requestError, $response->errors);
     }
-    
+
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
@@ -238,10 +249,17 @@ class SystemTest extends TestCase
         $systemMock->addEventSubscription(["testEventType" => "testEventHandler"], 'testCampaignId');
     }
     
-    public function testAddEventSubscription_UseDefaultCampaign() 
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider addeventsProvider
+    */
+    public function testAddEventSubscription_UseDefaultCampaign($requestCode, $requestData, $requestError) 
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
             '_getSubscriptionEvent' => "testEventType",
             '_getDefaultCampaignId' => 'testCampaignId'
         ]);
@@ -255,13 +273,24 @@ class SystemTest extends TestCase
                     ]], $params);
                 }));
 
-        $systemMock->addEventSubscription(["testEventType" => "testEventHandler"]);
+        $response = $systemMock->addEventSubscription(["testEventType" => "testEventHandler"]);
+        
+        $this->assertEquals($requestCode, $response->code);
+	$this->assertEquals($requestData, $response->data);
+	$this->assertEquals($requestError, $response->errors);
     }
-
-    public function testAddEventSubscription_useConfig() 
+    
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider addeventsProvider
+    */
+    public function testAddEventSubscription_useConfig($requestCode, $requestData, $requestError) 
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
             '_getSubscriptionEvent' => "testEventType"
         ]);
 
@@ -275,10 +304,14 @@ class SystemTest extends TestCase
                     $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
                 }));
 
-        $systemMock->addEventSubscription(["testEventType" => "testEventHandler"], 'testCampaignId', [
+        $response = $systemMock->addEventSubscription(["testEventType" => "testEventHandler"], 'testCampaignId', [
             'apiKey' => 'testapikey',
             'apiSecret' => 'testapisecret'
         ]);
+
+        $this->assertEquals($requestCode, $response->code);
+	$this->assertEquals($requestData, $response->data);
+	$this->assertEquals($requestError, $response->errors);
     }
 
     public function testDeleteEventSubscription() 
@@ -437,6 +470,33 @@ class SystemTest extends TestCase
             'apiKey' => 'testapikey',
             'apiSecret' => 'testapisecret'
         ]);
+    }
+    
+    public function addeventsProvider()
+    {
+        return [
+            [
+                200,
+                (object)[
+                    'add_event_subscriptions' => (object) [
+                        'data' => (object) [
+                            'event_type' => 'testEventType'
+                        ]
+                    ]
+                ],
+                []   
+            ],
+            [
+                400,
+                (object)[
+                    'add_event_subscriptions' => [
+                        (object) []
+                    ]
+                ],
+                ["message" => 'test error message'],
+                []    
+            ]
+        ];
     }
     
 }

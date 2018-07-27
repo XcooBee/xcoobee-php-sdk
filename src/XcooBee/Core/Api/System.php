@@ -102,10 +102,18 @@ class System extends Api
             ];
         }
 
-        return $this->_request($mutation, ['config' => [
+        $subscriptions = $this->_request($mutation, ['config' => [
                         'campaign_cursor' => $campaignId,
                         'events' => $mappedEvents,
                 ]], $config);
+        
+        if($subscriptions->code != 200){
+            return $subscriptions;
+        }
+        
+        $subscriptions->data->add_event_subscriptions = $subscriptions->data->add_event_subscriptions->data;
+        
+        return $subscriptions;
     }
 
     /**
