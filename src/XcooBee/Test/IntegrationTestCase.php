@@ -20,7 +20,7 @@ abstract class IntegrationTestCase extends TestCase
         $this->_xcoobee = new XcooBee($this);
         $this->_xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile(self::homeDir));
         $consents = $this->_xcoobee->consents->listConsents();
-        $this->_consentId = $consents->data->consents->data[0]->consent_cursor;
+        $this->_consentId = $consents->data->consents[0]->consent_cursor;
         
         parent::setUp(); 
     }

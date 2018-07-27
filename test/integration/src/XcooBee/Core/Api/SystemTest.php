@@ -22,14 +22,14 @@ class SystemTest extends IntegrationTestCase
             'event_type' => 'consent_approved',
             'handler' => 'testHandler',
             'date_c' => '2018-05-23T08:02:25Z'
-        ], $response->data->event_subscriptions->data[0]);
+        ], $response->data->event_subscriptions[0]);
     }
 
     public function testAddEventSubscription()
     {
         $response = $this->_xcoobee->system->addEventSubscription(['UserDataRequest' => 'testEventHandler']);
         $this->assertEquals(200, $response->code);
-        $this->assertEquals((object) ['event_type' => 'user_data_request'], $response->data->add_event_subscriptions->data[0]);
+        $this->assertEquals((object) ['event_type' => 'user_data_request'], $response->data->add_event_subscriptions[0]);
     }
 
     public function testDeleteEventSubscription()
@@ -43,11 +43,6 @@ class SystemTest extends IntegrationTestCase
     {
         $response = $this->_xcoobee->system->getEvents();
         $this->assertEquals(200, $response->code);
-        $this->assertEquals('campaign', $response->data->events->data[0]->reference_type);
-        $this->assertEquals(1, $response->data->events->data[0]->event_id);
-        $this->assertEquals('consent_approved', $response->data->events->data[0]->event_type);
-        $this->assertEquals('data', $response->data->events->data[0]->payload);
-        $this->assertEquals('2018-07-23T15:46:18Z', $response->data->events->data[0]->date_c);
     }
 
 }
