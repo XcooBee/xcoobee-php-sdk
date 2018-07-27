@@ -78,49 +78,17 @@ class ConsentsTest extends TestCase
         $this->assertEquals($requestError, $response->errors);
     }
     
-    public function campaignsProvider()
-    {
-        return [
-            [
-                200,
-                (object)[
-                    'campaigns' => (object)[
-                        'data' => (object) [
-                            'Field' => 'testFieldValue'
-                        ],
-                        'page_info' => (object)[
-                            'end_cursor' => 'testEndCursor',
-                            'has_next_page' => null
-
-                        ]
-                    ]
-                ],
-                []   
-            ],
-            [
-                400,
-                (object)[],
-                ["message" => 'test error message'],
-                []    
-            ]
-        ];
-    }
-    
-    public function testListCampaigns_UseConfig()
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider campaignsProvider
+    */
+    public function testListCampaigns_UseConfig($requestCode, $requestData, $requestError)
     {  
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => $this->_createResponse(200, (object)[
-                'campaigns' => (object)[
-                    'data' => (object) [
-                        'Field' => 'testFieldValue'
-                    ],
-                    'page_info' => (object)[
-                        'end_cursor' => 'testEndCursor',
-                        'has_next_page' => null
-                        
-                    ]
-                ]
-            ]),
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
             '_getUserId'=>'testUserId'
         ]);
         $consentsMock->expects($this->once())
@@ -129,7 +97,11 @@ class ConsentsTest extends TestCase
                 $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
         }));
         
-        $consentsMock->listCampaigns(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret']);
+        $response = $consentsMock->listCampaigns(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret']);
+        
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
     
     public function testRequestConsent()
@@ -189,34 +161,6 @@ class ConsentsTest extends TestCase
         $this->assertEquals($requestError, $response->errors);
     }
     
-    public function consentsProvider()
-    {
-        return [
-            [
-                200,
-                (object)[
-                    'consents' => (object)[
-                        'data' => (object) [
-                            'Field' => 'testFieldValue'
-                        ],
-                        'page_info' => (object)[
-                            'end_cursor' => 'testEndCursor',
-                            'has_next_page' => null
-
-                        ]
-                    ]
-                ],
-                []   
-            ],
-            [
-                400,
-                (object)[],
-                ["message" => 'test error message'],
-                []    
-            ]
-        ];
-    }
-    
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
@@ -240,22 +184,18 @@ class ConsentsTest extends TestCase
 
         $consentsMock->listConsents('testStatus');
     }
-
-    public function testListConsents_withStatus()
+    
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider consentsProvider
+    */
+    public function testListConsents_withStatus($requestCode, $requestData, $requestError)
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => $this->_createResponse(200, (object)[
-                'consents' => (object)[
-                    'data' => (object) [
-                        'Field' => 'testFieldValue'
-                    ],
-                    'page_info' => (object)[
-                        'end_cursor' => 'testEndCursor',
-                        'has_next_page' => null
-                        
-                    ]
-                ]
-            ]),
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
             '_getConsentStatus' => 'testStatus',
             '_getUserId' => 'testUser'
         ]);
@@ -265,24 +205,24 @@ class ConsentsTest extends TestCase
                             $this->assertEquals(['statusId' => 'testStatus', 'userId' => 'testUser'], $params);
                         }));
 
-        $consentsMock->listConsents('testStatus');
+        $response = $consentsMock->listConsents('testStatus');
+        
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
-
-    public function testListConsents__UseConfig()
+    
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider consentsProvider
+    */
+    public function testListConsents__UseConfig($requestCode, $requestData, $requestError)
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => $this->_createResponse(200, (object)[
-                'consents' => (object)[
-                    'data' => (object) [
-                        'Field' => 'testFieldValue'
-                    ],
-                    'page_info' => (object)[
-                        'end_cursor' => 'testEndCursor',
-                        'has_next_page' => null
-                        
-                    ]
-                ]
-            ]),
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
             '_getUserId' => 'testUser'
         ]);
         $consentsMock->expects($this->once())
@@ -292,10 +232,14 @@ class ConsentsTest extends TestCase
                             $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
                         }));
 
-        $consentsMock->listConsents(null, [
+        $response = $consentsMock->listConsents(null, [
             'apiKey' => 'testapikey',
             'apiSecret' => 'testapisecret'
         ]);
+        
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
     
     public function testGetConsentData() 
@@ -722,4 +666,59 @@ class ConsentsTest extends TestCase
         ];
     }
     
+    public function campaignsProvider()
+    {
+        return [
+            [
+                200,
+                (object)[
+                    'campaigns' => (object)[
+                        'data' => (object) [
+                            'Field' => 'testFieldValue'
+                        ],
+                        'page_info' => (object)[
+                            'end_cursor' => 'testEndCursor',
+                            'has_next_page' => null
+
+                        ]
+                    ]
+                ],
+                []   
+            ],
+            [
+                400,
+                (object)[],
+                ["message" => 'test error message'],
+                []    
+            ]
+        ];
+    }
+    
+    public function consentsProvider()
+    {
+        return [
+            [
+                200,
+                (object)[
+                    'consents' => (object)[
+                        'data' => (object) [
+                            'Field' => 'testFieldValue'
+                        ],
+                        'page_info' => (object)[
+                            'end_cursor' => 'testEndCursor',
+                            'has_next_page' => null
+
+                        ]
+                    ]
+                ],
+                []   
+            ],
+            [
+                400,
+                (object)[],
+                ["message" => 'test error message'],
+                []    
+            ]
+        ];
+    }
 }

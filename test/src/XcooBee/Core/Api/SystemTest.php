@@ -122,49 +122,17 @@ class SystemTest extends TestCase
         $this->assertEquals($requestError, $response->errors);
     }
     
-    public function eventsSubscriptionProvider()
-    {
-        return [
-            [
-                200,
-                (object)[
-                    'event_subscriptions' => (object)[
-                        'data' => (object) [
-                            'Field' => 'testFieldValue'
-                        ],
-                        'page_info' => (object)[
-                            'end_cursor' => 'testEndCursor',
-                            'has_next_page' => null
-
-                        ]
-                    ]
-                ],
-                []   
-            ],
-            [
-                400,
-                (object)[],
-                ["message" => 'test error message'],
-                []    
-            ]
-        ];
-    }
-    
-    public function testListEventSubscriptions_UseDefaultCampaign() 
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider eventsSubscriptionProvider
+    */
+    public function testListEventSubscriptions_UseDefaultCampaign($requestCode, $requestData, $requestError) 
     {
         $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => $this->_createResponse(200, (object)[
-                'event_subscriptions' => (object)[
-                    'data' => (object) [
-                        'Field' => 'testFieldValue'
-                    ],
-                    'page_info' => (object)[
-                        'end_cursor' => 'testEndCursor',
-                        'has_next_page' => null
-                        
-                    ]
-                ]
-            ]),
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
             '_getDefaultCampaignId' => 'testCampaignId',
         ]);
 
@@ -174,7 +142,11 @@ class SystemTest extends TestCase
                             $this->assertEquals(['campaignId' => 'testCampaignId'], $params);
                 }));
 
-        $systemMock->listEventSubscriptions();
+        $response = $systemMock->listEventSubscriptions();
+        
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
 
     public function testListEventSubscriptions_UseConfig() 
@@ -231,10 +203,10 @@ class SystemTest extends TestCase
                 }));
 
         $response = $systemMock->addEventSubscription(["testEventType" => "testEventHandler"], 'testCampaignId');
-        
+
         $this->assertEquals($requestCode, $response->code);
-	$this->assertEquals($requestData, $response->data);
-	$this->assertEquals($requestError, $response->errors);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
 
     /**
@@ -274,10 +246,10 @@ class SystemTest extends TestCase
                 }));
 
         $response = $systemMock->addEventSubscription(["testEventType" => "testEventHandler"]);
-        
+
         $this->assertEquals($requestCode, $response->code);
-	$this->assertEquals($requestData, $response->data);
-	$this->assertEquals($requestError, $response->errors);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
     
     /**
@@ -310,8 +282,8 @@ class SystemTest extends TestCase
         ]);
 
         $this->assertEquals($requestCode, $response->code);
-	$this->assertEquals($requestData, $response->data);
-	$this->assertEquals($requestError, $response->errors);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
 
     public function testDeleteEventSubscription() 
@@ -414,6 +386,36 @@ class SystemTest extends TestCase
         $this->assertEquals($requestError, $response->errors);
     }
     
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider eventsProvider
+    */
+    public function testGetEvents_useConfig($requestCode, $requestData, $requestError)
+    {
+        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
+            '_getUserId' => "testUserId"
+        ]);
+
+        $systemMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+                        }));
+
+        $response = $systemMock->getEvents([
+            'apiKey' => 'testapikey',
+            'apiSecret' => 'testapisecret'
+        ]);
+        
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
+    }
+    
     public function eventsProvider()
     {
         return [
@@ -440,36 +442,6 @@ class SystemTest extends TestCase
                 []    
             ]
         ];
-    }
-    
-    public function testGetEvents_useConfig()
-    {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => $this->_createResponse(200, (object)[
-                'events' => (object)[
-                    'data' => (object) [
-                        'Field' => 'testFieldValue'
-                    ],
-                    'page_info' => (object)[
-                        'end_cursor' => 'testEndCursor',
-                        'has_next_page' => null
-                        
-                    ]
-                ]
-            ]),
-            '_getUserId' => "testUserId"
-        ]);
-
-        $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                        }));
-
-        $systemMock->getEvents([
-            'apiKey' => 'testapikey',
-            'apiSecret' => 'testapisecret'
-        ]);
     }
     
     public function addeventsProvider()
@@ -499,4 +471,31 @@ class SystemTest extends TestCase
         ];
     }
     
+    public function eventsSubscriptionProvider()
+    {
+        return [
+            [
+                200,
+                (object)[
+                    'event_subscriptions' => (object)[
+                        'data' => (object) [
+                            'Field' => 'testFieldValue'
+                        ],
+                        'page_info' => (object)[
+                            'end_cursor' => 'testEndCursor',
+                            'has_next_page' => null
+
+                        ]
+                    ]
+                ],
+                []   
+            ],
+            [
+                400,
+                (object)[],
+                ["message" => 'test error message'],
+                []    
+            ]
+        ];
+    }
 }

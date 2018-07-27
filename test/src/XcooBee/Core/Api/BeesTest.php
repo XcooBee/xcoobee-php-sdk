@@ -122,7 +122,6 @@ class BeesTest extends TestCase
     */
     public function testListBees($requestCode, $requestData, $requestError)
     {
-        
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_request' => $this->_createResponse($requestCode, $requestData, $requestError)
         ]);
@@ -140,49 +139,17 @@ class BeesTest extends TestCase
         $this->assertEquals($requestError, $response->errors);
     }
     
-    public function beesProvider()
-    {
-        return [
-            [
-                200,
-                (object)[
-                    'bees' => (object)[
-                        'data' => (object) [
-                            'Field' => 'testFieldValue'
-                        ],
-                        'page_info' => (object)[
-                            'end_cursor' => 'testEndCursor',
-                            'has_next_page' => null
-
-                        ]
-                    ]
-                ],
-                []   
-            ],
-            [
-                400,
-                (object)[],
-                ["message" => 'test error message'],
-                []    
-            ]
-        ];
-    }
-    
-    public function testListBees_UseConfig()
+    /**
+    * @param int $requestCode
+    * @param array $requestData
+    * @param array $requestError
+    * 
+    * @dataProvider beesProvider
+    */
+    public function testListBees_UseConfig($requestCode, $requestData, $requestError)
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
-            '_request' => $this->_createResponse(200, (object)[
-                'bees' => (object)[
-                    'data' => (object) [
-                        'Field' => 'testFieldValue'
-                    ],
-                    'page_info' => (object)[
-                        'end_cursor' => 'testEndCursor',
-                        'has_next_page' => null
-                        
-                    ]
-                ]
-            ])
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError)
         ]);
         $consentsMock->expects($this->once())
             ->method('_request')
@@ -190,7 +157,11 @@ class BeesTest extends TestCase
                 $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
         }));
         
-        $consentsMock->listBees(null,['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret']);
+        $response = $consentsMock->listBees(null,['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret']);
+        
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($requestData, $response->data);
+        $this->assertEquals($requestError, $response->errors);
     }
     
     /**
@@ -352,6 +323,34 @@ class BeesTest extends TestCase
                     ]
                 ],
             ],
+        ];
+    }
+    
+    public function beesProvider()
+    {
+        return [
+            [
+                200,
+                (object)[
+                    'bees' => (object)[
+                        'data' => (object) [
+                            'Field' => 'testFieldValue'
+                        ],
+                        'page_info' => (object)[
+                            'end_cursor' => 'testEndCursor',
+                            'has_next_page' => null
+
+                        ]
+                    ]
+                ],
+                []   
+            ],
+            [
+                400,
+                (object)[],
+                ["message" => 'test error message'],
+                []    
+            ]
         ];
     }
 }
