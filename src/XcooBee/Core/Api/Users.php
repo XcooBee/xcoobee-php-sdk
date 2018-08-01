@@ -66,7 +66,7 @@ class Users extends Api
      * @return Response
      * @throws XcooBeeException
      */
-    public function sendUserMessage($message, $consentId, $breachId = null, $config = []) 
+    public function sendUserMessage($message, $consentId, $breachId = null, $config = [])
     {
         $mutation = 'mutation sendUserMessage($config: SendMessageConfig) {
                 send_message(config: $config) {
@@ -98,7 +98,7 @@ class Users extends Api
      * @return Response
      * @throws XcooBeeException
      */
-    public function getConversations($first = null, $after = null, $config = []) 
+    public function getConversations($first = null, $after = null, $config = [])
     {
         $query = 'query getConversations($userId: String!, $first : Int, $after: String) {
             conversations(user_cursor: $userId , first : $first , after : $after) {
@@ -115,7 +115,15 @@ class Users extends Api
             }
         }';
 
-        return $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $this->_getUserId($config)], $config);
+        $conversations = $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $this->_getUserId($config)], $config);
+        if ($conversations->code != 200) {
+            return $conversations;
+        }
+        
+        $conversations->data->page_info = $conversations->data->conversations->page_info;
+        $conversations->data->conversations = $conversations->data->conversations->data;
+        
+        return $conversations;
     }
 
     /**
@@ -129,7 +137,7 @@ class Users extends Api
      * @return Response
      * @throws XcooBeeException
      */
-    public function getConversation($userId, $first = null, $after = null, $config = []) 
+    public function getConversation($userId, $first = null, $after = null, $config = [])
     {
         if (!$userId) {
             throw new XcooBeeException('No "user" provided');
@@ -150,10 +158,18 @@ class Users extends Api
 		}
 	}';
 
-        return $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $userId], $config);
+        $conversation = $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $userId], $config);
+        if ($conversation->code != 200) {
+            return $conversation;
+        }
+        
+        $conversation->data->page_info = $conversation->data->conversation->page_info;
+        $conversation->data->conversation = $conversation->data->conversation->data;
+
+        return $conversation;
     }
 
-    protected function _getUserIdByConsent($consentId, $config = []) 
+    protected function _getUserIdByConsent($consentId, $config = [])
     {
         $store = $this->_xcoobee->getStore();
 
