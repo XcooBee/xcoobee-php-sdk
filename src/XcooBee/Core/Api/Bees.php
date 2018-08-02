@@ -93,7 +93,7 @@ class Bees extends Api
         $result = [];
         foreach ($files as $key => $file) {
             $policy = 'policy' . $key;
-            $policy = $policies->data->$policy;
+            $policy = $policies->result->$policy;
             $result[] = $this->_fileUploader->uploadFile($file, $policy, $config);
         }
 
@@ -189,7 +189,7 @@ class Bees extends Api
         
         $response = $this->_request($query, ['userId' => (string)$userId], $config);
 
-        $endpoint = array_filter($response->data->outbox_endpoints->data,
+        $endpoint = array_filter($response->result->outbox_endpoints->data,
             function($value) use ($intent) {
                 return (($value->name == $intent) || ($value->name == "flex"));
             });

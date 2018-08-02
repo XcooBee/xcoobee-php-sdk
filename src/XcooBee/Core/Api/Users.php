@@ -48,9 +48,9 @@ class Users extends Api
         }
         
         $user = new UserModel();
-        $user->userId = $response->data->user->cursor;
-        $user->xcoobeeId = $response->data->user->xcoobee_id;
-        $user->pgp_public_key = $response->data->user->pgp_public_key;
+        $user->userId = $response->result->user->cursor;
+        $user->xcoobeeId = $response->result->user->xcoobee_id;
+        $user->pgp_public_key = $response->result->user->pgp_public_key;
         
         return $user;
     }
@@ -162,7 +162,7 @@ class Users extends Api
         }
         
         $consent = $this->_xcoobee->consents->getConsentData($consentId, $config);
-        $consent = $consent->data->consent;
+        $consent = $consent->result->consent;
 
         if($consent){
             $store->setConsent($consentId, $consent);
