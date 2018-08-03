@@ -12,15 +12,13 @@ abstract class IntegrationTestCase extends TestCase
     
     /** @var consentId */
     protected $_consentId;
-    
-    const homeDir = 'F:\xampp\htdocs\xcoobee';
-    
+
     public function setup()
     {
         $this->_xcoobee = new XcooBee($this);
-        $this->_xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile(self::homeDir));
+        $this->_xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile(__DIR__ . '/../../../test/integration/assets/config'));
         $consents = $this->_xcoobee->consents->listConsents();
-        $this->_consentId = $consents->data->consents[0]->consent_cursor;
+        $this->_consentId = $consents->result->consents->data[0]->consent_cursor;
         
         parent::setUp(); 
     }

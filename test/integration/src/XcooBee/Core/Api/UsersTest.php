@@ -10,24 +10,21 @@ class UsersTest extends IntegrationTestCase
     {
         $user = $this->_xcoobee->users->getUser();
         $this->_userId = $user->userId;
-        $this->assertEquals('~ganesh_', $user->xcoobeeId);
+        $this->assertEquals('~demo_user', $user->xcoobeeId);
     }
 
     public function testGetConversations()
     {
         $response = $this->_xcoobee->users->getConversations();
-        $keys = array_keys($response->data->conversations);
         $this->assertEquals('200', $response->code);
-        $this->assertEquals('test test122', $response->data->conversations[end($keys)]->display_name);
-        $this->assertEquals(null, $response->data->conversations[end($keys)]->consent_cursor);
-        $this->assertEquals('2018-05-09T09:33:53Z', $response->data->conversations[end($keys)]->date_c);
+        $this->assertEquals('Ganesh Test', $response->result->conversations->data[0]->display_name);
     }
 
     public function testSendUserMessage()
     {
         $response = $this->_xcoobee->users->sendUserMessage("test message", $this->_consentId);
         $this->assertEquals('200', $response->code);
-        $this->assertEquals((object) ['note_text' => "test message"], $response->data->send_message);
+        $this->assertEquals((object) ['note_text' => "test message"], $response->result->send_message);
     }
 
     public function testGetConversation()
