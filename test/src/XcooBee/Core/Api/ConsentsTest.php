@@ -233,7 +233,7 @@ class ConsentsTest extends TestCase
         $response = $consentsMock->confirmDataDelete('testconsentId');
 
         $this->assertEquals(200, $response->code);
-        $this->assertTrue($response->data);
+        $this->assertTrue($response->result);
     }
     
     public function testConfirmDataDelete_onError()
@@ -285,7 +285,7 @@ class ConsentsTest extends TestCase
         ]);
 
         $this->assertEquals(200, $response->code);
-        $this->assertTrue($response->data);
+        $this->assertTrue($response->result);
     }
 
     public function testConfirmConsentChange()
@@ -297,7 +297,7 @@ class ConsentsTest extends TestCase
         $response = $consentsMock->confirmConsentChange('testconsentId');
 
         $this->assertEquals(200, $response->code);
-        $this->assertTrue($response->data);
+        $this->assertTrue($response->result);
     }
     
     public function testConfirmConsentChange_onError()
@@ -343,7 +343,7 @@ class ConsentsTest extends TestCase
         ]);
 
         $this->assertEquals(200, $response->code);
-        $this->assertTrue($response->data);
+        $this->assertTrue($response->result);
     }
     
     public function testSetUserDataResponse()
@@ -359,7 +359,7 @@ class ConsentsTest extends TestCase
 
         $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId');
         $this->assertEquals(200, $response->code);
-        $this->assertEquals(true, $response->data);
+        $this->assertEquals(true, $response->result);
     }
 
     public function testSetUserDataResponse_messageFailed()
@@ -414,7 +414,7 @@ class ConsentsTest extends TestCase
             'apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'
         ]);
         $this->assertEquals(200, $response->code);
-        $this->assertEquals(true, $response->data);
+        $this->assertEquals(true, $response->result);
     }
     
     public function testSetUserDataResponse_fileUpload()
@@ -435,7 +435,7 @@ class ConsentsTest extends TestCase
         
         $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId', 'testReference', 'testFile');
         $this->assertEquals(200, $response->code);
-        $this->assertEquals(true, $response->data);
+        $this->assertEquals(true, $response->result);
     }
 
     public function testSetUserDataResponse_takeOffError()
@@ -476,7 +476,7 @@ class ConsentsTest extends TestCase
 
         $response = $consentsMock->getCookieConsent($xid, 'testCampaignId');
         $this->assertEquals($requestCode, $response->code);
-        $this->assertEquals($expectedResponse, $response->data);
+        $this->assertEquals($expectedResponse, $response->result);
         $this->assertEquals($requestError, $response->errors);
     }
 
@@ -499,7 +499,7 @@ class ConsentsTest extends TestCase
 
         $response = $consentsMock->getCookieConsent($xid);
         $this->assertEquals($requestCode, $response->code);
-        $this->assertEquals($expectedResponse, $response->data);
+        $this->assertEquals($expectedResponse, $response->result);
         $this->assertEquals($requestError, $response->errors);
     }
 

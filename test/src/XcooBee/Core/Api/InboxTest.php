@@ -30,7 +30,7 @@ class InboxTest extends TestCase
 
         $response = $inboxMock->listInbox();
         $this->assertEquals($requestCode, $response->code);
-        $this->assertEquals($expectedResponse, $response->data->inbox->data);
+        $this->assertEquals($expectedResponse, $response->result->inbox->data);
     }
 
     /**
@@ -57,7 +57,7 @@ class InboxTest extends TestCase
         $response = $inboxMock->listInbox('2015-08-09T11:39:31Z');
         
         $this->assertEquals($requestCode, $response->code);
-        $this->assertEquals($expectedResponse, $response->data->inbox->data);
+        $this->assertEquals($expectedResponse, $response->result->inbox->data);
     }
 
     /**
@@ -84,7 +84,7 @@ class InboxTest extends TestCase
         $response = $inboxMock->getInboxItem('testFileName');
         
         $this->assertEquals($requestCode, $response->code);
-        $this->assertEquals($expectedResponse, $response->data->inbox_item);
+        $this->assertEquals($expectedResponse, $response->result->inbox_item);
     }
 
     public function testDeleteInboxItem()

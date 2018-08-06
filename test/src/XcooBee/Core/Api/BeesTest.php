@@ -17,7 +17,7 @@ class BeesTest extends TestCase
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_getOutboxEndpoint' => 'test',
             '_getPolicy' => (object) [
-                'data' => (object) [
+                'result' => (object) [
                     'policy0' => 'test',
                     'policy1' => 'test',
                 ],
@@ -45,7 +45,7 @@ class BeesTest extends TestCase
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_getOutboxEndpoint' => 'test',
             '_getPolicy' => (object) [
-                'data' => (object) [
+                'result' => (object) [
                     'policy0' => [],
                     'policy1' => [],
                 ],
@@ -91,7 +91,7 @@ class BeesTest extends TestCase
         $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_getOutboxEndpoint' => 'test',
             '_getPolicy' => (object) [
-                'data' => (object) [
+                'result' => (object) [
                     'policy0' => 'test',
                     'policy1' => 'test',
                 ],

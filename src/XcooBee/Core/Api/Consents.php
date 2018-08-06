@@ -122,7 +122,7 @@ class Consents extends Api
 
         $response = new Response();
         $response->code = 200;
-        $response->data = true;
+        $response->result = true;
 
         return $response;
     }
@@ -155,7 +155,7 @@ class Consents extends Api
 
         $response = new Response();
         $response->code = 200;
-        $response->data = true;
+        $response->result = true;
 
         return $response;
     }
@@ -189,7 +189,7 @@ class Consents extends Api
 
         $response = new Response();
         $response->code = 200;
-        $response->data = true;
+        $response->result = true;
 
         return $response;
     }
@@ -297,7 +297,7 @@ class Consents extends Api
             return $consents;
         }
         $csvContent = ['application' => false, 'usage' => false, 'advertising' => false, 'statistics' => false];
-        foreach ($consents->data->consents->data as $consent) {
+        foreach ($consents->result->consents->data as $consent) {
             if ($xid === $consent->user_xcoobee_id && in_array($consent->consent_type, ['website_tracking', 'web_application_tracking'])) {
                 if (in_array('application_cookie', $consent->request_data_types)) {
                     $csvContent['application'] = true;
@@ -315,7 +315,7 @@ class Consents extends Api
         }
         $response = new Response();
         $response->code = 200;
-        $response->data = $csvContent;
+        $response->result = $csvContent;
 
         return $response;
     }
@@ -323,8 +323,8 @@ class Consents extends Api
     protected function _getXcoobeeIdByConsent($consentId, $config = []) 
     {
         $consent = $this->getConsentData($consentId, $config = []);
-        if (!empty($consent->data->consent)) {
-            return $consent->data->consent->user_xcoobee_id;
+        if (!empty($consent->result->consent)) {
+            return $consent->result->consent->user_xcoobee_id;
         }
 
         return false;

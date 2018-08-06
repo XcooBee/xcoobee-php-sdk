@@ -21,7 +21,7 @@ class System extends Api
         $response = new Response();
         if ($user->pgp_public_key) {
             $campaignInfo = $this->_xcoobee->consents->getCampaign(null, $config);
-            if (!empty($campaignInfo->data->campaign)) {
+            if (!empty($campaignInfo->result->campaign)) {
                 $response->code = 200;
             } else {
                 $response->code = 400;
@@ -184,7 +184,15 @@ class System extends Api
             'BreachPresented'        => 'breach_presented',
             'BreachBeeUsed'          => 'breach_bee_used',
             'UserDataRequest'        => 'user_data_request',
-            'UserMessage'            => 'user_message' 
+            'UserMessage'            => 'user_message',
+            'BeeSuccess'             => 'bee_success',
+            'BeeError'               => 'bee_error',
+            'ProcessSuccess'         => 'process_success',
+            'ProcessError'           => 'process_error',
+            'ProcessFileDelivered'   => 'process_file_delivered',
+            'ProcessFilePresented'   => 'process_file_presented',
+            'ProcessFileDownloaded'  => 'process_file_downloaded',
+            'ProcessFileDeleted'     => 'process_file_deleted'
         ];
 
         if (!array_key_exists($event, $events)) {
