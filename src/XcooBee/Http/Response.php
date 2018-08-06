@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 class Response {
 
     /** @var mixed */
-    public $data = null;
+    public $result = null;
 
     /** @var object */
     public $errors = [];
@@ -17,7 +17,10 @@ class Response {
 
     /** @var string */
     public $time;
-
+    
+    /** @var string */
+    public $request_id;
+    
     public function __construct() 
     {
         $time = new \DateTime();
@@ -39,9 +42,11 @@ class Response {
         $responseBody = json_decode($response->getBody());
 
         if (isset($responseBody->data)) {
-            $xcoobeeResponse->data = $responseBody->data;
+            $xcoobeeResponse->result = $responseBody->data;
         }
-
+        
+        $xcoobeeResponse->request_id = $responseBody->request_id;
+        
         if (isset($responseBody->errors)) {
             $xcoobeeResponse->errors = $responseBody->errors;
         }

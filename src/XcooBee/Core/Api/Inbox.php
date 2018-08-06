@@ -47,7 +47,7 @@ class Inbox extends Api
         if ($inboxItems->code != 200) {
             return $inboxItems;
         }
-        $inboxItems->data->inbox->data = array_map(function($item) {
+        $inboxItems->result->inbox->data = array_map(function($item) {
             return (object) [
                 'fileName'          => $item->original_name,
                 'messageId'         => $item->filename,
@@ -57,7 +57,7 @@ class Inbox extends Api
                 'expirationDate'    => $this->_getExpirationDate($item->date),
                 'downloadDate'      => $item->downloaded,
             ];
-        }, $inboxItems->data->inbox->data);
+        }, $inboxItems->result->inbox->data);
 
         return $inboxItems;
     }
@@ -92,7 +92,7 @@ class Inbox extends Api
             'file_tags' => 'fileTags',
             'user_ref' => 'userRef',
         ];
-        $inboxItem->data->inbox_item->info = array_combine($fields, (array) $inboxItem->data->inbox_item->info);
+        $inboxItem->result->inbox_item->info = array_combine($fields, (array) $inboxItem->result->inbox_item->info);
 
         return $inboxItem;
     }

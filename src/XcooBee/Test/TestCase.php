@@ -63,7 +63,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         $response = new Response();
         $response->code = $code;
-        $response->data = $data;
+        $response->result = $data;
         $response->errors = $errors;
 
         return $response;
