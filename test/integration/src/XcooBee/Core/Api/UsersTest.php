@@ -9,15 +9,13 @@ class UsersTest extends IntegrationTestCase
     public function testGetUser()
     {
         $user = $this->_xcoobee->users->getUser();
-        $this->_userId = $user->userId;
-        $this->assertEquals('~demo_user', $user->xcoobeeId);
+        $this->assertInstanceOf('XcooBee\Models\UserModel', $user);
     }
 
     public function testGetConversations()
     {
         $response = $this->_xcoobee->users->getConversations();
         $this->assertEquals('200', $response->code);
-        $this->assertEquals('Ganesh Test', $response->result->conversations->data[0]->display_name);
     }
 
     public function testSendUserMessage()

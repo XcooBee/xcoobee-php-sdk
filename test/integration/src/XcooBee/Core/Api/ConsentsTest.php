@@ -11,7 +11,7 @@ class ConsentsTest extends IntegrationTestCase
     {
         $campaigns = $this->_xcoobee->consents->listCampaigns();
         $this->assertEquals(200, $campaigns->code);
-        $this->assertEquals('xcoobee demo campaign', $campaigns->result->campaigns->data[0]->campaign_name);
+        $this->assertEquals('xcoobee test campaign', $campaigns->result->campaigns->data[0]->campaign_name);
         $this->assertEquals('active', $campaigns->result->campaigns->data[0]->status);
     }
 
@@ -19,8 +19,7 @@ class ConsentsTest extends IntegrationTestCase
     {
         $campaign = $this->_xcoobee->consents->getCampaign();
         $this->assertEquals(200, $campaign->code);
-        $this->assertEquals('xcoobee demo campaign', $campaign->result->campaign->campaign_name);
-        $this->assertEquals('2018-08-03T11:39:04Z', $campaign->result->campaign->date_c);
+        $this->assertEquals('xcoobee test campaign', $campaign->result->campaign->campaign_name);
         $this->assertEquals('active', $campaign->result->campaign->status);
         $this->assertEquals([], $campaign->result->campaign->xcoobee_targets);
     }

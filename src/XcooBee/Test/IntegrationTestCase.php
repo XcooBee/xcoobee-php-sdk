@@ -13,7 +13,7 @@ abstract class IntegrationTestCase extends TestCase
     /** @var consentId */
     protected $_consentId;
 
-    public function setup()
+    public function setUp()
     {
         $this->_xcoobee = new XcooBee($this);
         $this->_xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile(__DIR__ . '/../../../test/integration/assets/config'));
