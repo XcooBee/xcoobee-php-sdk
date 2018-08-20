@@ -1,4 +1,4 @@
-<phpunit bootstrap="../../vendor/autoload.php">
+<phpunit backupGlobals="false" bootstrap="bootstrap.php">
     <testsuites>
         <testsuite name="xcoobee">
             <directory>src</directory>

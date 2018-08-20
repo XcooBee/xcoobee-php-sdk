@@ -9,7 +9,7 @@ class BeesTest extends IntegrationTestCase
 
     public function testListBees()
     {
-        $bees = $this->_xcoobee->bees->listBees();
+        $bees = self::$xcoobee->bees->listBees();
         $this->assertEquals(200, $bees->code);
         $this->assertEquals('xcoobee_dropbox_uploader', $bees->result->bees->data[0]->bee_system_name);
         $this->assertEquals('transport', $bees->result->bees->data[0]->category);
@@ -21,13 +21,12 @@ class BeesTest extends IntegrationTestCase
 
     public function testUploadFiles()
     {
-        $this->_xcoobee->bees->uploadFiles([__DIR__ . '/../../../../assets/testfile.txt']);
+        self::$xcoobee->bees->uploadFiles([__DIR__ . '/../../../../assets/testfile.txt']);
     }
 
     public function testTakeOff()
-    {
-
-        $response = $this->_xcoobee->bees->takeOff(
+    {  
+        $response = self::$xcoobee->bees->takeOff(
             [
                 'xcoobee_message' => [
                     'xcoobee_simple_message' => ['message' => 'Test post'], 'recipient' => ['xcoobee_id' => '~ganesh_']

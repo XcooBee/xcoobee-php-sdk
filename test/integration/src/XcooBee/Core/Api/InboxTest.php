@@ -9,7 +9,7 @@ class InboxTest extends IntegrationTestCase
 
     public function testInboxApi()
     {
-        $inboxApi = $this->_xcoobee->inbox;
+        $inboxApi = self::$xcoobee->inbox;
         $inboxData = $inboxApi->listInbox();
         if (isset($inboxData->result->inbox->data[0])) {
             $inboxItem = $inboxApi->getInboxItem($inboxData->result->inbox->data[0]->messageId);
