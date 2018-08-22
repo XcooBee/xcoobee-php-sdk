@@ -14,9 +14,8 @@ $xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile(__DIR__ . '/asse
 
 $consents = $xcoobee->consents->listConsents();
 if (!$consents) {
-    die('No consents fond');
+    die('No consent found');
 }
 
 IntegrationTestCase::$xcoobee = $xcoobee;
 IntegrationTestCase::$consentId = end($consents->result->consents->data)->consent_cursor;
-?>

@@ -12,16 +12,12 @@ class BeesTest extends IntegrationTestCase
         $bees = self::$xcoobee->bees->listBees();
         $this->assertEquals(200, $bees->code);
         $this->assertEquals('xcoobee_dropbox_uploader', $bees->result->bees->data[0]->bee_system_name);
-        $this->assertEquals('transport', $bees->result->bees->data[0]->category);
-        $this->assertEquals('xcoobee_dropbox_uploader', $bees->result->bees->data[0]->bee_icon);
-        $this->assertEquals('DropBox Upload Bee', $bees->result->bees->data[0]->label);
-        $this->assertEquals('With the Dropbox Upload Bee you can securely upload any file to your Dropbox account.', $bees->result->bees->data[0]->description);
-        $this->assertEquals(true, $bees->result->bees->data[0]->is_file_reader);
     }
 
     public function testUploadFiles()
     {
-        self::$xcoobee->bees->uploadFiles([__DIR__ . '/../../../../assets/testfile.txt']);
+        $uploadResponse = self::$xcoobee->bees->uploadFiles([__DIR__ . '/../../../../assets/testfile.txt']);
+        $this->assertInstanceOf('GuzzleHttp\Psr7\Response', $uploadResponse[0]);
     }
 
     public function testTakeOff()
