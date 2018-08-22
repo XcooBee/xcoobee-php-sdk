@@ -13,12 +13,4 @@ abstract class IntegrationTestCase extends TestCase {
     /** @var consentId */
     public static $consentId;
 
-    public function __construct()
-    {
-        global $xcoobee;
-        global $consentId;
-        self::$xcoobee = $xcoobee;
-        self::$consentId = $consentId;
-    }
-
 }
