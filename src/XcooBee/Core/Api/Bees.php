@@ -6,6 +6,7 @@ use XcooBee\Core\Validation;
 use XcooBee\Http\FileUploader;
 use XcooBee\XcooBee;
 use XcooBee\Http\Response;
+use GuzzleHttp\Exception\ClientException;
 
 class Bees extends Api
 {
@@ -94,10 +95,21 @@ class Bees extends Api
         foreach ($files as $key => $file) {
             $policy = 'policy' . $key;
             $policy = $policies->result->$policy;
-            $result[] = $this->_fileUploader->uploadFile($file, $policy, $config);
+            try {
+                $this->_fileUploader->uploadFile($file, $policy);
+                $result[] = ['message' => "upload success"];
+            }catch (ClientException $exception) {
+                $errors[] = (object) ['message' => $exception->getMessage()];
+            }
         }
 
-        return $result;
+        $response->code = $errors ? 400 : 200;
+        if(!$errors) {
+            $response->result = true;
+        }
+        $response->errors = $errors;
+
+        return $response;
     }
 
     /**

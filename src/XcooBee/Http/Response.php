@@ -45,7 +45,9 @@ class Response {
             $xcoobeeResponse->result = $responseBody->data;
         }
         
-        $xcoobeeResponse->request_id = $responseBody->request_id;
+        if(isset($responseBody->request_id)) {
+            $xcoobeeResponse->request_id = $responseBody->request_id;
+        }
         
         if (isset($responseBody->errors)) {
             $xcoobeeResponse->errors = $responseBody->errors;

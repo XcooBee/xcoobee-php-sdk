@@ -17,7 +17,7 @@ class BeesTest extends IntegrationTestCase
     public function testUploadFiles()
     {
         $uploadResponse = self::$xcoobee->bees->uploadFiles([__DIR__ . '/../../../../assets/testfile.txt']);
-        $this->assertInstanceOf('GuzzleHttp\Psr7\Response', $uploadResponse[0]);
+        $this->assertEquals(200, $uploadResponse->code);
     }
 
     public function testTakeOff()
