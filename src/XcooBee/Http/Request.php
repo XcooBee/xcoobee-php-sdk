@@ -2,43 +2,69 @@
 
 namespace XcooBee\Http;
 
-use XcooBee\Http\GraphQLClient;
+use XcooBee\Http\Client;
 use XcooBee\XcooBee;
 
 class Request
 {
 
-    protected $config;
-    protected $query;
-    protected $variables;
+    protected static $_data;
+    protected static $_uri;
     
-    public function makeCall($query, $variables = [], $config = [])
+    
+    public function __construct($uri = null) 
     {
-        $this->config = $config;
-        $this->query = $query;
-        $this->variables = $variables;
-        $client = new GraphQLClient(new XcooBee());
-        if($config){
-            $config = \XcooBee\Models\ConfigModel::createFromData($config);
+        if($uri){
+            self::$_uri = $uri;
         }
-        $response = $client->request($query, $variables, [], $config);
-        $response->request = $this;
+    }
+    
+    /**
+     * 
+     * name: make https call 
+     * 
+     * @param array $data
+     * 
+     * @return \XcooBee\Http\Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function makeCall($data)
+    {
+        self::setData($data);
+        $xcoobee = new XcooBee();
+        $client = new Client($xcoobee);
+        $response = $client->post(self::$_uri, $data);
 
         return $response;
     }
     
-    public function getQuery() 
+    /**
+     * 
+     * name: get data 
+     *
+     */
+    public function getData()
     {
-       return $this->query; 
+        return self::$_data;
     }
     
-    public function getVariables()
+    /**
+     * 
+     * name: set headers
+     *
+     */
+    public function setHeaders($headers)
     {
-        return $this->variables;
+        
     }
     
-    public function getConfig() 
+    /**
+     * 
+     * name: set Data
+     *
+     */
+    public function setData($data)
     {
-       return $this->config; 
+        self::$_data = $data;
     }
 }

@@ -3,7 +3,7 @@
 namespace XcooBee\Http;
 
 use Psr\Http\Message\ResponseInterface;
-use XcooBee\XcooBee;
+use XcooBee\Http\Request;
 
 class Response
 {
@@ -21,13 +21,10 @@ class Response
     public $time;
     
     /** @var string */
-    public $request_id;
-    
-    static $requestId;
-
-    static $hasNextPage;
-    
     static $endCursor;
+    
+    /** @var mixed */
+    static $response;
     
     public function __construct() 
     {
@@ -63,41 +60,62 @@ class Response
         if($xcoobeeResponse->code === 200 && $xcoobeeResponse->errors){
             $xcoobeeResponse->code = 400;
         }
-
+        
         return $xcoobeeResponse;
     }
     
+    /**
+     * 
+     * name: has next page
+     * 
+     * @param ResponseInterface $resultObject
+     * 
+     * @return \XcooBee\Http\Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function hasNextPage($resultObject)
     {
-        self::$requestId = $resultObject->request_id;
-        
         foreach($resultObject->result as $result){
             self::$endCursor = $result->page_info->end_cursor;
-            self::$hasNextPage = $result->page_info->has_next_page;
-     
             return $result->page_info->has_next_page;
         }
     }
     
+    /**
+     * 
+     * name: get next page data
+     * 
+     * @param ResponseInterface $resultObject
+     * 
+     * @return \XcooBee\Http\Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getNextPage($resultObject)
     {
+        self::$response = $resultObject;
+        $request = new Request();
         if($this->hasNextPage($resultObject)){
-            $xcoobee = new XcooBee();
-            $variables = $resultObject->request->getVariables();
-            $query = $resultObject->request->getQuery();
-            $config = $resultObject->request->getConfig();
-            $variables['after'] = self::$endCursor;
-            return $xcoobee->request->makeCall($query, $variables, $config);
-            //return $xcoobee->users->getConversations(1, self::$requestId);
+            $data = $request->getData();
+            $data['json']['variables']['after'] = self::$endCursor;
+            return Self::setFromHttpResponse(Request::makeCall($data));
         }
         
         return null;
     }
     
+    /**
+     * 
+     * name: get previous page data
+     * 
+     * @param ResponseInterface $resultObject
+     * 
+     * @return \XcooBee\Http\Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function getPreviousPage($resultObject)
     {
-        if(self::$hasNextPage){
-            
+        if(self::$response){
+            return self::$response;
         }
         
         return null;
