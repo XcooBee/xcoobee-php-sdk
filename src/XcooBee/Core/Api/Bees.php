@@ -91,13 +91,12 @@ class Bees extends Api
 
             return $response;
         }
-        $result = [];
+        
         foreach ($files as $key => $file) {
             $policy = 'policy' . $key;
             $policy = $policies->result->$policy;
             try {
                 $this->_fileUploader->uploadFile($file, $policy);
-                $result[] = ['message' => "upload success"];
             }catch (ClientException $exception) {
                 $errors[] = (object) ['message' => $exception->getMessage()];
             }
