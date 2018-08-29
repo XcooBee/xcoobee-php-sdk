@@ -22,16 +22,17 @@ class BeesTest extends IntegrationTestCase
 
     public function testTakeOff()
     {  
+        $user = self::$xcoobee->users->getUser();
         $response = self::$xcoobee->bees->takeOff(
             [
                 'xcoobee_message' => [
-                    'xcoobee_simple_message' => ['message' => 'Test post'], 'recipient' => ['xcoobee_id' => '~ganesh_']
+                    'xcoobee_simple_message' => ['message' => 'Test post'], 'recipient' => ['xcoobee_id' => $user->xcoobeeId]
                 ]
             ], 
             [
                 'process' => [
                     'fileNames' => ['testfile.txt'],
-                    'destinations' => ["~ganesh_"],
+                    'destinations' => [$user->xcoobeeId],
                 ],
             ]);
         $this->assertEquals(200, $response->code);
