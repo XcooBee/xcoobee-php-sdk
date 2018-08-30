@@ -7,35 +7,35 @@ use XcooBee\XcooBee;
 
 class Request
 {
+
     /** @var mixed */
     protected static $_data;
-    
+
     /** @var string */
     protected static $_uri;
-    
+
     /** @var string */
     protected static $_query;
-    
+
     /** @var mixed */
     protected static $_headers;
-    
+
     /** @var string */
     protected static $_variabels;
-    
+
     /** @var mixed */
     protected $_client;
 
-
-    public function __construct($uri = null) 
+    public function __construct($uri = null)
     {
-        if($uri){
+        if ($uri) {
             self::$_uri = $uri;
         }
-        
+
         $xcoobee = new XcooBee();
         $this->_client = new Client($xcoobee);
     }
-    
+
     /**
      * 
      * name: make http call 
@@ -47,25 +47,25 @@ class Request
      */
     public function makeCall($data)
     {
-        if(array_key_exists('headers', $data)){
+        if (array_key_exists('headers', $data)) {
             $this->setHeaders($data['headers']);
         }
-        
-        if(array_key_exists('json', $data)){
-            if(array_key_exists('variables', $data['json'])){
+
+        if (array_key_exists('json', $data)) {
+            if (array_key_exists('variables', $data['json'])) {
                 $this->setVariables($data['json']['variables']);
             }
-            
-            if(array_key_exists('query', $data['json'])){
+
+            if (array_key_exists('query', $data['json'])) {
                 $this->setQuery($data['json']['query']);
             }
         }
-        
+
         $response = $this->_client->post(self::$_uri, $data);
 
         return $response;
     }
-    
+
     /**
      * 
      * name: get data 
@@ -75,7 +75,7 @@ class Request
     {
         return self::$_headers;
     }
-    
+
     /**
      * 
      * name: set headers
@@ -85,7 +85,7 @@ class Request
     {
         self::$_headers = $headers;
     }
-    
+
     /**
      * 
      * name: set Variables
@@ -95,7 +95,7 @@ class Request
     {
         self::$_variabels = $variables;
     }
-    
+
     /**
      * 
      * name: get data 
@@ -105,7 +105,7 @@ class Request
     {
         return self::$_variabels;
     }
-    
+
     /**
      * 
      * name: set query 
@@ -115,7 +115,7 @@ class Request
     {
         self::$_query = $query;
     }
-    
+
     /**
      * 
      * name: get query 
@@ -126,13 +126,21 @@ class Request
         return self::$_query;
     }
     
+    /**
+     * 
+     * name: get query 
+     * @param: array $variables
+     * 
+     * @return mixed Data
+     */
     public function getData($variables)
     {
         $data = [];
         $data['headers'] = $this->getHeaders();
         $data['json']['query'] = $this->getQuery();
-        $data['json']['variables'] = array_merge($this->getVariables(), $variables );
+        $data['json']['variables'] = array_merge($this->getVariables(), $variables);
 
         return $data;
     }
+
 }

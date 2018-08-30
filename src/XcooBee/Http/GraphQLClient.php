@@ -25,7 +25,7 @@ class GraphQLClient extends Client
         $headers["Authorization"] = $this->_getAuthToken($config);
         
         $request = new Request($this->_getUriFromEndpoint(self::API_URL));
-        
+        Response::$request = $request;
         return Response::setFromHttpResponse($request->makeCall([
             'json' => [
                 'query' => $query,
