@@ -23,9 +23,6 @@ class Response
     /** @var string */
     public $request_id;
     
-    /** @var string */
-    static $endCursor;
-    
     /** @var mixed */
     static $response;
     
@@ -78,10 +75,7 @@ class Response
      */
     public function hasNextPage()
     {
-        foreach(self::$response->result as $result){
-            self::$endCursor = $result->page_info->end_cursor;
-            return $result->page_info->has_next_page;
-        }
+        return ($pageInfo = $this->_getNextPagePointer()) && $pageInfo->has_next_page;
     }
     
     /**
@@ -98,7 +92,8 @@ class Response
         self::$response = $resultObject;
         $request = new Request();
         if($this->hasNextPage($resultObject)){
-            $data = $request->getData(['after' => self::$endCursor]);
+            $endCursor = $this->_getNextPagePointer()->end_cursor;
+            $data = $request->getData(['after' => $endCursor]);
 
             return Self::setFromHttpResponse($request->makeCall($data));
         }
@@ -122,5 +117,12 @@ class Response
         }
         
         return null;
+    }
+    
+    protected function _getNextPagePointer()
+    {
+        foreach(self::$response->result as $result){
+            return $result->page_info;
+        }
     }
 }
