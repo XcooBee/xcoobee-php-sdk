@@ -4,7 +4,6 @@ namespace XcooBee\Core\Api;
 
 use XcooBee\Exception\XcooBeeException;
 use XcooBee\Http\Response;
-use XcooBee\Http\Request;
 
 class Consents extends Api
 {
@@ -18,8 +17,8 @@ class Consents extends Api
      */
     public function listCampaigns($config = [])
     {
-        $query = 'query getCampaigns($userId: String!, $first: Int, $after: String) {
-            campaigns(user_cursor: $userId, first : $first, after : $after) {
+        $query = 'query getCampaigns($userId: String!) {
+            campaigns(user_cursor: $userId) {
                 data {
                     campaign_name
                     status
@@ -30,8 +29,8 @@ class Consents extends Api
                 }
             }
         }';
-        $request = new Request();
-        return $request->makeCall($query, ['first' => 2, 'after' => null, 'userId' => $this->_getUserId($config)], $config);
+
+        return $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
     }
 
     /**
@@ -243,7 +242,7 @@ class Consents extends Api
     public function listConsents($statusId = null, $config = [])
     {
         $query = 'query listConsents($userId: String!, $statusId: ConsentStatus) {
-            consents(campaign_owner_cursor: $userId, status : $statusId, first : $first) {
+            consents(campaign_owner_cursor: $userId, status : $statusId) {
                 data {
                     consent_cursor,
                     consent_status,
@@ -259,7 +258,6 @@ class Consents extends Api
         }';
 
         return $this->_request($query, [
-            'first' => 5,
             'statusId' => $this->_getConsentStatus($statusId),
             'userId' => $this->_getUserId($config)
         ], $config);

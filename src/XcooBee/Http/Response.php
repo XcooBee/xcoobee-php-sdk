@@ -21,6 +21,9 @@ class Response
     public $time;
     
     /** @var string */
+    public $request_id;
+    
+    /** @var string */
     static $endCursor;
     
     /** @var mixed */
@@ -73,9 +76,9 @@ class Response
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function hasNextPage($resultObject)
+    public function hasNextPage()
     {
-        foreach($resultObject->result as $result){
+        foreach(self::$response->result as $result){
             self::$endCursor = $result->page_info->end_cursor;
             return $result->page_info->has_next_page;
         }
@@ -95,9 +98,9 @@ class Response
         self::$response = $resultObject;
         $request = new Request();
         if($this->hasNextPage($resultObject)){
-            $data = $request->getData();
-            $data['json']['variables']['after'] = self::$endCursor;
-            return Self::setFromHttpResponse(Request::makeCall($data));
+            $data = $request->getData(['after' => self::$endCursor]);
+
+            return Self::setFromHttpResponse($request->makeCall($data));
         }
         
         return null;
@@ -112,7 +115,7 @@ class Response
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getPreviousPage($resultObject)
+    public function getPreviousPage()
     {
         if(self::$response){
             return self::$response;
