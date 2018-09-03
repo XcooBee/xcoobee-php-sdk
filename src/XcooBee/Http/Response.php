@@ -21,12 +21,15 @@ class Response
 
     /** @var string */
     public $request_id;
-
+    
     /** @var mixed */
-    static $response;
-
-    /** @var mixed */
-    static $request;
+    public $request;
+    
+    /** @var Response */
+    protected $_nextPage = null;
+    
+    /** @var Response */
+    protected $_previousPage = null;
 
     public function __construct()
     {
@@ -77,7 +80,7 @@ class Response
      */
     public function hasNextPage()
     {
-        return ($pageInfo = $this->_getNextPagePointer()) && $pageInfo->has_next_page;
+        return (bool) $this->_getNextPagePointer();
     }
 
     /**
@@ -89,15 +92,18 @@ class Response
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getNextPage($resultObject)
+    public function getNextPage()
     {
-        self::$response = $resultObject;
-        $request = self::$request;
-        if ($this->hasNextPage($resultObject)) {
-            $endCursor = $this->_getNextPagePointer()->end_cursor;
-            $data = $request->getData(['after' => $endCursor]);
-
-            return Self::setFromHttpResponse($request->makeCall($data));
+        if ($this->hasNextPage()) {
+            $request = clone $this->request;
+            $endCursor = $this->_getNextPagePointer();
+            $request->setVariables(['after' => $endCursor]);
+            $nextPage = Self::setFromHttpResponse($request->makeCall());
+            $this->setNextPage($nextPage);
+            $nextPage->setPreviousPage($this);
+            $nextPage->request = $request;
+            
+            return $nextPage;
         }
 
         return null;
@@ -114,17 +120,27 @@ class Response
      */
     public function getPreviousPage()
     {
-        if (self::$response) {
-            return self::$response;
-        }
-
-        return null;
+        return $this->_previousPage;
+    }
+    
+    public function setNextPage($nextResponse)
+    {
+        $this->_nextPage = $nextResponse;
+    }
+    
+    public function setPreviousPage($previousResponse)
+    {
+        $this->_previousPage = $previousResponse;
     }
 
     protected function _getNextPagePointer()
     {
-        foreach (self::$response->result as $result) {
-            return $result->page_info;
+        foreach ($this->result as $result) {
+            if(isset($result->page_info) && $result->page_info->has_next_page === true){
+                return $result->page_info->end_cursor;
+            }else{
+                return null;
+            }
         }
     }
 

@@ -8,28 +8,25 @@ use XcooBee\XcooBee;
 class Request
 {
 
-    /** @var mixed */
-    protected static $_data;
+    /** @var string */
+    protected $_uri;
 
     /** @var string */
-    protected static $_uri;
+    protected $_query;
 
-    /** @var string */
-    protected static $_query;
+    /** @var array */
+    protected $_headers;
 
-    /** @var mixed */
-    protected static $_headers;
-
-    /** @var string */
-    protected static $_variabels;
+    /** @var array */
+    protected $_variabels;
 
     /** @var mixed */
     protected $_client;
 
-    public function __construct($uri = null)
+    public function __construct($uri)
     {
         if ($uri) {
-            self::$_uri = $uri;
+            $this->_uri = $uri;
         }
 
         $xcoobee = new XcooBee();
@@ -45,23 +42,15 @@ class Request
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function makeCall($data)
+    public function makeCall()
     {
-        if (array_key_exists('headers', $data)) {
-            $this->setHeaders($data['headers']);
-        }
-
-        if (array_key_exists('json', $data)) {
-            if (array_key_exists('variables', $data['json'])) {
-                $this->setVariables($data['json']['variables']);
-            }
-
-            if (array_key_exists('query', $data['json'])) {
-                $this->setQuery($data['json']['query']);
-            }
-        }
-
-        $response = $this->_client->post(self::$_uri, $data);
+        $response = $this->_client->post($this->_uri, [
+            'json' => [
+                'query' => $this->getQuery(),
+                'variables' => $this->getVariables()
+            ],
+            'headers' => $this->getHeaders()
+        ]);
 
         return $response;
     }
@@ -70,77 +59,70 @@ class Request
      * 
      * name: get data 
      *
+     * @return mixed headers
      */
     public function getHeaders()
     {
-        return self::$_headers;
+        return $this->_headers;
     }
 
     /**
      * 
      * name: set headers
      *
+     * @return void
      */
     public function setHeaders($headers)
     {
-        self::$_headers = $headers;
+        $this->_headers = $headers;
     }
 
     /**
      * 
      * name: set Variables
      *
+     * @return void
      */
     public function setVariables($variables)
     {
-        self::$_variabels = $variables;
+        if($this->getVariables()){
+            $this->_variabels = array_merge($this->getVariables(), $variables);
+        }else{
+            $this->_variabels = $variables;
+        }
     }
 
     /**
      * 
      * name: get data 
      *
+     * @return array Variables
      */
     public function getVariables()
     {
-        return self::$_variabels;
+        return $this->_variabels;
     }
 
     /**
      * 
      * name: set query 
      *
+     * @return void
      */
     public function setQuery($query)
     {
-        self::$_query = $query;
+        $this->_query = $query;
     }
 
     /**
      * 
      * name: get query 
      *
+     * @return String
      */
     public function getQuery()
     {
-        return self::$_query;
-    }
-    
-    /**
-     * 
-     * name: get query 
-     * @param: array $variables
-     * 
-     * @return mixed Data
-     */
-    public function getData($variables)
-    {
-        $data = [];
-        $data['headers'] = $this->getHeaders();
-        $data['json']['query'] = $this->getQuery();
-        $data['json']['variables'] = array_merge($this->getVariables(), $variables);
-
-        return $data;
+        return $this->_query;
     }
 
 }
