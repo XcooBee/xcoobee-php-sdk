@@ -31,9 +31,7 @@ class Request
 
     /**
      * 
-     * name: make http call 
-     * 
-     * @param array $data
+     * make http call 
      * 
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -52,8 +50,7 @@ class Request
     }
 
     /**
-     * 
-     * name: get data 
+     * get data 
      *
      * @return mixed headers
      */
@@ -63,8 +60,7 @@ class Request
     }
 
     /**
-     * 
-     * name: set headers
+     * set headers
      *
      * @return void
      */
@@ -74,8 +70,7 @@ class Request
     }
 
     /**
-     * 
-     * name: set Variables
+     * set Variables
      *
      * @return void
      */
@@ -89,8 +84,7 @@ class Request
     }
 
     /**
-     * 
-     * name: get data 
+     * get data 
      *
      * @return array Variables
      */
@@ -100,8 +94,7 @@ class Request
     }
 
     /**
-     * 
-     * name: set query 
+     * set query 
      *
      * @return void
      */
@@ -111,8 +104,7 @@ class Request
     }
 
     /**
-     * 
-     * name: get query 
+     * get query 
      *
      * @return String
      */

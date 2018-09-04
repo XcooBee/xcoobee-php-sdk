@@ -39,7 +39,7 @@ class Response
 
     /**
      * 
-     * name: Set response data from http request
+     * Set response data from http request
      * 
      * @param ResponseInterface $response
      * 
@@ -71,9 +71,7 @@ class Response
 
     /**
      * 
-     * name: has next page
-     * 
-     * @param ResponseInterface $resultObject
+     * has next page 
      * 
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -85,9 +83,7 @@ class Response
 
     /**
      * 
-     * name: get next page data
-     * 
-     * @param ResponseInterface $resultObject
+     * get next page data
      * 
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -111,9 +107,7 @@ class Response
 
     /**
      * 
-     * name: get previous page data
-     * 
-     * @param ResponseInterface $resultObject
+     * get previous page data
      * 
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -122,17 +116,32 @@ class Response
     {
         return $this->_previousPage;
     }
-
+    
+    /**
+     * set next page
+     *
+     * @return void
+     */
     public function setNextPage($nextResponse)
     {
         $this->_nextPage = $nextResponse;
     }
-
+    
+    /**
+     * set previous page
+     *
+     * @return void
+     */
     public function setPreviousPage($previousResponse)
     {
         $this->_previousPage = $previousResponse;
     }
-
+    
+    /**
+     * get next page cursor
+     *
+     * @return String
+     */
     protected function _getNextPagePointer()
     {
         foreach ($this->result as $result) {

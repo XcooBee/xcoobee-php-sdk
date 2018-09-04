@@ -24,7 +24,7 @@ class GraphQLClient extends Client
     public function request($query, $variables = [], $headers = [], $config = [])
     {
         $headers["Authorization"] = $this->_getAuthToken($config);
-        $request = new Request($this->_getUriFromEndpoint(self::API_URL));
+        $request = $this->_getRequest();
         $request->setHeaders($headers);
         $request->setVariables($variables);
         $request->setQuery($query);
@@ -32,5 +32,10 @@ class GraphQLClient extends Client
         $responsedata->request = $request;
 
         return $responsedata;
+    }
+    
+    protected function _getRequest()
+    {
+        return new Request($this->_getUriFromEndpoint(self::API_URL));
     }
 }
