@@ -25,12 +25,8 @@ class Request
 
     public function __construct($uri)
     {
-        if ($uri) {
-            $this->_uri = $uri;
-        }
-
-        $xcoobee = new XcooBee();
-        $this->_client = new Client($xcoobee);
+        $this->_uri = $uri;
+        $this->_client = new Client(new XcooBee());
     }
 
     /**
@@ -85,9 +81,9 @@ class Request
      */
     public function setVariables($variables)
     {
-        if($this->getVariables()){
+        if ($this->getVariables()) {
             $this->_variabels = array_merge($this->getVariables(), $variables);
-        }else{
+        } else {
             $this->_variabels = $variables;
         }
     }

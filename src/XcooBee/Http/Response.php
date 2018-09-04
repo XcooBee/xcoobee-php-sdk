@@ -21,13 +21,13 @@ class Response
 
     /** @var string */
     public $request_id;
-    
+
     /** @var mixed */
     public $request;
-    
+
     /** @var Response */
     protected $_nextPage = null;
-    
+
     /** @var Response */
     protected $_previousPage = null;
 
@@ -92,17 +92,17 @@ class Response
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getNextPage()
+    public function getNextPage() 
     {
         if ($this->hasNextPage()) {
             $request = clone $this->request;
             $endCursor = $this->_getNextPagePointer();
             $request->setVariables(['after' => $endCursor]);
-            $nextPage = Self::setFromHttpResponse($request->makeCall());
+            $nextPage = self::setFromHttpResponse($request->makeCall());
             $this->setNextPage($nextPage);
             $nextPage->setPreviousPage($this);
             $nextPage->request = $request;
-            
+
             return $nextPage;
         }
 
@@ -122,12 +122,12 @@ class Response
     {
         return $this->_previousPage;
     }
-    
+
     public function setNextPage($nextResponse)
     {
         $this->_nextPage = $nextResponse;
     }
-    
+
     public function setPreviousPage($previousResponse)
     {
         $this->_previousPage = $previousResponse;
@@ -136,9 +136,9 @@ class Response
     protected function _getNextPagePointer()
     {
         foreach ($this->result as $result) {
-            if(isset($result->page_info) && $result->page_info->has_next_page === true){
+            if (isset($result->page_info) && $result->page_info->has_next_page === true) {
                 return $result->page_info->end_cursor;
-            }else{
+            } else {
                 return null;
             }
         }
