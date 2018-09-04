@@ -20,7 +20,7 @@ class Request
     /** @var array */
     protected $_variabels;
 
-    /** @var mixed */
+    /** @var Client */
     protected $_client;
 
     public function __construct($uri)
@@ -30,10 +30,9 @@ class Request
     }
 
     /**
-     * 
      * make http call 
      * 
-     * @return \XcooBee\Http\Response
+     * @return \GuzzleHttp\Psr7\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function makeCall()
@@ -50,9 +49,9 @@ class Request
     }
 
     /**
-     * get data 
+     * get Headers 
      *
-     * @return mixed headers
+     * @return array headers
      */
     public function getHeaders()
     {

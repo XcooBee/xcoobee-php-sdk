@@ -22,7 +22,7 @@ class Response
     /** @var string */
     public $request_id;
 
-    /** @var mixed */
+    /** @var Request */
     public $request;
 
     /** @var Response */
@@ -38,7 +38,6 @@ class Response
     }
 
     /**
-     * 
      * Set response data from http request
      * 
      * @param ResponseInterface $response
@@ -72,8 +71,11 @@ class Response
     }
 
     /**
-     * 
      * has next page 
+     * 
+     * Check if Response is iterables and has next page data
+     * 
+     * @return bool 
      * 
      * @return \XcooBee\Http\Response
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -122,6 +124,8 @@ class Response
     /**
      * set next page
      *
+     * @param Response $nextResponse
+     * 
      * @return void
      */
     public function setNextPage($nextResponse)
@@ -132,6 +136,8 @@ class Response
     /**
      * set previous page
      *
+     * @param Response $previousResponse
+     * 
      * @return void
      */
     public function setPreviousPage($previousResponse)
