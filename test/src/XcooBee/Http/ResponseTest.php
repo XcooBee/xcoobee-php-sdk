@@ -32,13 +32,15 @@ class Response extends TestCase {
         $responseMock = $this->_getMock(\XcooBee\Http\Response::class, [
             '_getNextPagePointer' => 'testEndCursor'
         ]);
-
+        $responseMock->result = true;
+        
         $this->_setProperty($responseMock, 'request', $requestMock);
         $response = $responseMock->getNextPage();
         $this->assertEquals($expectedCode, $response->code);
         $this->assertEquals($returnedData, $response->result);
         $this->assertEquals($returnedErrors, $response->errors);
         $this->assertEquals($request_id, $response->request_id);
+        $this->assertEquals(true, $response->getPreviousPage()->result);
     }
 
     public function testHasNextPage()
