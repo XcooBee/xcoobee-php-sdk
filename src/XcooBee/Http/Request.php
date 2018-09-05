@@ -37,21 +37,19 @@ class Request
      */
     public function makeCall()
     {
-        $response = $this->_client->post($this->_uri, [
+        return $this->_client->post($this->_uri, [
             'json' => [
                 'query' => $this->getQuery(),
                 'variables' => $this->getVariables()
             ],
             'headers' => $this->getHeaders()
         ]);
-
-        return $response;
     }
 
     /**
-     * get Headers 
+     * returns headers 
      *
-     * @return array headers
+     * @return array
      */
     public function getHeaders()
     {
@@ -69,7 +67,7 @@ class Request
     }
 
     /**
-     * set Variables
+     * set variables
      *
      * @return void
      */
@@ -83,9 +81,9 @@ class Request
     }
 
     /**
-     * get data 
+     * returns variables
      *
-     * @return array Variables
+     * @return array
      */
     public function getVariables()
     {
@@ -103,9 +101,9 @@ class Request
     }
 
     /**
-     * get query 
+     * returns query 
      *
-     * @return String
+     * @return string
      */
     public function getQuery()
     {

@@ -43,7 +43,6 @@ class Response
      * @param ResponseInterface $response
      * 
      * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public static function setFromHttpResponse(ResponseInterface $response)
     {
@@ -71,14 +70,10 @@ class Response
     }
 
     /**
-     * has next page 
-     * 
      * Check if Response is iterables and has next page data
      * 
      * @return bool 
      * 
-     * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function hasNextPage()
     {
@@ -86,11 +81,9 @@ class Response
     }
 
     /**
-     * 
-     * get next page data
+     * Returns next page response
      * 
      * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getNextPage() 
     {
@@ -110,11 +103,9 @@ class Response
     }
 
     /**
-     * 
-     * get previous page data
+     * Returns previous page response
      * 
      * @return \XcooBee\Http\Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getPreviousPage()
     {
@@ -122,7 +113,7 @@ class Response
     }
     
     /**
-     * set next page
+     * set next page response
      *
      * @param Response $nextResponse
      * 
@@ -134,7 +125,7 @@ class Response
     }
     
     /**
-     * set previous page
+     * set previous page response
      *
      * @param Response $previousResponse
      * 
@@ -146,7 +137,7 @@ class Response
     }
     
     /**
-     * get next page cursor
+     * returns next page pointer
      *
      * @return String
      */
