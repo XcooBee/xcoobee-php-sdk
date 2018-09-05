@@ -43,6 +43,31 @@ class Response extends TestCase {
         $this->assertEquals(true, $response->getPreviousPage()->result);
     }
 
+    public function testGetPreviousPage()
+    {
+        $guzzleResponseMock = $this->_getMock(\GuzzleHttp\Psr7\Response::class, [
+            'getBody' => json_encode([
+                'data' => ['resutl' => 'testData'],
+                'errors' => [],
+                'request_id' => 'testrequestId'
+            ]),
+            'getStatusCode' => 200,
+        ]);
+
+        $requestMock = $this->_getMock(\XcooBee\Http\Request::class, [
+            'makeCall' => $guzzleResponseMock
+        ]);
+        $responseMock = $this->_getMock(\XcooBee\Http\Response::class, [
+            '_getNextPagePointer' => 'testEndCursor'
+        ]);
+        $responseMock->result = true;
+        
+        $this->_setProperty($responseMock, 'request', $requestMock);
+        $response = $responseMock->getNextPage();
+
+        $this->assertTrue($response->getPreviousPage()->result);
+    }
+    
     public function testHasNextPage()
     {
         $responseMock = $this->_getMock(\XcooBee\Http\Response::class, [
