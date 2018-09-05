@@ -15,7 +15,7 @@ class UsersTest extends TestCase {
         $usersMock->expects($this->once())
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['userId' => 'testuserId', 'first' => null, 'after' => null], $params);
+                            $this->assertEquals(['userId' => 'testuserId'], $params);
                         }));
 
         $usersMock->getConversation('testuserId');
@@ -29,11 +29,11 @@ class UsersTest extends TestCase {
         $usersMock->expects($this->once())
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params, $config) {
-                            $this->assertEquals(['userId' => 'testuserId', 'first' => null, 'after' => null], $params);
+                            $this->assertEquals(['userId' => 'testuserId'], $params);
                             $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
                         }));
 
-        $usersMock->getConversation('testuserId', null, null, [
+        $usersMock->getConversation('testuserId', [
             'apiKey'=> 'testapikey' , 
             'apiSecret'=> 'testapisecret' 
         ]);
@@ -73,7 +73,7 @@ class UsersTest extends TestCase {
                 $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
         }));
                 
-        $usersMock->getConversations(null, null, [
+        $usersMock->getConversations([
             'apiKey'=> 'testapikey' , 
             'apiSecret'=> 'testapisecret' 
         ]);
