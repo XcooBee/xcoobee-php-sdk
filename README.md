@@ -66,6 +66,7 @@ pgpSecret   => the pgp-secret key
 pgpPassword => the pgp-password 
 campaignId  => the default campaign id
 encrypt     => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+pageSize    => pagination limit
 ```
 
 #### clearConfig()
@@ -101,6 +102,7 @@ apiSecret=8937438hf
 campaignId=ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be
 pgpPassword=somethingsecret
 encrypt=0
+pageSize=10
 ```
 
 options: 
@@ -111,6 +113,7 @@ apiSecret      => the api-secret
 campaignId     => the default campaign id
 pgpPassword    => the password for your pgp key
 encrypt        => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+pageSize       => pagination limit
 ```
 
 

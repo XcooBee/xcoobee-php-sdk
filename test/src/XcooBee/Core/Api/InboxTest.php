@@ -19,13 +19,14 @@ class InboxTest extends TestCase
     public function testListInbox($requestCode, $requestData, $requestError, $expectedResponse)
     {
         $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
-            '_request' => $this->_createResponse($requestCode, $requestData, $requestError)
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
+            '_getPageSize' => true,
         ]);
 
         $inboxMock->expects($this->once())
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['after' => null], $params);
+                            $this->assertEquals(['first' => true, 'after' => null], $params);
                         }));
 
         $response = $inboxMock->listInbox();
@@ -45,16 +46,17 @@ class InboxTest extends TestCase
     public function testListInbox_withStartId($requestCode, $requestData, $requestError, $expectedResponse)
     {
         $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
-            '_request' => $this->_createResponse($requestCode, $requestData, $requestError)
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
+            '_getPageSize' => true,
         ]);
 
         $inboxMock->expects($this->once())
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['after' => '2015-08-09T11:39:31Z'], $params);
+                            $this->assertEquals(['after' => 'testEndId', 'first' => true], $params);
                         }));
 
-        $response = $inboxMock->listInbox('2015-08-09T11:39:31Z');
+        $response = $inboxMock->listInbox('testEndId');
         
         $this->assertEquals($requestCode, $response->code);
         $this->assertEquals($expectedResponse, $response->result->inbox->data);

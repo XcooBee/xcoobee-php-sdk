@@ -17,8 +17,8 @@ class Consents extends Api
      */
     public function listCampaigns($config = [])
     {
-        $query = 'query getCampaigns($userId: String!) {
-            campaigns(user_cursor: $userId) {
+        $query = 'query getCampaigns($userId: String!, $first : Int, $after: String) {
+            campaigns(user_cursor: $userId, first : $first , after : $after) {
                 data {
                     campaign_name
                     status
@@ -30,7 +30,7 @@ class Consents extends Api
             }
         }';
 
-        return $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
+        return $this->_request($query, ['first' => $this->_getPageSize($config), 'after' => null, 'userId' => $this->_getUserId($config)], $config);
     }
 
     /**
@@ -241,8 +241,8 @@ class Consents extends Api
      */
     public function listConsents($statusId = null, $config = [])
     {
-        $query = 'query listConsents($userId: String!, $statusId: ConsentStatus) {
-            consents(campaign_owner_cursor: $userId, status : $statusId) {
+        $query = 'query listConsents($userId: String!, $statusId: ConsentStatus, $first : Int, $after: String) {
+            consents(campaign_owner_cursor: $userId, status : $statusId, first : $first , after : $after) {
                 data {
                     consent_cursor,
                     consent_status,
@@ -259,7 +259,9 @@ class Consents extends Api
 
         return $this->_request($query, [
             'statusId' => $this->_getConsentStatus($statusId),
-            'userId' => $this->_getUserId($config)
+            'userId' => $this->_getUserId($config),
+            'first' => $this->_getPageSize($config),
+            'after' => null, 
         ], $config);
     }
     

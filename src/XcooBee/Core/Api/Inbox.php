@@ -20,8 +20,8 @@ class Inbox extends Api
      */
     public function listInbox($startId = null)
     {
-        $query = 'query listInbox($startId: String) {
-            inbox (after: $startId){
+        $query = 'query listInbox($startId: String, $first : Int) {
+            inbox (after: $startId, first : $first){
                 data {
                     original_name
                     filename
@@ -42,7 +42,7 @@ class Inbox extends Api
             }
         }';
 
-        $inboxItems = $this->_request($query, ['after' => $startId]);
+        $inboxItems = $this->_request($query, ['after' => $startId, 'first' => $this->_getPageSize()]);
 
         if ($inboxItems->code != 200) {
             return $inboxItems;
