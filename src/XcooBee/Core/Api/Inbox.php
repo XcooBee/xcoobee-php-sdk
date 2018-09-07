@@ -21,8 +21,8 @@ class Inbox extends Api
      */
     public function listInbox($startId = null, $config = [])
     {
-        $query = 'query listInbox($startId: String, $first : Int) {
-            inbox (after: $startId, first : $first){
+        $query = 'query listInbox($after: String, $first : Int) {
+            inbox (after: $after, first : $first){
                 data {
                     original_name
                     filename
