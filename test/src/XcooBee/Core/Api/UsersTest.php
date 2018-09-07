@@ -11,11 +11,12 @@ class UsersTest extends TestCase {
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
+            '_getPageSize' => true
         ]);
         $usersMock->expects($this->once())
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['userId' => 'testuserId'], $params);
+                            $this->assertEquals(['first' => true, 'after' => null, 'userId' => 'testuserId'], $params);
                         }));
 
         $usersMock->getConversation('testuserId');
@@ -25,17 +26,18 @@ class UsersTest extends TestCase {
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
+            '_getPageSize' => true
         ]);
         $usersMock->expects($this->once())
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params, $config) {
-                            $this->assertEquals(['userId' => 'testuserId'], $params);
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                            $this->assertEquals(['first' => true, 'after' => null, 'userId' => 'testuserId'], $params);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
                         }));
 
         $usersMock->getConversation('testuserId', [
-            'apiKey'=> 'testapikey' , 
-            'apiSecret'=> 'testapisecret' 
+            'apiKey' => 'testapikey' , 
+            'apiSecret' => 'testapisecret' 
         ]);
     }
     
@@ -54,9 +56,15 @@ class UsersTest extends TestCase {
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
-            '_getUserId' => 'testUserID'
+            '_getUserId' => 'testUserID',
+            '_getPageSize' => true
         ]);
-
+        $usersMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['userId' => 'testUserID', 'first' => true, 'after' => null], $params);
+        }));
+        
         $usersMock->getConversations();
     }
     
@@ -64,18 +72,19 @@ class UsersTest extends TestCase {
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
-            '_getUserId' => 'testUserID'
+            '_getUserId' => 'testUserID',
+            '_getPageSize' => true
         ]);
         
         $usersMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params, $config) {
-                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
         }));
                 
         $usersMock->getConversations([
-            'apiKey'=> 'testapikey' , 
-            'apiSecret'=> 'testapisecret' 
+            'apiKey' => 'testapikey' , 
+            'apiSecret' => 'testapisecret' 
         ]);
     }
     
@@ -119,12 +128,12 @@ class UsersTest extends TestCase {
                                     'breach_cursor' => null
                                 ]], $params);
                             
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
                         }));
 
         $usersMock->sendUserMessage('test message', 'testconsentId', null, [
-            'apiKey'=> 'testapikey' , 
-            'apiSecret'=> 'testapisecret' 
+            'apiKey' => 'testapikey' , 
+            'apiSecret' => 'testapisecret' 
         ]);
     }
     

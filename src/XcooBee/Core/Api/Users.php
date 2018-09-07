@@ -98,8 +98,8 @@ class Users extends Api
      */
     public function getConversations($config = []) 
     {
-        $query = 'query getConversations($userId: String!) {
-            conversations(user_cursor: $userId) {
+        $query = 'query getConversations($userId: String!, $first : Int, $after: String) {
+            conversations(user_cursor: $userId, first : $first , after : $after) {
                 data {
                     display_name,
                     consent_cursor,
@@ -113,7 +113,7 @@ class Users extends Api
             }
         }';
 
-        return $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
+        return $this->_request($query, ['first' => $this->_getPageSize($config), 'after' => null, 'userId' => $this->_getUserId($config)], $config);
     }
 
     /**
@@ -131,8 +131,8 @@ class Users extends Api
             throw new XcooBeeException('No "user" provided');
         }
 
-        $query = 'query getConversation($userId: String!) {
-		conversation(target_cursor : $userId) {
+        $query = 'query getConversation($userId: String!, $first : Int, $after: String) {
+		conversation(target_cursor : $userId, first : $first, after : $after) {
                     data {
                         display_name,
                         consent_cursor,
@@ -146,7 +146,7 @@ class Users extends Api
 		}
 	}';
 
-        return $this->_request($query, ['userId' => $userId], $config);
+        return $this->_request($query, ['first' => $this->_getPageSize($config), 'after' => null, 'userId' => $userId], $config);
     }
 
     protected function _getUserIdByConsent($consentId, $config = []) 

@@ -54,12 +54,12 @@ class InboxTest extends TestCase
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params, $config) {
                             $this->assertEquals(['first' => true, 'after' => null], $params);
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
                         }));
 
         $response = $inboxMock->listInbox(null, [
-            'apiKey'=> 'testapikey' , 
-            'apiSecret'=> 'testapisecret' 
+            'apiKey' => 'testapikey' , 
+            'apiSecret' => 'testapisecret' 
         ]);
         $this->assertEquals($requestCode, $response->code);
         $this->assertEquals($expectedResponse, $response->result->inbox->data);
@@ -140,11 +140,11 @@ class InboxTest extends TestCase
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params, $config) {
                             $this->assertEquals(['userId' => "testUserId", 'filename' => 'testFileName'], $params);
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
                         }));
         $response = $inboxMock->getInboxItem('testFileName', [
-            'apiKey'=> 'testapikey' , 
-            'apiSecret'=> 'testapisecret' 
+            'apiKey' => 'testapikey' , 
+            'apiSecret' => 'testapisecret' 
         ]);
         
         $this->assertEquals($requestCode, $response->code);
@@ -177,11 +177,11 @@ class InboxTest extends TestCase
                 ->method('_request')
                 ->will($this->returnCallback(function ($query, $params, $config) {
                             $this->assertEquals(['userId' => "testUserId", 'filename' => 'testFileName'], $params);
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
                         }));
         $inboxMock->deleteInboxItem('testFileName', [
-            'apiKey'=> 'testapikey' , 
-            'apiSecret'=> 'testapisecret' 
+            'apiKey' => 'testapikey' , 
+            'apiSecret' => 'testapisecret' 
         ]);
     }
     

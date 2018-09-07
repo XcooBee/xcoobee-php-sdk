@@ -132,8 +132,8 @@ class BeesTest extends TestCase
         ]));
 
         $response = $beesMock->uploadFiles([__DIR__ . '/../../../../assets/test.txt', __DIR__ . '/../../../../assets/test2.txt'], [
-            'apiKey'=> 'testapikey' , 
-            'apiSecret'=> 'testapisecret' 
+            'apiKey' => 'testapikey' , 
+            'apiSecret' => 'testapisecret' 
         ]);
 
         $this->assertTrue($response->result);
@@ -181,10 +181,10 @@ class BeesTest extends TestCase
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params, $config) {
                 $this->assertEquals(['searchText' => null, 'first' => true, 'after' => null], $params);
-                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
         }));
         
-        $beesMock->listBees(null,['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret']);
+        $beesMock->listBees(null, ['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret']);
     }
     
     /**

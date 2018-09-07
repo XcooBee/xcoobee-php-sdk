@@ -74,7 +74,7 @@ class Response extends TestCase {
             '_getNextPagePointer' => 'testEndCursor'
         ]);
         $hasNextPage = $responseMock->hasNextPage();
-        $this->assertEquals(true, $hasNextPage);
+        $this->assertTrue($hasNextPage);
     }
 
     public function testHasNextPage_False()
@@ -83,7 +83,7 @@ class Response extends TestCase {
             '_getNextPagePointer' => null
         ]);
         $hasNextPage = $responseMock->hasNextPage();
-        $this->assertEquals(false, $hasNextPage);
+        $this->assertFalse($hasNextPage);
     }
 
     public function responseProvider()

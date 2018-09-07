@@ -51,11 +51,11 @@ class SystemTest extends TestCase
         $XcooBeeMock->users->expects($this->once())
                 ->method('getUser')
                 ->will($this->returnCallback(function ($config) {
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
                 }));
         $this->_setProperty($systemMock, '_xcoobee', $XcooBeeMock);
         
-        $response = $systemMock->ping(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret']);
+        $response = $systemMock->ping(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret']);
         $this->assertEquals(200, $response->code);
     }
     
