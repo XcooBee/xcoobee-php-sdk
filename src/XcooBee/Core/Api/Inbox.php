@@ -14,11 +14,12 @@ class Inbox extends Api
      * List all Items in inbox
      *
      * @param String $startId
+     * @param array $config
      * 
      * @return Response
      * @throws XcooBeeException
      */
-    public function listInbox($startId = null)
+    public function listInbox($startId = null, $config = [])
     {
         $query = 'query listInbox($startId: String, $first : Int) {
             inbox (after: $startId, first : $first){
@@ -42,7 +43,7 @@ class Inbox extends Api
             }
         }';
 
-        $inboxItems = $this->_request($query, ['after' => $startId, 'first' => $this->_getPageSize()]);
+        $inboxItems = $this->_request($query, ['after' => $startId, 'first' => $this->_getPageSize($config)], $config);
 
         if ($inboxItems->code != 200) {
             return $inboxItems;
@@ -65,12 +66,13 @@ class Inbox extends Api
     /**
      * get Items in inbox
      *
-     * @param String $filename
+     * @param String $messageId
+     * @param array $config
      * 
      * @return Response
      * @throws XcooBeeException
      */
-    public function getInboxItem($messageId)
+    public function getInboxItem($messageId, $config = [])
     {
         $query = 'query getInboxItem($userId: String!, $filename: String!) {
             inbox_item(user_cursor: $userId, filename: $filename) {
@@ -83,7 +85,7 @@ class Inbox extends Api
             }
         }';
 
-        $inboxItem = $this->_request($query, ['userId' => $this->_getUserId(), 'filename' => $messageId]);
+        $inboxItem = $this->_request($query, ['userId' => $this->_getUserId($config), 'filename' => $messageId], $config);
         if ($inboxItem->code != 200) {
             return $inboxItem;
         }
@@ -100,12 +102,13 @@ class Inbox extends Api
     /**
      * delete Item in inbox
      *
-     * @param String $filename
+     * @param String $messageId
+     * @param array $config
      * 
      * @return Response
      * @throws XcooBeeException
      */
-    public function deleteInboxItem($messageId)
+    public function deleteInboxItem($messageId, $config = [])
     {
         $query = 'mutation deleteInboxItem($userId: String!, $filename: String!) {
             remove_inbox_item(user_cursor: $userId, filename: $filename) {
@@ -113,7 +116,7 @@ class Inbox extends Api
             }
         }';
 
-        return $this->_request($query, ['userId' => $this->_getUserId(), 'filename' => $messageId]);
+        return $this->_request($query, ['userId' => $this->_getUserId($config), 'filename' => $messageId], $config);
     }
     
     protected function _getExpirationDate($date)

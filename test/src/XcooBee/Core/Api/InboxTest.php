@@ -33,7 +33,38 @@ class InboxTest extends TestCase
         $this->assertEquals($requestCode, $response->code);
         $this->assertEquals($expectedResponse, $response->result->inbox->data);
     }
+    
+    /**
+     * @param array $inboxItems
+     * @param int $requestCode
+     * @param array $requestData
+     * @param array $requestError
+     * @param array $expectedResponse
+     * 
+     * @dataProvider inboxItemsProvider
+     */
+    public function testListInbox_withConfig($requestCode, $requestData, $requestError, $expectedResponse)
+    {
+        $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
+            '_getPageSize' => true,
+        ]);
 
+        $inboxMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['first' => true, 'after' => null], $params);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                        }));
+
+        $response = $inboxMock->listInbox(null, [
+            'apiKey'=> 'testapikey' , 
+            'apiSecret'=> 'testapisecret' 
+        ]);
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($expectedResponse, $response->result->inbox->data);
+    }
+    
     /**
      * @param array $inboxItems
      * @param int $requestCode
@@ -88,7 +119,38 @@ class InboxTest extends TestCase
         $this->assertEquals($requestCode, $response->code);
         $this->assertEquals($expectedResponse, $response->result->inbox_item);
     }
+    
+    /**
+     * @param array $inboxItems
+     * @param int $requestCode
+     * @param array $requestData
+     * @param array $requestError
+     * @param array $expectedResponse
+     * 
+     * @dataProvider inboxItemProvider
+     */
+    public function testGetInboxItem_withConfig($requestCode, $requestData, $requestError, $expectedResponse)
+    {
+        $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
+            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
+            '_getUserId' => 'testUserId'
+        ]);
 
+        $inboxMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['userId' => "testUserId", 'filename' => 'testFileName'], $params);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                        }));
+        $response = $inboxMock->getInboxItem('testFileName', [
+            'apiKey'=> 'testapikey' , 
+            'apiSecret'=> 'testapisecret' 
+        ]);
+        
+        $this->assertEquals($requestCode, $response->code);
+        $this->assertEquals($expectedResponse, $response->result->inbox_item);
+    }
+    
     public function testDeleteInboxItem()
     {
         $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
@@ -103,7 +165,26 @@ class InboxTest extends TestCase
                         }));
         $inboxMock->deleteInboxItem('testFileName');
     }
+    
+    public function testDeleteInboxItem_withConfig()
+    {
+        $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
+            '_request' => true,
+            '_getUserId' => "testUserId"
+        ]);
 
+        $inboxMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['userId' => "testUserId", 'filename' => 'testFileName'], $params);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                        }));
+        $inboxMock->deleteInboxItem('testFileName', [
+            'apiKey'=> 'testapikey' , 
+            'apiSecret'=> 'testapisecret' 
+        ]);
+    }
+    
     public function inboxItemProvider()
     {
         return [
