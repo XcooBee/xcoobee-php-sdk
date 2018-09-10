@@ -2,6 +2,9 @@
 
 namespace XcooBee\Http;
 
+use XcooBee\Http\Request;
+use XcooBee\Http\Response;
+
 class GraphQLClient extends Client
 {
     const API_URL = 'graphql';
@@ -21,13 +24,18 @@ class GraphQLClient extends Client
     public function request($query, $variables = [], $headers = [], $config = [])
     {
         $headers["Authorization"] = $this->_getAuthToken($config);
+        $request = $this->_getRequest();
+        $request->setHeaders($headers);
+        $request->setVariables($variables);
+        $request->setQuery($query);
+        $responsedata = Response::setFromHttpResponse($request->makeCall());
+        $responsedata->request = $request;
 
-        return Response::setFromHttpResponse($this->post($this->_getUriFromEndpoint(self::API_URL), [
-            'json' => [
-                'query' => $query,
-                'variables' => $variables
-            ],
-            'headers' => $headers
-        ]));
+        return $responsedata;
+    }
+    
+    protected function _getRequest()
+    {
+        return new Request($this->_getUriFromEndpoint(self::API_URL));
     }
 }

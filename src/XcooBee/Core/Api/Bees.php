@@ -28,9 +28,9 @@ class Bees extends Api
      * @return Response
      * @throws XcooBeeException
      */
-    public function listBees($searchText = "", $config = []){
-        $query = 'query getBees($searchText: String) {
-            bees(search: $searchText) {
+    public function listBees($searchText = null, $config = []){
+        $query = 'query getBees($searchText: String, $first : Int, $after: String) {
+            bees(search: $searchText, first : $first , after : $after) {
                 data {
                     cursor
                     bee_system_name
@@ -51,7 +51,7 @@ class Bees extends Api
             }
         }';
 
-        return $this->_request($query, ['searchText' => $searchText], $config);
+        return $this->_request($query, ['first' => $this->_getPageSize($config), 'after' => null, 'searchText' => $searchText], $config);
     }
 
     /**

@@ -66,6 +66,7 @@ pgpSecret   => the pgp-secret key
 pgpPassword => the pgp-password 
 campaignId  => the default campaign id
 encrypt     => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+pageSize    => pagination limit
 ```
 
 #### clearConfig()
@@ -101,6 +102,7 @@ apiSecret=8937438hf
 campaignId=ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be
 pgpPassword=somethingsecret
 encrypt=0
+pageSize=10
 ```
 
 options: 
@@ -111,6 +113,7 @@ apiSecret      => the api-secret
 campaignId     => the default campaign id
 pgpPassword    => the password for your pgp key
 encrypt        => one of 0|1 where 0=no, 1=Yes, if 1 SDK will encrypt the contents of this file using machine specific mechanisms upon first use.
+pageSize       => pagination limit
 ```
 
 
@@ -882,7 +885,7 @@ standard JSON response object
 
 The inbox API governs the access to your inbox. You can list, download, and delete items from your inbox.
 
-## listInbox([startId])
+## listInbox([config])
 
 This method will present a paged list of inbox items that you can download. The listing will be for the user connected to you API key. You cannot check any other user's inbox using this method. You can return up to 100 items in one call.
 Calling this method more than once per minute will result in HTTP 429 error (exceeding call limits).
@@ -900,7 +903,7 @@ Inbox items are listed in order of arrival with most recent items first.
 
 options:
 ```
-startId       => optional: the message id from which to start the listing
+config   => optional: the config object
 
 ```
 

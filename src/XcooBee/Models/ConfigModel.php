@@ -15,7 +15,8 @@ class ConfigModel
     public $pgpSecret   = null;
     public $pgpPassword = null;
     public $campaignId  = null;
-    public $encrypt      = true;
+    public $encrypt     = true;
+    public $pageSize    = null;
 
     /**
      * Creates config model from passed params
@@ -27,6 +28,7 @@ class ConfigModel
                 'pgpPassword'   => '',
                 'campaignId'    => '',
                 'encrypt'       => true,
+                'pageSize'      => null
             ]
      *
      * @return self
@@ -54,6 +56,9 @@ class ConfigModel
         }
         if (array_key_exists('encrypt', $data)) {
             $model->encrypt = !!$data['encrypt'];
+        }
+        if (array_key_exists('pageSize', $data)) {
+            $model->pageSize = $data['pageSize'];
         }
 
         return $model;

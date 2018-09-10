@@ -27,10 +27,13 @@ class GraphQLClient extends TestCase
             ]),
             'getStatusCode' => $returnedCode,
         ]);
+        $requestMock = $this->_getMock(\XcooBee\Http\Request::class, [
+            'makeCall' => $guzzleResponseMock
+        ]);
         $graphQLClientMock = $this->_getMock(\XcooBee\Http\GraphQLClient::class, [
             '_getAuthToken' => 'token',
             '_getUriFromEndpoint' => null,
-            'post' => $guzzleResponseMock,
+            '_getRequest' => $requestMock,
         ]);
 
         $response = $graphQLClientMock->request('query');

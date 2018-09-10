@@ -67,6 +67,8 @@ class Api
      * @param String $campaignId
      * @param array $config
      * 
+     * @return String
+     * 
      * @throws XcooBeeException
      */
     protected function _getCampaignId($campaignId, $config)
@@ -83,5 +85,21 @@ class Api
         }
         
         throw new XcooBeeException('No "campaignId" provided');
+    }
+    
+    /**
+     * Get page size
+     * 
+     * @param array $config
+     * 
+     * @return Int
+     */
+    protected function _getPageSize($config = [])
+    {
+        if(array_key_exists('pageSize', $config)){
+            return $config['pageSize'];
+        }
+        
+        return $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY)->pageSize;
     }
 }

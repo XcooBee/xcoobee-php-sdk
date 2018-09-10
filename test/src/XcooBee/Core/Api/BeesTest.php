@@ -132,8 +132,8 @@ class BeesTest extends TestCase
         ]));
 
         $response = $beesMock->uploadFiles([__DIR__ . '/../../../../assets/test.txt', __DIR__ . '/../../../../assets/test2.txt'], [
-            'apiKey'=> 'testapikey' , 
-            'apiSecret'=> 'testapisecret' 
+            'apiKey' => 'testapikey' , 
+            'apiSecret' => 'testapisecret' 
         ]);
 
         $this->assertTrue($response->result);
@@ -143,25 +143,48 @@ class BeesTest extends TestCase
     public function testListBees()
     {
         
-        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
+        $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_request' => true,
+            '_getPageSize' => true,
         ]);
+        $beesMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['searchText' => null, 'first' => true, 'after' => null], $params);
+        }));
         
-        $consentsMock->listBees();
+        $beesMock->listBees();
+    }
+    
+    public function testListBees_withSearch()
+    {
+        $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
+            '_request' => true,
+            '_getPageSize' => true,
+        ]);
+        $beesMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['searchText' => 'testSearchText', 'first' => true, 'after' => null], $params);
+        }));
+        
+        $beesMock->listBees('testSearchText');
     }
     
     public function testListBees_UseConfig()
     {
-        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
+        $beesMock = $this->_getMock(\XcooBee\Core\Api\Bees::class, [
             '_request' => true,
+            '_getPageSize' => true,
         ]);
-        $consentsMock->expects($this->once())
+        $beesMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params, $config) {
-                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret'], $config);
+                $this->assertEquals(['searchText' => null, 'first' => true, 'after' => null], $params);
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
         }));
         
-        $consentsMock->listBees(null,['apiKey' => 'testapikey', 'apiSecret'=> 'testapisecret']);
+        $beesMock->listBees(null, ['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret']);
     }
     
     /**

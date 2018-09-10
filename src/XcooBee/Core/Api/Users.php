@@ -91,17 +91,15 @@ class Users extends Api
     /**
      * list all the user conversation
      *
-     * @param Int $first
-     * @param Int $after
      * @param array $config
      * 
      * @return Response
      * @throws XcooBeeException
      */
-    public function getConversations($first = null, $after = null, $config = []) 
+    public function getConversations($config = []) 
     {
         $query = 'query getConversations($userId: String!, $first : Int, $after: String) {
-            conversations(user_cursor: $userId , first : $first , after : $after) {
+            conversations(user_cursor: $userId, first : $first , after : $after) {
                 data {
                     display_name,
                     consent_cursor,
@@ -115,27 +113,25 @@ class Users extends Api
             }
         }';
 
-        return $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $this->_getUserId($config)], $config);
+        return $this->_request($query, ['first' => $this->_getPageSize($config), 'after' => null, 'userId' => $this->_getUserId($config)], $config);
     }
 
     /**
      * get conversation data
      *
      * @param string $userId
-     * @param Int $first
-     * @param Int $after
      * @param array $config
      * 
      * @return Response
      * @throws XcooBeeException
      */
-    public function getConversation($userId, $first = null, $after = null, $config = []) 
+    public function getConversation($userId, $config = []) 
     {
         if (!$userId) {
             throw new XcooBeeException('No "user" provided');
         }
 
-        $query = 'query getConversation($userId: String!,$first : Int, $after: String) {
+        $query = 'query getConversation($userId: String!, $first : Int, $after: String) {
 		conversation(target_cursor : $userId, first : $first, after : $after) {
                     data {
                         display_name,
@@ -150,7 +146,7 @@ class Users extends Api
 		}
 	}';
 
-        return $this->_request($query, ['first' => $first, 'after' => $after, 'userId' => $userId], $config);
+        return $this->_request($query, ['first' => $this->_getPageSize($config), 'after' => null, 'userId' => $userId], $config);
     }
 
     protected function _getUserIdByConsent($consentId, $config = []) 
