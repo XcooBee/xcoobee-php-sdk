@@ -35,7 +35,6 @@ class InboxTest extends TestCase
     }
     
     /**
-     * @param array $inboxItems
      * @param int $requestCode
      * @param array $requestData
      * @param array $requestError
@@ -57,44 +56,15 @@ class InboxTest extends TestCase
                             $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
                         }));
 
-        $response = $inboxMock->listInbox(null, [
+        $response = $inboxMock->listInbox([
             'apiKey' => 'testapikey' , 
             'apiSecret' => 'testapisecret' 
         ]);
         $this->assertEquals($requestCode, $response->code);
         $this->assertEquals($expectedResponse, $response->result->inbox->data);
     }
-    
-    /**
-     * @param array $inboxItems
-     * @param int $requestCode
-     * @param array $requestData
-     * @param array $requestError
-     * @param array $expectedResponse
-     * 
-     * @dataProvider inboxItemsProvider
-     */
-    public function testListInbox_withStartId($requestCode, $requestData, $requestError, $expectedResponse)
-    {
-        $inboxMock = $this->_getMock(\XcooBee\Core\Api\Inbox::class, [
-            '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
-            '_getPageSize' => true,
-        ]);
-
-        $inboxMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['after' => 'testEndId', 'first' => true], $params);
-                        }));
-
-        $response = $inboxMock->listInbox('testEndId');
-        
-        $this->assertEquals($requestCode, $response->code);
-        $this->assertEquals($expectedResponse, $response->result->inbox->data);
-    }
 
     /**
-     * @param array $inboxItems
      * @param int $requestCode
      * @param array $requestData
      * @param array $requestError
@@ -121,7 +91,6 @@ class InboxTest extends TestCase
     }
     
     /**
-     * @param array $inboxItems
      * @param int $requestCode
      * @param array $requestData
      * @param array $requestError

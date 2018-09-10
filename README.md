@@ -885,7 +885,7 @@ standard JSON response object
 
 The inbox API governs the access to your inbox. You can list, download, and delete items from your inbox.
 
-## listInbox([startId])
+## listInbox([config])
 
 This method will present a paged list of inbox items that you can download. The listing will be for the user connected to you API key. You cannot check any other user's inbox using this method. You can return up to 100 items in one call.
 Calling this method more than once per minute will result in HTTP 429 error (exceeding call limits).
@@ -903,7 +903,7 @@ Inbox items are listed in order of arrival with most recent items first.
 
 options:
 ```
-startId       => optional: the message id from which to start the listing
+config   => optional: the config object
 
 ```
 

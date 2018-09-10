@@ -13,13 +13,12 @@ class Inbox extends Api
     /**
      * List all Items in inbox
      *
-     * @param String $startId
      * @param array $config
      * 
      * @return Response
      * @throws XcooBeeException
      */
-    public function listInbox($startId = null, $config = [])
+    public function listInbox($config = [])
     {
         $query = 'query listInbox($after: String, $first : Int) {
             inbox (after: $after, first : $first){
@@ -43,7 +42,7 @@ class Inbox extends Api
             }
         }';
 
-        $inboxItems = $this->_request($query, ['after' => $startId, 'first' => $this->_getPageSize($config)], $config);
+        $inboxItems = $this->_request($query, ['after' => null, 'first' => $this->_getPageSize($config)], $config);
 
         if ($inboxItems->code != 200) {
             return $inboxItems;
