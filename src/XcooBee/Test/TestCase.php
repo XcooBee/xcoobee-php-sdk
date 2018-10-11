@@ -52,11 +52,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * Return XcooBee mocked object
      *
+     * @param array $methods
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function _getXcooBeeMock()
+    protected function _getXcooBeeMock($methods = [])
     {
-        return $this->_getMock(XcooBee::class, []);
+        return $this->_getMock(XcooBee::class, $methods);
     }
     
     protected function _createResponse($code, $data = null, $errors = []) 

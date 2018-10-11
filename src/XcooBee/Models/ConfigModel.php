@@ -89,7 +89,7 @@ class ConfigModel
             $configArray[$column[0]] = $column[1];
         }
 
-        if ($configArray['encrypt'] && file_exists($homeDirPath . self::PGP_SECRET_FILE)) {
+        if (file_exists($homeDirPath . self::PGP_SECRET_FILE)) {
             $configArray['pgpSecret'] = file_get_contents($homeDirPath . self::PGP_SECRET_FILE);
         }
 

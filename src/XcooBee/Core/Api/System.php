@@ -2,11 +2,24 @@
 
 namespace XcooBee\Core\Api;
 
+use XcooBee\Core\Encryption;
+use XcooBee\Exception\EncryptionException;
 use XcooBee\Http\Response;
 use XcooBee\Exception\XcooBeeException;
+use XcooBee\XcooBee;
 
 class System extends Api 
 {
+    /** @var Encryption */
+    protected $_encryption;
+
+    public function __construct(XcooBee $xcoobee)
+    {
+        $this->_encryption = new Encryption($xcoobee);
+
+        parent::__construct($xcoobee);
+    }
+
     /**
      * method to check if pgp key and Campaign is correct.
      *
@@ -64,14 +77,14 @@ class System extends Api
 
         return $this->_request($query, ['campaignId' => $campaignId], $config);
     }
-    
+
     /**
      * add an Event
      *
      * @param array $events
      * @param string $campaignId
      * @param array $config
-     *  
+     *
      * @return Response
      * @throws XcooBeeException
      */
@@ -157,7 +170,33 @@ class System extends Api
             }
         }';
 
-        return $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
+        $events = $this->_request($query, ['userId' => $this->_getUserId($config)], $config);
+
+        if ($events->code != 200) {
+            return $events;
+        }
+
+        foreach ($events->result->events->data as $key => $event) {
+            try {
+                $payload = $this->_encryption->decrypt($event->payload);
+
+                if ($payload === null) {
+                    $response = new Response();
+                    $response->code = 400;
+                    $response->errors = [
+                        (object)['message' => 'can\'t decrypt pgp encrypted message, check your keys'],
+                    ];
+
+                    return $response;
+                }
+
+                $events->result->events->data[$key]->payload = json_decode($payload);
+            } catch (EncryptionException $e) {
+                // do nothing, because we cannot decrypt value, send to user encrypted
+            }
+        }
+
+        return $events;
     }
     
     /**

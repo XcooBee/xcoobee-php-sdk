@@ -2,7 +2,13 @@
 
 namespace Test\XcooBee\Core\Api;
 
+use XcooBee\Core\Api\Consents;
+use XcooBee\Core\Api\System;
+use XcooBee\Core\Api\Users;
+use XcooBee\Core\Encryption;
+use XcooBee\Exception\EncryptionException;
 use XcooBee\Test\TestCase;
+use XcooBee\XcooBee;
 
 class SystemTest extends TestCase
 {
@@ -21,7 +27,7 @@ class SystemTest extends TestCase
         $XcooBeeMock->users = $this->_getMock(Users::class, [
             'getUser' => (object) ['pgp_public_key' => 'test']
         ]);
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
                 '_getDefaultCampaignId' => null,
         ]);
         $this->_setProperty($systemMock, '_xcoobee', $XcooBeeMock);
@@ -45,7 +51,7 @@ class SystemTest extends TestCase
         $XcooBeeMock->users = $this->_getMock(Users::class, [
             'getUser' => (object) ['pgp_public_key' => 'test']
         ]);
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
                 '_getDefaultCampaignId' => null,
         ]);
         $XcooBeeMock->users->expects($this->once())
@@ -70,7 +76,7 @@ class SystemTest extends TestCase
         $XcooBeeMock->users = $this->_getMock(Users::class, [
             'getUser' => (object) ['pgp_public_key' => 'test']
         ]);
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
                 '_getDefaultCampaignId' => null,
         ]);
         $this->_setProperty($systemMock, '_xcoobee', $XcooBeeMock);
@@ -86,7 +92,7 @@ class SystemTest extends TestCase
         $XcooBeeMock->users = $this->_getMock(Users::class, [
             'getUser' => (object) ['pgp_public_key' => null]
         ]);
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
                 '_getDefaultCampaignId' => null,
         ]);
         $this->_setProperty($systemMock, '_xcoobee', $XcooBeeMock);
@@ -98,7 +104,7 @@ class SystemTest extends TestCase
     
     public function testListEventSubscriptions() 
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
             '_request' => true,
         ]);
 
@@ -113,7 +119,7 @@ class SystemTest extends TestCase
 
     public function testListEventSubscriptions_UseDefaultCampaign() 
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
             '_request' => true,
             '_getDefaultCampaignId' => 'testCampaignId',
         ]);
@@ -129,7 +135,7 @@ class SystemTest extends TestCase
 
     public function testListEventSubscriptions_UseConfig() 
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
             '_request' => true,
         ]);
 
@@ -148,7 +154,7 @@ class SystemTest extends TestCase
 
     public function testAddEventSubscription() 
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
             '_request' => true,
             '_getSubscriptionEvent' => "testEventType"
         ]);
@@ -170,7 +176,7 @@ class SystemTest extends TestCase
      */
     public function testAddEventSubscription_InvalidEvent() 
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
             '_request' => true,
         ]);
 
@@ -179,7 +185,7 @@ class SystemTest extends TestCase
     
     public function testAddEventSubscription_UseDefaultCampaign() 
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
             '_request' => true,
             '_getSubscriptionEvent' => "testEventType",
             '_getDefaultCampaignId' => 'testCampaignId'
@@ -199,7 +205,7 @@ class SystemTest extends TestCase
 
     public function testAddEventSubscription_useConfig() 
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
             '_request' => true,
             '_getSubscriptionEvent' => "testEventType"
         ]);
@@ -222,7 +228,7 @@ class SystemTest extends TestCase
 
     public function testDeleteEventSubscription() 
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
             '_request' => true,
             '_getSubscriptionEvent' => "testEventType"
         ]);
@@ -244,7 +250,7 @@ class SystemTest extends TestCase
      */
     public function testDeleteEventSubscription_InvalidEvent() 
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
             '_request' => true,
         ]);
 
@@ -253,7 +259,7 @@ class SystemTest extends TestCase
     
     public function testDeleteEventSubscription_UseDefaultCampaign() 
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
             '_request' => true,
             '_getSubscriptionEvent' => "testEventType",
             '_getDefaultCampaignId' => 'testCampaignId'
@@ -273,7 +279,7 @@ class SystemTest extends TestCase
 
     public function testDeleteEventSubscription_useConfig() 
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
+        $systemMock = $this->_getMock(System::class, [
             '_request' => true,
             '_getSubscriptionEvent' => "testEventType"
         ]);
@@ -293,26 +299,116 @@ class SystemTest extends TestCase
             'apiSecret' => 'testapisecret'
         ]);
     }
-    
-    public function testGetEvents()
+
+    public function testGetEvents_DecryptPayload()
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => true,
+        $systemMock = $this->_getMock(System::class, [
+            '_request' => (object)[
+                'code' => 200,
+                'result' => (object)[
+                    'events' => (object)[
+                        'data' => [
+                            (object)['payload' => 'test'],
+                        ],
+                    ],
+                ],
+            ],
             '_getUserId' => "testUserId"
         ]);
-
         $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['userId' => 'testUserId'], $params);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['userId' => 'testUserId'], $params);
+            }));
+
+        $encryptionMock = $this->_getMock(Encryption::class, [
+            'decrypt' => '{"test": true}',
+        ]);
+        $encryptionMock->expects($this->once())
+            ->method('decrypt')
+            ->will($this->returnCallback(function ($message) {
+                $this->assertEquals('test', $message);
+            }));
+        $this->_setProperty($systemMock, '_encryption', $encryptionMock);
+
         $systemMock->getEvents();
+    }
+
+    public function testGetEvents_SkipDecryptingIfNoPGPKeyProvided()
+    {
+        $systemMock = $this->_getMock(System::class, [
+            '_request' => (object)[
+                'code' => 200,
+                'result' => (object)[
+                    'events' => (object)[
+                        'data' => [
+                            (object)['payload' => 'test'],
+                        ],
+                    ],
+                ],
+            ],
+            '_getUserId' => "testUserId"
+        ]);
+        $systemMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['userId' => 'testUserId'], $params);
+            }));
+
+        $encryptionMock = $this->_getMock(Encryption::class, [
+            'decrypt' => true,
+        ]);
+        $encryptionMock->expects($this->once())
+            ->method('decrypt')
+            ->will($this->throwException(new EncryptionException()));
+        $this->_setProperty($systemMock, '_encryption', $encryptionMock);
+
+        $eventsResponse = $systemMock->getEvents();
+        $this->assertEquals($eventsResponse->result->events->data[0]->payload, "test");
+    }
+
+    public function testGetEvents_DecryptingError()
+    {
+        $systemMock = $this->_getMock(System::class, [
+            '_request' => (object)[
+                'code' => 200,
+                'result' => (object)[
+                    'events' => (object)[
+                        'data' => [
+                            (object)['payload' => 'test'],
+                        ],
+                    ],
+                ],
+            ],
+            '_getUserId' => "testUserId"
+        ]);
+        $systemMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['userId' => 'testUserId'], $params);
+            }));
+
+        $encryptionMock = $this->_getMock(Encryption::class, [
+            'decrypt' => null,
+        ]);
+        $this->_setProperty($systemMock, '_encryption', $encryptionMock);
+
+        $eventsResponse = $systemMock->getEvents();
+        $this->assertEquals($eventsResponse->code, 400);
+        $this->assertEquals($eventsResponse->errors[0]->message, 'can\'t decrypt pgp encrypted message, check your keys');
     }
 
     public function testGetEvents_useConfig()
     {
-        $systemMock = $this->_getMock(\XcooBee\Core\Api\System::class, [
-            '_request' => true,
+        $systemMock = $this->_getMock(System::class, [
+            '_request' => (object)[
+                'code' => 200,
+                'result' => (object)[
+                    'events' => (object)[
+                        'data' => [],
+                    ],
+                ],
+            ],
             '_getUserId' => "testUserId"
         ]);
 

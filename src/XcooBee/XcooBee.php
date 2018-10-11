@@ -36,13 +36,13 @@ class XcooBee
     public function __construct()
     {
         $this->configuration = new Configuration($this);
-        
+
         $this->system   = new System($this);
         $this->bees     = new Bees($this);
         $this->consents = new Consents($this);
         $this->users    = new Users($this);
         $this->inbox    = new Inbox($this);
-        $this->_store   = CachedData::getInstance($this);
+        $this->_store   = CachedData::getInstance();
     }
 
     /**
