@@ -15,7 +15,7 @@ Please be aware that if you should exceed poll limits for the poller you will re
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
-        <script src="xcoobee-sdk-0.0.0-alpha.min.js?v=1.0.0"></script>
+        <script src="xcoobee-sdk-0.8.1-beta.min.js?v=1.0.0"></script>
         <script src="poller.min.js?v=1.1.1"></script>
         <style>
             label.error {
@@ -49,7 +49,8 @@ Please be aware that if you should exceed poll limits for the poller you will re
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h2 style="text-align: center;">XcooBee Demo Page</h2>
+                    <h2 style="text-align: center;">XcooBee Event Demo Page</h2>
+                    <p> This page retrieves events from XcooBee and reposts to your local application. This is helpful when you are in development and cannot expose your application to the internet. You can still handle events from XcooBee.</p>
                     <form action="" id="xcoobee_demo_form" method="post">
                         <div class="form-group">
                             <label for="xcoobee_url">Xcoobee API Endpoint Url:</label>
@@ -81,7 +82,7 @@ Please be aware that if you should exceed poll limits for the poller you will re
                     </form>
                 </div>
                 <div class="col-md-6">
-                    <h2 style="text-align: center;">Running Events</h2>
+                    <h2 style="text-align: center;">Retrieved and Reposted Events</h2>
                     <div class="xcoobee_loader">
                         <img alt="" src="loader.svg"/>
                     </div>
