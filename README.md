@@ -411,8 +411,14 @@ standard JSON response object
     - data will contain campaign data object
 - status 400 if error
 
-## listCampaigns()
+## listCampaigns([config])
 get all user campaigns
+
+options: 
+
+```
+config          => optional: the config object
+```
 
 ### response
 
@@ -422,6 +428,8 @@ standard JSON response object
 - status 400 if error
 
 ## getDataPackage(packagePointer,[config])
+
+TO BE IMPLEMENTED: 
 
 When data is hosted for you at XcooBee you can request the data package each time you need to use it. You will need to provide `packagePointer`. This call will only respond to authorized call source.
 
@@ -440,7 +448,7 @@ standard JSON response object
         The SDK will decrypt this for you if it has access to PGP keys otherwise you have to decrypt this object
 - status 400 if error
 
-## listConsents([statusId],[config])
+## listConsents([statusIds],[config])
 
 Query for list of consents for a given campaign. Company can get general consentid for any consent that was created as part of a campaign. This is a multi-page recordset. Data returned: consentId, creation date, expiration date, xcoobeeId
 
@@ -451,7 +459,7 @@ possible response/filter for status:
 options: 
 
 ```
-statusId   => optional: numeric, one of the valid consent statuses. If not specified all will be returned
+statusIds   => optional: array of numbers, one of the valid consent statuses. If not specified all will be returned
 config       => optional: the config object
 ```
 
@@ -779,7 +787,25 @@ It contains:
 The Bee api is the principal interface to hire bees. Most of the times this will be accomplished in two steps. In the first step you upload your files to be processed by bees using `uploadFiles()` call. If you did not specify an outbox endpoint you will also have to call the `takeOff()` function with the processing parameters for the bee.
 The immediate response will only cover issues with files for the first bee. If you want to be informed about the progress of the processing you will need to subscribe to events.
 
-## uploadFiles(files, [endpoint])
+
+## listBees(searchText, [config])
+
+This function will help you search through the bees in the system that your account is able to hire. This is a simple keyword search interface.
+
+options:
+
+```
+searchtext   => string of keywords to search for in the bee system name or label in the language of your account.
+config       => optional: the config object
+```
+
+### response
+standard JSON response object
+- status 200 if success: 
+    - data object will contain basic bee data: bee-systemname, bee-label, bee-cost, cost-type
+- status 400 if error
+
+## uploadFiles(files, [endpoint], [config])
 
 You use the uploadFiles function to upload files from your server to XcooBee. You can upload multiple files and you can optionally supply an outbox endpoint. If you have an outbox endpoint you do not need to call the `takeOff` function as the endpoint already specifies all processing parameters. If your subscription allows you can configure the outbox endpoints in the XcooBee UI.
 
@@ -787,6 +813,8 @@ options:
 ```
 files      => array of strings with file pointers to the file store, e.g.: "c:\temp\mypic.jpg" or "home/mypic.jpg"
 endpoint   => optional: the outbox endpoint, e.g. "marketing data" or "POS drop point"
+config     => optional: the config object
+
 ```
 
 ### response
@@ -795,9 +823,15 @@ standard JSON response object
     - data object will contain true
 - status 400 if error
 
-## takeOff(bees, [options], [subscriptions])
+## takeOff(bees, [options], [subscriptions], [config])
 
 You normally use this as follow up call to `uploadFiles()`. This will start your processing. You specify the bee(s) that you want to hire and the parameter that are needed for the bee to work on your file(s). If you want to be kept up to date you can supply subscriptions. Please note that subscriptions will deduct points from your balance and will cause errors when your balance is insufficient.
+
+This is the most complex function call in the Bee API and has multiple options and parts.
+
+a) parameter object
+b) subscriptions
+c) subscription events
 
 
 options:
@@ -805,10 +839,14 @@ options:
 ```
 bees          => array of bee system names, e.g. "xcoobee_digital_signature_detection"
 parameters    => optional: the parameters object. For each bee by bee name.
-subscriptions => optional: the subscriptions object. Specifies the subscriptions.
+subscriptions => optional: the subscriptions object. Specifies the subscriptions.'
+config        => optional: the config object
 ```
 
-### Parameters Object
+
+
+
+### `a` Parameters Object
 
 Parameters can be bee specific or apply to the overall job.
 
@@ -829,7 +867,7 @@ xcoobee_testbee.height = 599
 xcoobee_testbee.width = 1200
 ```
 
-### Subscriptions
+### `b` Subscriptions
 Subscriptions can be attached to the overall process or for each bee. You will need to specify a `target` and an `events` argument at minimum. The `target` endpoint has to be reachable by the XcooBee system via **HTTP/S POST**. The `events` determines which events you are subscribing to.
 Thus the three keys for each subscription are:
 - target => string with target endpoint URL
@@ -854,7 +892,7 @@ xcoobee_testbee.target = "https://somesite.com/testbee/notification/"
 xcoobee_testbee.events = ["error", "success"]
 ```
 
-### Subscription events
+### `c` Subscription events
 
 The event system for bees can distinguish between process level and bee level events.
 
@@ -931,23 +969,6 @@ standard JSON response object
 
 
 
-## listBees(searchText)
-
-This function will help you search through the bees in the system that your account is able to hire. This is a simple keyword search interface.
-
-options:
-
-```
-searchtext   => string of keywords to search for in the bee system name or label in the language of your account.
-```
-
-### response
-standard JSON response object
-- status 200 if success: 
-    - data object will contain basic bee data: bee-systemname, bee-label, bee-cost, cost-type
-- status 400 if error
-
-
 # Inbox API
 
 The inbox API governs the access to your inbox. You can list, download, and delete items from your inbox.
@@ -981,15 +1002,15 @@ standard JSON response object
 - status 400 if error
 
 
-## getInboxItem(messageId)
+## getInboxItem(messageId, [config])
 
 This method will return a file and file meta tags. Upon first downloaded, the `downloadDate` for the item will be populated.
 
 
 options:
 ```
-messageId       => required: the message id for the file to be downloaded. 
-
+messageId     => required: the message id for the file to be downloaded. 
+config        => optional: the config object
 ```
 
 ### response
@@ -999,15 +1020,15 @@ standard JSON response object
 - status 400 if error
 
 
-## deleteInboxItem(messageId)
+## deleteInboxItem(messageId, [config])
 
 This method will delete a file that corresponds to your messageid. If the file does not exist, an error will be returned.
 
 
 options:
 ```
-messageId       => required: the message id for the file to be deleted. 
-
+messageId     => required: the message id for the file to be deleted. 
+config        => optional: the config object
 ```
 
 ### response
