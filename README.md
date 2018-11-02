@@ -197,7 +197,7 @@ b) register your event subscription and handler pairs
 c) process inbound events
 
 
-### Determine how to receive events
+### `a` Determine how to receive events
 
 You have two options on how to receive events from the XcooBee network. Event HTTP post (webhook) or Event polling.
 
@@ -206,7 +206,7 @@ When elect to use HTTP POST, you need to supply a web accessible system or endpo
 
 You specify your target URL during the setup of your consent campaign in the XcooBee UI. You cannot change or set it via the SDK.
 
-#### `a` Event Polling
+#### Event Polling
 
 As an alternative you can poll events from your system on a regular interval. This is useful when you do not have a web accessible system or are in development mode. The SDK has a supporting method `getEvents` which allows you to retrieve all events that you have subscribed to that occurred during the last 72 hours. 
 
@@ -221,7 +221,7 @@ This is one of the simpler parts. As you subscribe to events using the `addEvent
 
 ### `c` Process Inbound Events
 
-The easiest way to process inbound event is to invoke the `System->handleEvents([event])` method. 
+The easiest way to process inbound event is to invoke the `handleEvents([event])` method of the `System` class. 
 
 Normally this is included in your site endpoint (page) that receives the HTTP POST from XcooBee. If you do event polling, you can pass the full POST body as `event` to the function.
 
@@ -265,10 +265,11 @@ standard JSON response object
 
 ## addEventSubscription(arrayOfEventAndHandlerPairs,[campaignId],[config])
 
-You can register subscriptions to hooks by calling the addEventSubscription function and providing the event and handler pairs `eventname => handler`.
+You can register subscriptions to hooks by calling the addEventSubscription function and providing the event (as specified in this document) and handler pairs `eventname => handler`.
 
 There is no wildcard event subscription, however, you can add many handlers at one time.
 
+TODO: replace with PHP example
 ```
 Example JavaScript:
 addEventSubscription([{"ConsentDeclined":"declinedHandler"}],"ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be",myConfigObj);
@@ -277,7 +278,7 @@ addEventSubscription([{"ConsentDeclined":"declinedHandler"}],"ifddb4cd9-d6ea-400
 
 This will subscribe you on the XcooBee system to receive `ConsentDeclined` events for the `ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be` campaign and call your handler named `declinedHandler(event)` when such an event occurs.
 
-All event data is attached to the `event` object in the function calls.
+All event data is attached to the `events` object in the function calls.
 
 No response is expected directly from any of the event handlers so returns are void/null.
 
@@ -285,7 +286,7 @@ options:
 
 ```
 arrayOfEventAndHandlerPairs  => array object with event and handler maps
-campaignId                  => optional: the campaign id to use if not default
+campaignId                   => optional: the campaign id to use if not default
 config                       => optional: the config object
 ```
 
@@ -336,7 +337,7 @@ standard JSON response object
 - status 400 if error
 
 
-## handleEvent(event)
+## handleEvents(events)
 
 This function does not require a call to the XcooBee API. It is rather the handler for calls that you recceive **from** XcooBee via webhooks as outlined previously.
 
@@ -346,10 +347,21 @@ The webhook post will be validated in this method and if post is valid, we will 
 
 Optionally, the events data object may be passed along with the data from the HTTP header and POST call.
 
+There is two modes of operation for `handleEvents()`.
+
+a) Without function parameter `events`:
+
+When you call `handleEvents()` without an `events` function argument, the method will look for the event data in the webhook (HTTP POST) stream. Verify the HTTP signatures against expected signatures and then process the event.
+
+b) With function parameter `events`:
+
+In case where you poll for events from XcooBee seperately you can call `handleEvents(events)` directly with the events. If you supply the events specifically, the method will not look for HTTP POST header variables for verification and instead will directly process events as provided.
+
+
 options: 
 
 ```
-event  => object with HTTP post data
+events  => optional: array of objects with HTTP post data
 
 ```
 
