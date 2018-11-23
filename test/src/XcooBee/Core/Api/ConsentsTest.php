@@ -7,7 +7,7 @@ use XcooBee\Core\Api\Consents as Consent;
 
 class ConsentsTest extends TestCase
 {
-    public function testGetCampaign()
+    public function testGetCampaignInfo()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
@@ -19,7 +19,7 @@ class ConsentsTest extends TestCase
                 $this->assertEquals(['campaignId' => 'testCampaignId'], $params);
             }));
 
-        $consentsMock->getCampaign('testCampaignId');
+        $consentsMock->getCampaignInfo('testCampaignId');
     }
 
     public function testGetCampaign_UseDefaultCampaign()
@@ -35,7 +35,7 @@ class ConsentsTest extends TestCase
                 $this->assertEquals(['campaignId' => 'testCampaignId'], $params);
             }));
 
-        $consentsMock->getCampaign();
+        $consentsMock->getCampaignInfo();
     }
     
     public function testGetCampaign_UseConfig()
@@ -51,7 +51,7 @@ class ConsentsTest extends TestCase
                 $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
             }));
 
-        $consentsMock->getCampaign('testCampaignId', [
+        $consentsMock->getCampaignInfo('testCampaignId', [
             'apiKey' => 'testapikey' , 
             'apiSecret' => 'testapisecret' 
         ]);

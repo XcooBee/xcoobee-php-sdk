@@ -33,7 +33,7 @@ class System extends Api
         $user = $this->_xcoobee->users->getUser($config);
         $response = new Response();
         if ($user->pgp_public_key) {
-            $campaignInfo = $this->_xcoobee->consents->getCampaign(null, $config);
+            $campaignInfo = $this->_xcoobee->consents->getCampaignInfo(null, $config);
             if (!empty($campaignInfo->result->campaign)) {
                 $response->code = 200;
             } else {
