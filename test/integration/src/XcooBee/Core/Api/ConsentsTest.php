@@ -15,9 +15,9 @@ class ConsentsTest extends IntegrationTestCase
         $this->assertEquals('active', $campaigns->result->campaigns->data[0]->status);
     }
 
-    public function testGetCampaign()
+    public function testGetCampaignInfo()
     {
-        $campaign = self::$xcoobee->consents->getCampaign();
+        $campaign = self::$xcoobee->consents->getCampaignInfo();
         $this->assertEquals(200, $campaign->code);
         $this->assertEquals('xcoobee test campaign', $campaign->result->campaign->campaign_name);
         $this->assertEquals('active', $campaign->result->campaign->status);
