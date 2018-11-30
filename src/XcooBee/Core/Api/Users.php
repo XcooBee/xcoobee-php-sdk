@@ -54,7 +54,34 @@ class Users extends Api
         
         return $user;
     }
-    
+
+    /**
+     * Return user's public PGP key.
+     *
+     * @param String $userId XcooBee ID.
+     *
+     * @return Response
+     * @throws XcooBeeException
+     */
+    public function getUserPublicKey($userId, $config = [])
+    {
+        $query = 'query getUserPublicKey($userId: String!) {
+                users(xcoobee_id: $userId) {
+                    data {
+                        pgp_public_key
+                    }
+                }
+            }';
+
+        $response = $this->_request($query, ['userId' => $userId], $config);
+
+        if (empty($response->result->users->data)) {
+            throw new XcooBeeException('User not found');
+        }
+
+        return $response;
+    }
+
     /**
      * send message to user
      *
