@@ -9,6 +9,8 @@ use XcooBee\Exception\XcooBeeException;
 
 class Api
 {
+    const MAX_PAGE_SIZE = 100;
+
     /** @var GraphQLClient */
     protected $_client;
     
@@ -88,18 +90,21 @@ class Api
     }
     
     /**
-     * Get page size
-     * 
+     * Get page size.
+     *
      * @param array $config
-     * 
+     *
      * @return Int
      */
     protected function _getPageSize($config = [])
     {
-        if(array_key_exists('pageSize', $config)){
-            return $config['pageSize'];
+
+        if (array_key_exists('pageSize', $config)) {
+            return $config['pageSize'] > self::MAX_PAGE_SIZE ? self::MAX_PAGE_SIZE : $config['pageSize'];
         }
-        
-        return $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY)->pageSize;
+
+        $cachedPageSize = $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY)->pageSize;
+
+        return  is_null($cachedPageSize) || $cachedPageSize > self::MAX_PAGE_SIZE ? self::MAX_PAGE_SIZE : $cachedPageSize;
     }
 }
