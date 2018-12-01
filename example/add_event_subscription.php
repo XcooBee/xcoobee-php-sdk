@@ -16,7 +16,6 @@ $xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile());
 //     'apiSecret' => '',
 // ]));
 
-//
 $res = $xcoobee->system->addEventSubscription(
     ['EventType', 'eventTypeHandler'],
     'campaignId'
