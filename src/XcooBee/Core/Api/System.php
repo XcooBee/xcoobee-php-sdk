@@ -198,7 +198,55 @@ class System extends Api
 
         return $events;
     }
-    
+
+    /**
+     * Handle webhook calls.
+     *
+     * @param array $events
+     *  
+     * @return void
+     * @throws XcooBeeException
+     */
+    public function handleEvents($events = [])
+    {
+        $eventType = $_SERVER['X-XBEE-EVENT'];
+        $eventId  = $_SERVER['X-TRANS-ID'];
+        $signature = $_SERVER['X-XBEE-SIGNATURE'];
+        $responseBody = file_get_contents( 'php://input', true );
+
+        $config = $this->_xcoobee->getConfig();
+
+        // Validate signature.
+        if (isset($signature)) {
+            if (!$config->pgpSecret) {
+                throw new EncryptionException('PGP private key not provided');
+            }
+
+            if ( $signature !== hash_hmac( 'sha1', $responseBody, $config->pgpSecret)) {
+                throw new EncryptionException('Invalid signature');
+            }
+        }
+
+        // Decrypt payload.
+        try {
+            $payload = $this->_encryption->decrypt($responseBody);
+            if ($payload === null) {
+                $response = new Response();
+                $response->code = 400;
+                $response->errors = [
+                    (object)['message' => 'Can\'t decrypt PGP encrypted message, check your keys.'],
+                ];
+                return $response;
+            }
+            $response->result->payload = json_decode($payload);
+        } catch (EncryptionException $e) {
+            // Do nothing, because we cannot decrypt value, send to user encrypted.
+        }
+
+        // Call the handler.
+        call_user_func_array($payload->handler);
+    }
+
     /**
      * get events
      * 
