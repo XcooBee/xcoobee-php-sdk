@@ -321,7 +321,31 @@ class Consents extends Api
 
         return $response;
     }
-    
+
+    /**
+     * Get data package.
+     *
+     * @param string $consentId
+     * @param array $config
+     *
+     * @return Response
+     * @throws XcooBeeException
+     */
+    public function getDataPackage($consentId, $config =[])
+    {
+        if (!$consentId) {
+            throw new XcooBeeException('No "consent" provided');
+        }
+
+        $query = 'query getDataPackage($consentId: String!) {
+            data_package(consent_cursor: $consentId) {
+                data
+            }
+        }';
+
+        return $this->_request($query, ['consentId' => $consentId], $config);
+    }
+
     protected function _getXcoobeeIdByConsent($consentId, $config = []) 
     {
         $consent = $this->getConsentData($consentId, $config = []);
