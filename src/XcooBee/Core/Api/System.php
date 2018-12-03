@@ -203,48 +203,64 @@ class System extends Api
      * Handle webhook calls.
      *
      * @param array $events
-     *  
+     *
      * @return void
      * @throws XcooBeeException
      */
     public function handleEvents($events = [])
     {
-        $eventType = $_SERVER['X-XBEE-EVENT'];
-        $eventId  = $_SERVER['X-TRANS-ID'];
-        $signature = $_SERVER['X-XBEE-SIGNATURE'];
-        $responseBody = file_get_contents( 'php://input', true );
+        // If no event objects passed directly, validate signature and create an event object.
+        if (empty($events)) {
+            // Response data.
+            $eventType = $_SERVER['HTTP_X_XBEE_EVENT'];
+            $eventId  = $_SERVER['HTTP_X_TRANS_ID'];
+            $signature = $_SERVER['HTTP_X_XBEE_SIGNATURE'];
+            $responseBody = json_decode(file_get_contents( 'php://input', true ));
+            $payload = $responseBody->data;
 
-        $config = $this->_xcoobee->getConfig();
+            // Validate signature if found.
+            if (isset($signature)) {
+                $config = $this->_xcoobee->getConfig();
 
-        // Validate signature.
-        if (isset($signature)) {
-            if (!$config->pgpSecret) {
-                throw new EncryptionException('PGP private key not provided');
+                if (!$config->pgpSecret) {
+                    throw new EncryptionException('PGP private key not provided');
+                }
+
+                 // Validate signature.
+                if ( $signature !== hash_hmac( 'sha1', $responseBody, $config->pgpSecret)) {
+                    throw new EncryptionException('Invalid signature');
+                }
             }
 
-            if ( $signature !== hash_hmac( 'sha1', $responseBody, $config->pgpSecret)) {
-                throw new EncryptionException('Invalid signature');
-            }
+            // Create event object.
+            $events[0] = (object) [
+                'event_id' => $eventId,
+                'reference_cursor' => '',
+                'owner_cursor' => '',
+                'event_type' => $eventType,
+                'payload' => $payload
+            ];
         }
 
-        // Decrypt payload.
-        try {
-            $payload = $this->_encryption->decrypt($responseBody);
-            if ($payload === null) {
-                $response = new Response();
-                $response->code = 400;
-                $response->errors = [
-                    (object)['message' => 'Can\'t decrypt PGP encrypted message, check your keys.'],
-                ];
-                return $response;
-            }
-            $response->result->payload = json_decode($payload);
-        } catch (EncryptionException $e) {
-            // Do nothing, because we cannot decrypt value, send to user encrypted.
-        }
+        // Process events:
+        //  - Try to decrypt the encrypted payload.
+        //  - Call the handler function.
+        foreach ($events as $key => $event) {
+            // Try decrypting the payload.
+            try {
+                $payload = $this->_encryption->decrypt($event->payload);
 
-        // Call the handler.
-        call_user_func_array($payload->handler);
+                if ($payload !== null) {
+                    $event->$payload = json_decode($payload);
+                }
+            } catch (EncryptionException $e) {
+                // Do nothing. We will pass the encrypted payload to the handler function.
+            }
+
+            // Call the handler function.
+            // @todo Get the handler.
+            call_user_func_array($handler, $event->$payload);
+        }
     }
 
     /**
