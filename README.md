@@ -269,11 +269,14 @@ You can register subscriptions to hooks by calling the addEventSubscription func
 
 There is no wildcard event subscription, however, you can add many handlers at one time.
 
-TODO: replace with PHP example
-```
-Example JavaScript:
-addEventSubscription([{"ConsentDeclined":"declinedHandler"}],"ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be",myConfigObj);
+Example:
 
+```
+$xcoobee->system->addEventSubscription(
+    ['ConsentDeclined' => 'declinedHandler'],
+    'ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be',
+    $config
+);
 ```
 
 This will subscribe you on the XcooBee system to receive `ConsentDeclined` events for the `ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be` campaign and call your handler named `declinedHandler(event)` when such an event occurs.
