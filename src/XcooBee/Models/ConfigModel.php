@@ -72,8 +72,12 @@ class ConfigModel
      * @return self
      * @throws XcooBeeException
      */
-    public static function createFromFile($homeDirPath)
+    public static function createFromFile($homeDirPath = null)
     {
+        if ($homeDirPath === null) {
+            $homeDirPath = self::_getHomeDirPath();
+        }
+
         $configFilePath = $homeDirPath . self::CONFIG_FILE;
         if (!file_exists($configFilePath)) {
             throw new XcooBeeException("File $configFilePath doesn't exist");
@@ -94,5 +98,25 @@ class ConfigModel
         }
 
         return self::createFromData($configArray);
+    }
+
+    protected static function _getHomeDirPath()
+    {
+        // POSIX-compliant systems.
+        if (false !== ($homeDirPath = getenv('HOME'))) {
+            return $homeDirPath;
+        }
+
+        if (function_exists('posix_getuid') && function_exists('posix_getpwuid')) {
+            $info = posix_getpwuid(posix_getuid());
+            return $info['dir'];
+        }
+
+        // Windows.
+        if (defined('PHP_WINDOWS_VERSION_BUILD') && false !== ($homeDirPath = getenv('USERPROFILE'))) {
+            return $homeDirPath;
+        }
+
+        throw new XcooBeeException('Could not determine user directory');
     }
 }
