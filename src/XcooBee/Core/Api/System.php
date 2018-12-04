@@ -203,9 +203,8 @@ class System extends Api
      * Handle webhook calls.
      *
      * @param array $events
-     *
      * @return void
-     * @throws XcooBeeException
+     * @throws EncryptionException|XcooBeeException
      */
     public function handleEvents($events = [])
     {
@@ -215,7 +214,7 @@ class System extends Api
             $eventType = $_SERVER['HTTP_X_XBEE_EVENT'];
             $eventId  = $_SERVER['HTTP_X_TRANS_ID'];
             $signature = $_SERVER['HTTP_X_XBEE_SIGNATURE'];
-            $responseBody = json_decode(file_get_contents( 'php://input', true ));
+            $responseBody = json_decode(file_get_contents('php://input', true));
             $payload = $responseBody->data;
 
             // Validate signature if found.
@@ -227,39 +226,50 @@ class System extends Api
                 }
 
                  // Validate signature.
-                if ( $signature !== hash_hmac( 'sha1', $responseBody, $config->pgpSecret)) {
+                if ($signature !== hash_hmac( 'sha1', $responseBody, $config->pgpSecret)) {
                     throw new EncryptionException('Invalid signature');
                 }
             }
 
             // Create event object.
             $events[0] = (object) [
-                'event_id' => $eventId,
-                'reference_cursor' => '',
-                'owner_cursor' => '',
-                'event_type' => $eventType,
-                'payload' => $payload
+                'event_type' => $this->_getSubscriptionEvent($eventType),
+                'payload' => $payload,
             ];
         }
 
         // Process events:
-        //  - Try to decrypt the encrypted payload.
+        //  - Try to decrypt the payload.
         //  - Call the handler function.
-        foreach ($events as $key => $event) {
+        foreach ($events as $event) {
             // Try decrypting the payload.
             try {
                 $payload = $this->_encryption->decrypt($event->payload);
 
-                if ($payload !== null) {
-                    $event->$payload = json_decode($payload);
+                // Could not decrypt the payload.
+                if (is_null($payload)) {
+                    continue;
                 }
             } catch (EncryptionException $e) {
-                // Do nothing. We will pass the encrypted payload to the handler function.
+                // Do nothing. Move on.
+                continue;
             }
 
-            // Call the handler function.
-            // @todo Get the handler.
-            call_user_func_array($handler, $event->$payload);
+            $event->payload = json_decode($payload);
+            $consentData = $this->_xcoobee->consents->getConsentData($event->payload->consentId);
+            
+            if ($consentData->code !== 200) {
+                throw new XcooBeeException('Can\'t get campaign data');
+            }
+
+            $campaignId = $consentData->result->consent->campaign_cursor;
+
+            $handler = $this->_getEventHandler($campaignId, $event->event_type);
+
+            // Call the handler function and pass the payload as an object.
+            if (!is_null($handler)) {
+                call_user_func_array($handler, array($event->payload));
+            }
         }
     }
 
@@ -303,5 +313,32 @@ class System extends Api
         }
 
         return $events[$event];
+    }
+
+    /**
+     * Returns the handler of an event subscription.
+     *
+     * @param string $campaignId
+     * @param string $event
+     * @param array $config
+     *
+     * @return string|null
+     */
+    protected function _getEventHandler($campaignId, $event, $config = [])
+    {
+        $response = $this->listEventSubscriptions($campaignId, $config);
+        $subscriptions = $response->result->event_subscriptions->data;
+
+        $subscription  = array_map(function($s) use ($event) {
+            if ($s->event_type === $event) {
+                return $s->handler;
+            } 
+        }, $subscriptions);
+
+        if (!empty($subscription)) {
+            return $subscription[0];
+        }
+
+        return null;
     }
 }
