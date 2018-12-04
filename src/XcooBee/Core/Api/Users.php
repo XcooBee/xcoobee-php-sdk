@@ -63,6 +63,10 @@ class Users extends Api
      */
     public function getUserPublicKey($xid, $config = [])
     {
+        if (!$xid) {
+            throw new XcooBeeException('No "user" provided');
+        }
+
         $query = 'query getUserPublicKey($xid: String!) {
                 users(xcoobee_id: $xid) {
                     data {

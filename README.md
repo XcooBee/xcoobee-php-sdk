@@ -1044,7 +1044,7 @@ standard JSON response object
 
 Retrieves a user's public PGP key as published on their public profile. If the user chose to hide it or the user is not known, it returns `null`.
 
-Example:
+example:
 ```
 getUserPublicKey('~XcooBeeId');
 ```
@@ -1056,7 +1056,7 @@ config => optional: the config object
 ```
 
 ### response
-`null` or public PGP
+public PGP or `null`
 
 # Troubleshooting
 
