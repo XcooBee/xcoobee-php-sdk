@@ -193,9 +193,10 @@ class Consents extends Api
 
         return $response;
     }
-    
+
     /**
      * @param string $consentId
+     * @param array $config
      *
      * @return Response
      * @throws XcooBeeException
@@ -207,7 +208,7 @@ class Consents extends Api
         }
 
         $query = 'query getConsentData($consentId: String!) {
-		consent(consent_cursor: $consentId) {
+                consent(consent_cursor: $consentId) {
                     user_display_name,
                     user_xcoobee_id,
                     user_cursor,
@@ -218,17 +219,18 @@ class Consents extends Api
                     consent_details {
                       datatype
                     },
+                    campaign_cursor,
                     date_c,
                     date_e,
                     request_owner,
                     request_data_types,
                     required_data_types
-		}
-	}';
+                }
+            }';
 
-        return $this->_request($query, ['consentId' => $consentId], $config);    
+        return $this->_request($query, ['consentId' => $consentId], $config);
     }
-    
+
     /**
      * list all consents
      * 

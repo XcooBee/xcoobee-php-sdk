@@ -200,7 +200,7 @@ class System extends Api
     }
 
     /**
-     * Handle webhook calls.
+     * Handle event calls.
      *
      * @param array $events
      * @return void
@@ -225,13 +225,13 @@ class System extends Api
                     throw new EncryptionException('PGP private key not provided');
                 }
 
-                 // Validate signature.
+                // Validate signature.
                 if ($signature !== hash_hmac( 'sha1', $responseBody, $config->pgpSecret)) {
                     throw new EncryptionException('Invalid signature');
                 }
             }
 
-            // Create event object.
+            // Create an event object.
             $events[0] = (object) [
                 'event_type' => $this->_getSubscriptionEvent($eventType),
                 'payload' => $payload,
