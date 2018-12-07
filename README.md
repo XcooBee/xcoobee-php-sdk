@@ -43,6 +43,10 @@ or if you are on Windows:
 set XBEE_STATE=test
 ```
 
+using PHP:
+```
+putenv('XBEE_STATE=test');
+```
 
 ### The config object
 
