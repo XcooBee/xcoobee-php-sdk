@@ -42,7 +42,7 @@ class Client
     /**
      * @return string
      */
-    public function _getApiUrl() {
+    protected function _getApiUrl() {
         return getenv('XBEE_STATE') === 'test' ? self::TEST_API_URL : self::API_URL;
     }
 
