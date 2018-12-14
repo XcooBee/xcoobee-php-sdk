@@ -200,46 +200,58 @@ class System extends Api
     }
 
     /**
-     * Handle event calls.
+     * Handle event subscriptions in webhooks.
      *
      * @param array $events
+     *
      * @return void
-     * @throws EncryptionException|XcooBeeException
+     * @throws XcooBeeException|EncryptionException
      */
     public function handleEvents($events = [])
     {
         // If no event objects passed directly, validate signature and create an event object.
         if (empty($events)) {
             // Response data.
-            $eventType = $_SERVER['HTTP_X_XBEE_EVENT'];
-            $eventId  = $_SERVER['HTTP_X_TRANS_ID'];
-            $signature = $_SERVER['HTTP_X_XBEE_SIGNATURE'];
-            $responseBody = json_decode(file_get_contents('php://input', true));
-            $payload = $responseBody->data;
+            $eventType = isset($_SERVER['HTTP_X_XBEE_EVENT']) ? $_SERVER['HTTP_X_XBEE_EVENT'] : null;
+            $eventId  = isset($_SERVER['HTTP_X_TRANS_ID']) ? $_SERVER['HTTP_X_TRANS_ID'] : null;
+            $signature = isset($_SERVER['HTTP_X_XBEE_SIGNATURE']) ? $_SERVER['HTTP_X_XBEE_SIGNATURE'] : null;
+            $responseBody = file_get_contents('php://input', true);
+            
+            /*
+             * Get the exact payload string to correctly calculate the HMAC signature:
+             * - Remove `{"data:"}` and `"}` from the response.
+             * - Correctly escape new line characters.
+             */
+            $payload = trim(trim($responseBody, '{"data":"'), '"}');
+            $payload = str_replace('\n', "\n", $payload);
+            $payload = str_replace('\r', "\r", $payload);
 
             // Validate signature if found.
-            if (isset($signature)) {
+            if (!empty($signature) && !empty($payload)) {
                 $config = $this->_xcoobee->getConfig();
 
                 if (!$config->pgpSecret) {
                     throw new EncryptionException('PGP private key not provided');
                 }
-
+                
                 // Validate signature.
-                if ($signature !== hash_hmac( 'sha1', $responseBody, $config->pgpSecret)) {
+                // @todo Get webkey.
+                if ($signature !== hash_hmac( 'sha1', $payload, '')) {
                     throw new EncryptionException('Invalid signature');
                 }
             }
-
-            // Create an event object.
-            $events[0] = (object) [
-                'event_type' => $this->_getSubscriptionEvent($eventType),
-                'payload' => $payload,
-            ];
+            
+            if(!empty($eventType) && !empty($payload)) {
+                // Create event object.
+                $events[0] = (object) [
+                    'event_type' => $this->_getSubscriptionEvent($eventType),
+                    'payload' => $payload,
+                ];
+            }
         }
 
         // Process events:
-        //  - Try to decrypt the payload.
+        //  - Try to decrypt the encrypted payload.
         //  - Call the handler function.
         foreach ($events as $event) {
             // Try decrypting the payload.
@@ -259,7 +271,7 @@ class System extends Api
             $consentData = $this->_xcoobee->consents->getConsentData($event->payload->consentId);
             
             if ($consentData->code !== 200) {
-                throw new XcooBeeException('Can\'t get campaign data');
+                throw new XcooBeeException('Could not get campaign data');
             }
 
             $campaignId = $consentData->result->consent->campaign_cursor;
