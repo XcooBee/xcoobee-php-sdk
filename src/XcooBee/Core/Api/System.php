@@ -205,20 +205,23 @@ class System extends Api
      * @param array $events
      *
      * @return void
-     * @throws XcooBeeException|EncryptionException
+     * @throws EncryptionException|XcooBeeException;
      */
     public function handleEvents($events = [])
     {
-        // If no event objects passed directly, validate signature and create an event object.
+        // If no events array is passed, then parse the HTTP POST request and:
+        // - validate delivery signature if found,
+        // - try to decrypt payload and
+        // - create an event object.
         if (empty($events)) {
             // Response data.
             $eventType = isset($_SERVER['HTTP_X_XBEE_EVENT']) ? $_SERVER['HTTP_X_XBEE_EVENT'] : null;
             $eventId  = isset($_SERVER['HTTP_X_TRANS_ID']) ? $_SERVER['HTTP_X_TRANS_ID'] : null;
             $signature = isset($_SERVER['HTTP_X_XBEE_SIGNATURE']) ? $_SERVER['HTTP_X_XBEE_SIGNATURE'] : null;
             $responseBody = file_get_contents('php://input', true);
-            
+
             /*
-             * Get the exact payload string to correctly calculate the HMAC signature:
+             * Get the exact payload string to correctly calculate the HMAC hex digest:
              * - Remove `{"data:"}` and `"}` from the response.
              * - Correctly escape new line characters.
              */
@@ -226,48 +229,41 @@ class System extends Api
             $payload = str_replace('\n', "\n", $payload);
             $payload = str_replace('\r', "\r", $payload);
 
-            // Validate signature if found.
+            // Validate delivery signature if found.
             if (!empty($signature) && !empty($payload)) {
                 $config = $this->_xcoobee->getConfig();
 
                 if (!$config->pgpSecret) {
                     throw new EncryptionException('PGP private key not provided');
                 }
-                
+
                 // Validate signature.
-                // @todo Get webkey.
-                if ($signature !== hash_hmac( 'sha1', $payload, '')) {
+                $xcoobee_id = $this->_xcoobee->users->getUser()->xcoobeeId;
+                if ($signature !== hash_hmac( 'sha1', $payload, $xcoobee_id)) {
                     throw new EncryptionException('Invalid signature');
                 }
             }
-            
+
+            // Try to decrypt payload.
             if(!empty($eventType) && !empty($payload)) {
-                // Create event object.
-                $events[0] = (object) [
-                    'event_type' => $this->_getSubscriptionEvent($eventType),
-                    'payload' => $payload,
-                ];
+                try {
+                    $payload = $this->_encryption->decrypt($payload);
+
+                    if ($payload !== null) {
+                        // Create event object.
+                        $events[0] = (object) [
+                            'event_type' => $this->_getSubscriptionEvent($eventType),
+                            'payload' => json_decode($payload),
+                        ];
+                    }
+                } catch (EncryptionException $e) {
+                    // Do nothing.
+                }
             }
         }
 
-        // Process events:
-        //  - Try to decrypt the encrypted payload.
-        //  - Call the handler function.
+        // Process events and call the handler function and pass the payload to it.
         foreach ($events as $event) {
-            // Try decrypting the payload.
-            try {
-                $payload = $this->_encryption->decrypt($event->payload);
-
-                // Could not decrypt the payload.
-                if (is_null($payload)) {
-                    continue;
-                }
-            } catch (EncryptionException $e) {
-                // Do nothing. Move on.
-                continue;
-            }
-
-            $event->payload = json_decode($payload);
             $consentData = $this->_xcoobee->consents->getConsentData($event->payload->consentId);
             
             if ($consentData->code !== 200) {
@@ -278,7 +274,7 @@ class System extends Api
 
             $handler = $this->_getEventHandler($campaignId, $event->event_type);
 
-            // Call the handler function and pass the payload as an object.
+            // Call handler and pass payload to it.
             if (!is_null($handler)) {
                 call_user_func_array($handler, array($event->payload));
             }
