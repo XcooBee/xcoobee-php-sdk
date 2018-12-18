@@ -339,6 +339,27 @@ standard JSON response object
     - data will contain the number of deleted subscriptions
 - status 400 if error
 
+## triggerEvent(type, [config])
+
+trigger test event to configured campaign webhook.
+The structure will be the same as real event (with encrypted payload and hmac signature).
+Also you will receive `X-XBEE-TEST-EVENT` header, which indicates that event is test. 
+If campaign webhook is not configured, you'll receive an error.
+
+
+options: 
+
+```
+type   => name of event
+config => optional: the config object
+```
+### response
+
+standard JSON response object
+- status 200 if success: 
+    - data will contain test event data
+- status 400 if error
+
 
 ## handleEvents(events)
 

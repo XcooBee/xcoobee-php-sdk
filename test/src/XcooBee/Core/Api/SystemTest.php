@@ -16,7 +16,7 @@ class SystemTest extends TestCase
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
         $XcooBeeMock->consents = $this->_getMock(Consents::class, [
-            'getCampaign' => (object) [
+            'getCampaignInfo' => (object) [
                     'result' => (object) [
                             'campaign' => (object) [
                                     'xcoobee_targets' => [],
@@ -40,7 +40,7 @@ class SystemTest extends TestCase
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
         $XcooBeeMock->consents = $this->_getMock(Consents::class, [
-            'getCampaign' => (object) [
+            'getCampaignInfo' => (object) [
                     'result' => (object) [
                             'campaign' => (object) [
                                     'xcoobee_targets' => [],
@@ -69,7 +69,7 @@ class SystemTest extends TestCase
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
         $XcooBeeMock->consents = $this->_getMock(Consents::class, [
-            'getCampaign' => (object) [
+            'getCampaignInfo' => (object) [
                     'result' => null
             ]
         ]);
@@ -413,12 +413,50 @@ class SystemTest extends TestCase
         ]);
 
         $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+            }));
 
         $systemMock->getEvents([
+            'apiKey' => 'testapikey',
+            'apiSecret' => 'testapisecret'
+        ]);
+    }
+
+    public function testTriggerEvent()
+    {
+        $systemMock = $this->_getMock(System::class, [
+            '_request' => true,
+            '_getCampaignId' => 'testCampaignId',
+        ]);
+
+        $systemMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['config' => [
+                    'campaign_cursor' => 'testCampaignId',
+                    'type' => 'consent_approved',
+                ]], $params);
+            }));
+
+        $systemMock->triggerEvent("ConsentApproved");
+    }
+
+    public function testTriggerEvent_useConfig()
+    {
+        $systemMock = $this->_getMock(System::class, [
+            '_request' => true,
+            '_getCampaignId' => 'testCampaignId',
+        ]);
+
+        $systemMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+            }));
+
+        $systemMock->triggerEvent("ConsentApproved", [
             'apiKey' => 'testapikey',
             'apiSecret' => 'testapisecret'
         ]);
