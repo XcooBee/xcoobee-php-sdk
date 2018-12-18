@@ -198,6 +198,33 @@ class System extends Api
 
         return $events;
     }
+
+    /**
+     * trigger test event to campaign webhook
+     *
+     * @param string $type
+     * @param array $config
+     *
+     * @return Response
+     * @throws XcooBeeException
+     */
+    public function triggerEvent($type, $config = [])
+    {
+        $campaignId = $this->_getCampaignId(null, $config);
+
+        $mutation = 'mutation sendTestEvent($campaignId: String!, $type: EventSubscriptionType!){
+            send_test_event(campaign_cursor: $campaignId, type: $type){
+                event_type
+                payload
+                hmac
+            }
+        }';
+
+        return $this->_request($mutation, ['config' => [
+            'campaign_cursor' => $campaignId,
+            'type' => $this->_getSubscriptionEvent($type),
+        ]], $config);
+    }
     
     /**
      * get events
