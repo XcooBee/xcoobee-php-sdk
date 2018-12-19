@@ -877,10 +877,7 @@ Overall job parameters to be used for the hiring are specified with the `process
 general process parameters example:
 ```
 $options['process']['userReference'] = 'myownreference';
-$options['process']['destinations'] = [
-    ['email' => 'email@mysite.com'],
-    ['xcoobee_id' => '~jonny'],
-];
+$options['process']['destinations'] = ['email@mysite.com', '~jonny'];
 $options['process']['fileNames] = ['filename.png'];
 ```
 
