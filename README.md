@@ -896,8 +896,9 @@ Subscriptions can be attached to the overall process or for each bee. You will n
 Thus the three keys for each subscription are:
 - target => string with target endpoint URL
 - events => CSV string with life-cycle events to subscribe to
-- signed => optional: default false, whether the content of the HTTPS POST is signed with your public PGP key
+- signed => optional: default false, whether the content of the HTTPS POST is signed with a HMAC signature and your public PGP key
 
+When using signed events, the HMAC signature will assume your XcooBee ID as the shared secret key and will use the the PGP public key to encrypt the payload. Without this you are still using SSL encryption for the transfer.
 
 To subscribe to overall process events, the keyword `process` needs to be used instead of the bee system name. The subscription details need to be attached as subkeys to it. For bee level subscriptions, you will need to use the bee system name as prefix.
 Remember that subscriptions deduct points from your balance even if they are not successful so please validate that the endpoints you specify in `target` are valid.
