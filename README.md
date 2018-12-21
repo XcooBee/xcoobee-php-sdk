@@ -913,8 +913,8 @@ process.signed = true
 process.events = ["error", "success", "deliver", "present", "download", "delete", "reroute"]
 
 Bee subscriptions:
-xcoobee_testbee.target = "https://somesite.com/testbee/notification/"
-xcoobee_testbee.events = ["error", "success"]
+xcoobee_testbee.subscriptions.target = "https://somesite.com/testbee/notification/"
+xcoobee_testbee.subscriptions.events = ["error", "success"]
 ```
 
 ### `c` Subscription events
