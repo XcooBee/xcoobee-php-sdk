@@ -1063,6 +1063,26 @@ standard JSON response object
 - status 400 if error
 
 
+# User API
+
+## getUserPublicKey(xid,[config])
+
+Retrieves a user's public PGP key as published on their public profile. If the user chose to hide it or the user is not known, it returns `null`.
+
+example:
+```
+getUserPublicKey('~XcooBeeId');
+```
+
+options:
+```
+xid    => XcooBee ID of the user to get their public PGP key
+config => optional: the config object
+```
+
+### response
+public PGP or `null`
+
 # Troubleshooting
 
 ## Error 401

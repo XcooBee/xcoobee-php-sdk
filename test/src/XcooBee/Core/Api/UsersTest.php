@@ -87,8 +87,65 @@ class UsersTest extends TestCase {
             'apiSecret' => 'testapisecret' 
         ]);
     }
-    
-    public function testSendUserMessage() 
+
+    public function testGetUserPublicKey()
+    {
+        $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
+            '_request' => true,
+        ]);
+
+        $usersMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params) {
+                            $this->assertEquals(['xid' => 'testXid'], $params);
+                        }));
+
+        $usersMock->getUserPublicKey('testXid');
+    }
+
+    public function testGetUserPublicKey_UseConfig() 
+    {
+        $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
+            '_request' => true,
+        ]);
+
+        $usersMock->expects($this->once())
+                ->method('_request')
+                ->will($this->returnCallback(function ($query, $params, $config) {
+                            $this->assertEquals(['xid' => 'testXid'], $params);
+                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+                        }));
+
+        $usersMock->getUserPublicKey('testXid', [
+            'apiKey' => 'testapikey',
+            'apiSecret' => 'testapisecret'
+        ]);
+    }
+
+    public function testGetUserPublicKey_NoPgpFound()
+    {
+        $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
+            '_request' => true,
+            'getUserPublicKey' => $this->_createResponse(200, (object) ['data' => []]),
+        ]);
+
+        $response = $usersMock->getUserPublicKey('testXid');
+
+        $this->assertEquals(200, $response->code);
+        $this->assertEquals([], $response->result->data);
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testGetUserPublicKey_NoXid()
+    {
+        $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, []);
+
+        $usersMock->getUserPublicKey(null);
+    }
+
+    public function testSendUserMessage()
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
