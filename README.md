@@ -29,6 +29,24 @@ Like all standard transactions API calls are logged on the XcooBee network. They
 
 ## Getting Started
 
+### API endpoint
+
+To use the test API endpoint, please set an environment variable `XBEE_STATE=test`.
+
+example:
+```
+export XBEE_STATE=test
+```
+
+or if you are on Windows:
+```
+set XBEE_STATE=test
+```
+
+using PHP:
+```
+putenv('XBEE_STATE=test');
+```
 
 ### The config object
 

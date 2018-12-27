@@ -8,19 +8,20 @@ use XcooBee\XcooBee;
 
 class Client
 {
-    const API_URL = 'https://testapi.xcoobee.net/Test/';
+    const API_URL = 'https://api.xcoobee.net/Test/';
+    const TEST_API_URL = 'https://testapi.xcoobee.net/Test/';
     const TIME_OUT = 3000;
 
     protected $_client;
-	
+
     /** @var XcooBee */
     protected $_xcoobee;
-	
+
     public function __construct(XcooBee $xcoobee)
     {
         $this->_xcoobee = $xcoobee;
         $this->_client = new HttpClient([
-            'base_uri' => self::API_URL,
+            'base_uri' => $this->_getApiUrl(),
             'timeout'  => self::TIME_OUT,
         ]);
     }
@@ -39,12 +40,19 @@ class Client
     }
 
     /**
+     * @return string
+     */
+    protected function _getApiUrl() {
+        return getenv('XBEE_STATE') === 'test' ? self::TEST_API_URL : self::API_URL;
+    }
+
+    /**
      * @param $endpoint
      * @return string
      */
     protected function _getUriFromEndpoint($endpoint)
     {
-        return self::API_URL . $endpoint;
+        return $this->_getApiUrl() . $endpoint;
     }
 
     /**
