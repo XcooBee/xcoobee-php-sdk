@@ -167,12 +167,12 @@ HTTP POST payloads that are delivered to your webhook's configured URL endpoint 
 
 | Header | Description  | 
 |----|---|
-|X-XBEE-EVENT  |Event type that triggered the delivery. E.g. ConsentApproved | 
-|X-TRANS-ID  |A GUID identifying this event.  | 
-|X-XBEE-SIGNATURE |The HMAC hex digest of the response body*.  | 
+|XBEE-EVENT  |Event type that triggered the delivery. E.g. ConsentApproved | 
+|XBEE-TRANS-ID  |A GUID identifying this event.  | 
+|XBEE-SIGNATURE |The HMAC hex digest of the response body*.  | 
 
 
-* The `X-XBEE-SIGNATURE` header will be sent if the webhook is configured with a secret. The HMAC hex digest is generated using the sha1 hash function and the secret as the HMAC key.
+* The `XBEE-SIGNATURE` header will be sent if the webhook is configured with a secret. The HMAC hex digest is generated using the sha1 hash function and the secret as the HMAC key.
 
 
 ## Implementing Webhook Acceptance
@@ -343,7 +343,7 @@ standard JSON response object
 
 trigger test event to configured campaign webhook.
 The structure will be the same as real event (with encrypted payload and hmac signature).
-Also you will receive `X-XBEE-TEST-EVENT` header, which indicates that event is test. 
+Also you will receive `XBEE-TEST-EVENT` header, which indicates that event is test. 
 If campaign webhook is not configured, you'll receive an error.
 
 
