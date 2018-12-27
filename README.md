@@ -871,7 +871,7 @@ You normally use this as follow up call to `uploadFiles()`. This will start your
 
 This is the most complex function call in the Bee API and has multiple options and parts.
 
-a) parameter object
+a) parameters array
 b) subscriptions
 c) subscription events
 
@@ -879,16 +879,14 @@ c) subscription events
 options:
 
 ```
-bees          => array of bee system names, e.g. "xcoobee_digital_signature_detection"
-parameters    => optional: the parameters object. For each bee by bee name.
-subscriptions => optional: the subscriptions object. Specifies the subscriptions.'
-config        => optional: the config object
+bees          => array of bee system names (e.g. "xcoobee_digital_signature_detection") and their parameters
+parameters    => optional: the parameters array. For each bee by bee name.
+subscriptions => optional: the subscriptions array. Specifies the subscriptions.
+config        => optional: the config array.
 ```
 
 
-
-
-### `a` Parameters Object
+### `a` Parameters
 
 Parameters can be bee specific or apply to the overall job.
 
@@ -896,24 +894,26 @@ Overall job parameters to be used for the hiring are specified with the `process
 
 general process parameters example:
 ```
-process.userReference="myownreference"
-process.destinations=["~xcoobeeIds",{"xcoobeeId":"~jonny","accesskey":"isfnsfhis"},"emails"]
-process.Integrations.XcooBeeInbox=[{"filename": "fileinInbox.png"}]
+$options['process']['userReference'] = 'myownreference';
+$options['process']['destinations'] = ['email@mysite.com', '~jonny'];
+$options['process']['fileNames] = ['filename.png'];
 ```
 
-Bee parameters that are specified require the bee name prefix. If the bee name is `xcoobee_testbee` and it requires two parameters `height` and `width` then you will need to add these with prefix of bee-name to the parameters object. 
+Bee parameters that are specified require the bee name prefix. If the bee name is `xcoobee_testbee` and it requires two parameters `height` and `width` then you will need to add these into an associative array inside the parameters array with a key of bee name.
 
 bee parameters example:
 ```
-xcoobee_testbee.height = 599
-xcoobee_testbee.width = 1200
+$options['xcoobee_testbee'] = [
+    'height' => 599,
+    'width' => 1200,
+];
 ```
 
 ### `b` Subscriptions
 Subscriptions can be attached to the overall process or for each bee. You will need to specify a `target` and an `events` argument at minimum. The `target` endpoint has to be reachable by the XcooBee system via **HTTP/S POST**. The `events` determines which events you are subscribing to.
 Thus the three keys for each subscription are:
 - target => string with target endpoint URL
-- events => CSV string with life-cycle events to subscribe to
+- events => array with life-cycle events to subscribe to
 - signed => optional: default false, whether the content of the HTTPS POST is signed with a HMAC signature and your public PGP key
 
 When using signed events, the HMAC signature will assume your XcooBee ID as the shared secret key and will use the the PGP public key to encrypt the payload. Without this you are still using SSL encryption for the transfer.
@@ -931,8 +931,8 @@ process.signed = true
 process.events = ["error", "success", "deliver", "present", "download", "delete", "reroute"]
 
 Bee subscriptions:
-xcoobee_testbee.target = "https://somesite.com/testbee/notification/"
-xcoobee_testbee.events = ["error", "success"]
+xcoobee_testbee.subscriptions.target = "https://somesite.com/testbee/notification/"
+xcoobee_testbee.subscriptions.events = ["error", "success"]
 ```
 
 ### `c` Subscription events
