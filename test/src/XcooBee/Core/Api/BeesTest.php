@@ -204,6 +204,8 @@ class BeesTest extends TestCase
         $beesMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) use ($paramsExpected) {
+                var_dump($params);
+
                 $this->assertEquals($paramsExpected, $params);
             }));
 
@@ -213,6 +215,34 @@ class BeesTest extends TestCase
     public function takeOffProvider() 
     {
         return [
+            [
+                [
+                    'xcoobee_message' => [
+                        'xcoobee_simple_message' => ['message' => 'test' ],
+                        'recipient' => [ 'xcoobee_id' => '~test' ],
+                    ],
+                ],
+                [
+                    'process' => [
+                        'destinations' => [ '~test' ],
+                    ]
+                ],
+                [],
+                [
+                    'params' => [
+                        'user_reference' => null,
+                        'destinations' => [
+                            ['xcoobee_id' => '~test'],
+                        ],
+                        'bees' => [
+                            [
+                                'bee_name' => 'xcoobee_message',
+                                'params' => '{"xcoobee_simple_message":{"message":"test"},"recipient":{"xcoobee_id":"~test"}}',
+                            ]
+                        ],
+                    ]
+                ],
+            ],
             [
                 [
                     'transfer' => [
