@@ -204,8 +204,6 @@ class BeesTest extends TestCase
         $beesMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) use ($paramsExpected) {
-                var_dump($params);
-
                 $this->assertEquals($paramsExpected, $params);
             }));
 
