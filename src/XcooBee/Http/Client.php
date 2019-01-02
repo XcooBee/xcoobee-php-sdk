@@ -8,7 +8,7 @@ use XcooBee\XcooBee;
 
 class Client
 {
-    const API_URL = 'https://api.xcoobee.net/Test/';
+    const API_URL = 'https://api.xcoobee.net/';
     const TEST_API_URL = 'https://testapi.xcoobee.net/Test/';
     const TIME_OUT = 3000;
 
