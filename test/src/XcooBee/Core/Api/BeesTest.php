@@ -215,6 +215,34 @@ class BeesTest extends TestCase
         return [
             [
                 [
+                    'xcoobee_message' => [
+                        'xcoobee_simple_message' => ['message' => 'test' ],
+                        'recipient' => [ 'xcoobee_id' => '~test' ],
+                    ],
+                ],
+                [
+                    'process' => [
+                        'destinations' => [ '~test' ],
+                    ]
+                ],
+                [],
+                [
+                    'params' => [
+                        'user_reference' => null,
+                        'destinations' => [
+                            ['xcoobee_id' => '~test'],
+                        ],
+                        'bees' => [
+                            [
+                                'bee_name' => 'xcoobee_message',
+                                'params' => '{"xcoobee_simple_message":{"message":"test"},"recipient":{"xcoobee_id":"~test"}}',
+                            ]
+                        ],
+                    ]
+                ],
+            ],
+            [
+                [
                     'transfer' => [
                         'message' => 'test',
                     ],
