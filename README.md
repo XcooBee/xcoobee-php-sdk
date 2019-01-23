@@ -188,6 +188,7 @@ HTTP POST payloads that are delivered to your webhook's configured URL endpoint 
 |XBEE-EVENT  |Event type that triggered the delivery. E.g. ConsentApproved | 
 |XBEE-TRANS-ID  |A GUID identifying this event.  | 
 |XBEE-SIGNATURE |The HMAC hex digest of the response body*.  | 
+|XBEE-HANDLER |Name of a function that was configured as a handler for current event type | 
 
 
 * The `XBEE-SIGNATURE` header will be sent if the webhook is configured with a secret. The HMAC hex digest is generated using the sha1 hash function and the secret as the HMAC key.
