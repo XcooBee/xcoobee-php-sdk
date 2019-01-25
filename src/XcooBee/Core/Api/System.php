@@ -349,31 +349,4 @@ class System extends Api
 
         return $events[$event];
     }
-
-    /**
-     * Returns the handler of an event subscription.
-     *
-     * @param string $campaignId
-     * @param string $event
-     * @param array $config
-     *
-     * @return string|null
-     */
-    protected function _getEventHandler($campaignId, $event, $config = [])
-    {
-        $response = $this->listEventSubscriptions($campaignId, $config);
-        $subscriptions = $response->result->event_subscriptions->data;
-
-        $subscription  = array_map(function($s) use ($event) {
-            if ($s->event_type === $event) {
-                return $s->handler;
-            } 
-        }, $subscriptions);
-
-        if (!empty($subscription)) {
-            return $subscription[0];
-        }
-
-        return null;
-    }
 }
