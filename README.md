@@ -188,6 +188,7 @@ HTTP POST payloads that are delivered to your webhook's configured URL endpoint 
 |XBEE-EVENT  |Event type that triggered the delivery. E.g. ConsentApproved | 
 |XBEE-TRANS-ID  |A GUID identifying this event.  | 
 |XBEE-SIGNATURE |The HMAC hex digest of the response body*.  | 
+|XBEE-HANDLER |Name of a function that was configured as a handler for current event type | 
 
 
 * The `XBEE-SIGNATURE` header will be sent if the webhook is configured with a secret. The HMAC hex digest is generated using the sha1 hash function and the secret as the HMAC key.
@@ -910,18 +911,20 @@ $options['xcoobee_testbee'] = [
 ```
 
 ### `b` Subscriptions
-Subscriptions can be attached to the overall process or for each bee. You will need to specify a `target` and an `events` argument at minimum. The `target` endpoint has to be reachable by the XcooBee system via **HTTP/S POST**. The `events` determines which events you are subscribing to.
+Subscriptions can be attached to the overall process. You will need to specify a `target` and an `events` argument at minimum. The `target` endpoint has to be reachable by the XcooBee system via **HTTP/S POST**. The `events` determines which events you are subscribing to.
 Thus the three keys for each subscription are:
 - target => string with target endpoint URL
 - events => array with life-cycle events to subscribe to
 - signed => optional: default false, whether the content of the HTTPS POST is signed with a HMAC signature and your public PGP key
+- handler =>  required: The PHP function that will be called when we have bee api events.
 
 When using signed events, the HMAC signature will assume your XcooBee ID as the shared secret key and will use the the PGP public key to encrypt the payload. Without this you are still using SSL encryption for the transfer.
 
-To subscribe to overall process events, the keyword `process` needs to be used instead of the bee system name. The subscription details need to be attached as subkeys to it. For bee level subscriptions, you will need to use the bee system name as prefix.
+To subscribe to overall process events, the keyword `process` needs to be used. The subscription details need to be attached as subkeys to it. 
+
 Remember that subscriptions deduct points from your balance even if they are not successful so please validate that the endpoints you specify in `target` are valid.
 
-Example of subscription on the overall process and for one of the bees.
+Example of subscription on the overall process.
 
 subscriptions example:
 ```
@@ -929,23 +932,14 @@ Process Subscriptions:
 process.target = "https://mysite.com/beehire/notification/"
 process.signed = true
 process.events = ["error", "success", "deliver", "present", "download", "delete", "reroute"]
+process.handler = "myBeeEventHandler"
 
-Bee subscriptions:
-xcoobee_testbee.subscriptions.target = "https://somesite.com/testbee/notification/"
-xcoobee_testbee.subscriptions.events = ["error", "success"]
 ```
 
 ### `c` Subscription events
 
-The event system for bees can distinguish between process level and bee level events.
+The event system for bees uses process level events.
 
-#### Bee Level events
-- **error**
-    - There was an error in the hiring cycle for this bee
-    - Event type sent in POST header - `BeeSuccess`
-- **success**
-    - The bee completed the hiring cycle successfully
-    - Event type sent in POST header - `BeeError`
 
 #### Process Level events
 - **error**
