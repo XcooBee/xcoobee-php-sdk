@@ -226,84 +226,97 @@ class System extends Api
         ]], $config);
     }
 
-    /*
+    /**
      * Handle event subscriptions in webhooks.
      *
      * @param array $events
      *
-     * @return void
-     * @throws EncryptionException|XcooBeeException;
+     * @throws EncryptionException
      */
     public function handleEvents($events = [])
     {
-        // If no events array is passed, then parse the HTTP POST request and:
-        // - validate delivery signature if found,
+        // If no events array is passed on, then parse the HTTP POST request and:
+        // - validate HMAC hex digest if found,
         // - try to decrypt payload and
-        // - create an event object.
+        // - create event object.
         if (empty($events)) {
             // Response data.
-            $eventType = isset($_SERVER['HTTP_X_XBEE_EVENT']) ? $_SERVER['HTTP_X_XBEE_EVENT'] : null;
-            $eventId  = isset($_SERVER['HTTP_X_TRANS_ID']) ? $_SERVER['HTTP_X_TRANS_ID'] : null;
-            $signature = isset($_SERVER['HTTP_X_XBEE_SIGNATURE']) ? $_SERVER['HTTP_X_XBEE_SIGNATURE'] : null;
+            $eventType = isset($_SERVER['HTTP_XBEE_EVENT']) ? $_SERVER['HTTP_XBEE_EVENT'] : null;
+            $signature = isset($_SERVER['HTTP_XBEE_SIGNATURE']) ? $_SERVER['HTTP_XBEE_SIGNATURE'] : null;
+            $handler = isset($_SERVER['HTTP_XBEE_HANDLER']) ? $_SERVER['HTTP_XBEE_HANDLER'] : null;
             $responseBody = file_get_contents('php://input', true);
 
-            /*
-             * Get the exact payload string to correctly calculate the HMAC hex digest:
-             * - Remove `{"data:"}` and `"}` from the response.
-             * - Correctly escape new line characters.
-             */
-            $payload = trim(trim($responseBody, '{"data":"'), '"}');
-            $payload = str_replace('\n', "\n", $payload);
-            $payload = str_replace('\r', "\r", $payload);
+            $encryptedEvents = [
+                'ConsentApproved',
+                'ConsentDeclined',
+                'ConsentChanged',
+                'ConsentNearExpiration',
+                'ConsentExpired',
+                'DataApproved',
+                'DataDeclined',
+                'DataChanged',
+                'DataNearExpiration',
+                'DataExpired',
+                'BreachPresented',
+                'BreachBeeUsed',
+                'UserDataRequest',
+                'UserMessage',
+            ];
 
-            // Validate delivery signature if found.
-            if (!empty($signature) && !empty($payload)) {
-                $config = $this->_xcoobee->getConfig();
+            // Get the exact payload string to generate the correct HMAC hex digest.
+            if (in_array($eventType, $encryptedEvents)) {
+                // Remove `{"data:"}` at the beginning of the payload.
+                $payload = ltrim($responseBody, '{"data":"');
 
-                if (!$config->pgpSecret) {
-                    throw new EncryptionException('PGP private key not provided');
-                }
+                // Remove `"}` at the end of the payload.
+                $payload = rtrim($payload, '"}');
 
-                // Validate signature.
-                $xcoobee_id = $this->_xcoobee->users->getUser()->xcoobeeId;
-                if ($signature !== hash_hmac( 'sha1', $payload, $xcoobee_id)) {
+                // Correctly escape new line characters.
+                $payload = str_replace('\n', "\n", $payload);
+                $payload = str_replace('\r', "\r", $payload);  
+            } else {
+                // Remove the `"` characters that enclose the payload and strip backslashes off.
+                $payload = stripslashes(trim($responseBody, '\"'));
+            }
+
+            // Validate signature if found.
+            if (!is_null($signature) && !empty($payload)) {
+                // Use XcooBee Id as the HMAC secret key.
+                $xid = $this->_xcoobee->users->getUser()->xcoobeeId;
+                
+                // Generate HMAC hash.
+                $hmac = hash_hmac('sha1', $payload, $xid);
+
+                if (!hash_equals($hmac, $signature)) {
                     throw new EncryptionException('Invalid signature');
                 }
             }
 
-            // Try to decrypt payload.
-            if(!empty($eventType) && !empty($payload)) {
+            // Try to decrypt the payload.
+            if (!empty($payload)) {
                 try {
-                    $payload = $this->_encryption->decrypt($payload);
+                    $decrypted_payload = $this->_encryption->decrypt($payload);
 
-                    if ($payload !== null) {
-                        // Create event object.
-                        $events[0] = (object) [
-                            'event_type' => $this->_getSubscriptionEvent($eventType),
-                            'payload' => json_decode($payload),
-                        ];
+                    if ($decrypted_payload !== null) {
+                        $payload = json_decode($decrypted_payload);
                     }
                 } catch (EncryptionException $e) {
-                    // Do nothing.
+                    // Do nothing, we will pass on the payload as it is.
                 }
             }
+
+            // Create event object.
+             $events[0] = (object) [
+                'handler' => $handler,
+                'payload' => $payload,
+            ];
         }
 
-        // Process events and call the handler function and pass the payload to it.
+        // Process event objects.
         foreach ($events as $event) {
-            $consentData = $this->_xcoobee->consents->getConsentData($event->payload->consentId);
-            
-            if ($consentData->code !== 200) {
-                throw new XcooBeeException('Could not get campaign data');
-            }
-
-            $campaignId = $consentData->result->consent->campaign_cursor;
-
-            $handler = $this->_getEventHandler($campaignId, $event->event_type);
-
-            // Call handler and pass payload to it.
-            if (!is_null($handler)) {
-                call_user_func_array($handler, array($event->payload));
+            // Call the handler function and pass on the payload.
+            if (!is_null($event->handler)) {
+                call_user_func_array($event->handler, array($event->payload));
             }
         }
     }
