@@ -343,7 +343,22 @@ class Consents extends Api
             }
         }';
 
-        return $this->_request($query, ['consentId' => $consentId], $config);
+        $response = $this->_request($query, ['consentId' => $consentId], $config);
+
+        // Try to decrypt the data.
+        if ($response->code === 200 && !is_null($response->result->data_package)) {
+            try {
+                $decryptedData = $this->_encryption->decrypt($response->result->data_package);
+
+                if ($decryptedData !== null) {
+                    $response->result->data_package = $decryptedData;
+                }
+            } catch (EncryptionException $e) {
+                // Do nothing, we will pass on the data as it is.
+            }
+        }
+
+        return $response;
     }
 
     protected function _getXcoobeeIdByConsent($consentId, $config = []) 
