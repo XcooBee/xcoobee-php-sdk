@@ -16,15 +16,9 @@ $xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile());
 //     'apiSecret' => '',
 // ]));
 
-echo 'Uploading files needed for bees' . PHP_EOL;
-$xcoobee->bees->uploadFiles(['assets/cool.jpg', 'assets/nature.png']);
+$res = $xcoobee->system->addEventSubscription(
+    ['EventType', 'eventTypeHandler'],
+    'campaignId'
+);
 
-echo 'Take off provided bees' . PHP_EOL;
-$xcoobee->bees->takeOff([
-    'xcoobee_twitter_base' => ['message' => 'Test post'],
-    'xcoobee_facebook_base' => ['message' => 'Test post'],
-], [
-    'process' => [
-        'fileNames' => ['cool.jpg', 'nature.png'],
-    ],
-]);
+var_export($res);

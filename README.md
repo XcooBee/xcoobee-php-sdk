@@ -29,6 +29,24 @@ Like all standard transactions API calls are logged on the XcooBee network. They
 
 ## Getting Started
 
+### API endpoint
+
+To use the test API endpoint, please set an environment variable `XBEE_STATE=test`.
+
+example:
+```
+export XBEE_STATE=test
+```
+
+or if you are on Windows:
+```
+set XBEE_STATE=test
+```
+
+using PHP:
+```
+putenv('XBEE_STATE=test');
+```
 
 ### The config object
 
@@ -167,12 +185,13 @@ HTTP POST payloads that are delivered to your webhook's configured URL endpoint 
 
 | Header | Description  | 
 |----|---|
-|X-XBEE-EVENT  |Event type that triggered the delivery. E.g. ConsentApproved | 
-|X-TRANS-ID  |A GUID identifying this event.  | 
-|X-XBEE-SIGNATURE |The HMAC hex digest of the response body*.  | 
+|XBEE-EVENT  |Event type that triggered the delivery. E.g. ConsentApproved | 
+|XBEE-TRANS-ID  |A GUID identifying this event.  | 
+|XBEE-SIGNATURE |The HMAC hex digest of the response body*.  | 
+|XBEE-HANDLER |Name of a function that was configured as a handler for current event type | 
 
 
-* The `X-XBEE-SIGNATURE` header will be sent if the webhook is configured with a secret. The HMAC hex digest is generated using the sha1 hash function and the secret as the HMAC key.
+* The `XBEE-SIGNATURE` header will be sent if the webhook is configured with a secret. The HMAC hex digest is generated using the sha1 hash function and the secret as the HMAC key.
 
 
 ## Implementing Webhook Acceptance
@@ -269,11 +288,14 @@ You can register subscriptions to hooks by calling the addEventSubscription func
 
 There is no wildcard event subscription, however, you can add many handlers at one time.
 
-TODO: replace with PHP example
-```
-Example JavaScript:
-addEventSubscription([{"ConsentDeclined":"declinedHandler"}],"ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be",myConfigObj);
+Example:
 
+```
+$xcoobee->system->addEventSubscription(
+    ['ConsentDeclined' => 'declinedHandler'],
+    'ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be',
+    $config
+);
 ```
 
 This will subscribe you on the XcooBee system to receive `ConsentDeclined` events for the `ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be` campaign and call your handler named `declinedHandler(event)` when such an event occurs.
@@ -334,6 +356,27 @@ config             => optional: the config object
 standard JSON response object
 - status 200 if success: 
     - data will contain the number of deleted subscriptions
+- status 400 if error
+
+## triggerEvent(type, [config])
+
+trigger test event to configured campaign webhook.
+The structure will be the same as real event (with encrypted payload and hmac signature).
+Also you will receive `XBEE-TEST-EVENT` header, which indicates that event is test. 
+If campaign webhook is not configured, you'll receive an error.
+
+
+options: 
+
+```
+type   => name of event
+config => optional: the config object
+```
+### response
+
+standard JSON response object
+- status 200 if success: 
+    - data will contain test event data
 - status 400 if error
 
 
@@ -829,7 +872,7 @@ You normally use this as follow up call to `uploadFiles()`. This will start your
 
 This is the most complex function call in the Bee API and has multiple options and parts.
 
-a) parameter object
+a) parameters array
 b) subscriptions
 c) subscription events
 
@@ -837,16 +880,14 @@ c) subscription events
 options:
 
 ```
-bees          => array of bee system names, e.g. "xcoobee_digital_signature_detection"
-parameters    => optional: the parameters object. For each bee by bee name.
-subscriptions => optional: the subscriptions object. Specifies the subscriptions.'
-config        => optional: the config object
+bees          => array of bee system names (e.g. "xcoobee_digital_signature_detection") and their parameters
+parameters    => optional: the parameters array. For each bee by bee name.
+subscriptions => optional: the subscriptions array. Specifies the subscriptions.
+config        => optional: the config array.
 ```
 
 
-
-
-### `a` Parameters Object
+### `a` Parameters
 
 Parameters can be bee specific or apply to the overall job.
 
@@ -854,31 +895,36 @@ Overall job parameters to be used for the hiring are specified with the `process
 
 general process parameters example:
 ```
-process.userReference="myownreference"
-process.destinations=["~xcoobeeIds",{"xcoobeeId":"~jonny","accesskey":"isfnsfhis"},"emails"]
-process.Integrations.XcooBeeInbox=[{"filename": "fileinInbox.png"}]
+$options['process']['userReference'] = 'myownreference';
+$options['process']['destinations'] = ['email@mysite.com', '~jonny'];
+$options['process']['fileNames] = ['filename.png'];
 ```
 
-Bee parameters that are specified require the bee name prefix. If the bee name is `xcoobee_testbee` and it requires two parameters `height` and `width` then you will need to add these with prefix of bee-name to the parameters object. 
+Bee parameters that are specified require the bee name prefix. If the bee name is `xcoobee_testbee` and it requires two parameters `height` and `width` then you will need to add these into an associative array inside the parameters array with a key of bee name.
 
 bee parameters example:
 ```
-xcoobee_testbee.height = 599
-xcoobee_testbee.width = 1200
+$options['xcoobee_testbee'] = [
+    'height' => 599,
+    'width' => 1200,
+];
 ```
 
 ### `b` Subscriptions
-Subscriptions can be attached to the overall process or for each bee. You will need to specify a `target` and an `events` argument at minimum. The `target` endpoint has to be reachable by the XcooBee system via **HTTP/S POST**. The `events` determines which events you are subscribing to.
+Subscriptions can be attached to the overall process. You will need to specify a `target` and an `events` argument at minimum. The `target` endpoint has to be reachable by the XcooBee system via **HTTP/S POST**. The `events` determines which events you are subscribing to.
 Thus the three keys for each subscription are:
 - target => string with target endpoint URL
-- events => CSV string with life-cycle events to subscribe to
-- signed => optional: default false, whether the content of the HTTPS POST is signed with your public PGP key
+- events => array with life-cycle events to subscribe to
+- signed => optional: default false, whether the content of the HTTPS POST is signed with a HMAC signature and your public PGP key
+- handler =>  required: The PHP function that will be called when we have bee api events.
 
+When using signed events, the HMAC signature will assume your XcooBee ID as the shared secret key and will use the the PGP public key to encrypt the payload. Without this you are still using SSL encryption for the transfer.
 
-To subscribe to overall process events, the keyword `process` needs to be used instead of the bee system name. The subscription details need to be attached as subkeys to it. For bee level subscriptions, you will need to use the bee system name as prefix.
+To subscribe to overall process events, the keyword `process` needs to be used. The subscription details need to be attached as subkeys to it. 
+
 Remember that subscriptions deduct points from your balance even if they are not successful so please validate that the endpoints you specify in `target` are valid.
 
-Example of subscription on the overall process and for one of the bees.
+Example of subscription on the overall process.
 
 subscriptions example:
 ```
@@ -886,23 +932,14 @@ Process Subscriptions:
 process.target = "https://mysite.com/beehire/notification/"
 process.signed = true
 process.events = ["error", "success", "deliver", "present", "download", "delete", "reroute"]
+process.handler = "myBeeEventHandler"
 
-Bee subscriptions:
-xcoobee_testbee.target = "https://somesite.com/testbee/notification/"
-xcoobee_testbee.events = ["error", "success"]
 ```
 
 ### `c` Subscription events
 
-The event system for bees can distinguish between process level and bee level events.
+The event system for bees uses process level events.
 
-#### Bee Level events
-- **error**
-    - There was an error in the hiring cycle for this bee
-    - Event type sent in POST header - `BeeSuccess`
-- **success**
-    - The bee completed the hiring cycle successfully
-    - Event type sent in POST header - `BeeError`
 
 #### Process Level events
 - **error**
@@ -1037,6 +1074,26 @@ standard JSON response object
     - data object will contain true
 - status 400 if error
 
+
+# User API
+
+## getUserPublicKey(xid,[config])
+
+Retrieves a user's public PGP key as published on their public profile. If the user chose to hide it or the user is not known, it returns `null`.
+
+example:
+```
+getUserPublicKey('~XcooBeeId');
+```
+
+options:
+```
+xid    => XcooBee ID of the user to get their public PGP key
+config => optional: the config object
+```
+
+### response
+public PGP or `null`
 
 # Troubleshooting
 
