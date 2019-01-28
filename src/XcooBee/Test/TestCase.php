@@ -5,7 +5,7 @@ namespace XcooBee\Test;
 use XcooBee\XcooBee;
 use XcooBee\Http\Response;
 
-abstract class TestCase extends \PHPUnit_Framework_TestCase
+abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * Return mocked object
@@ -13,7 +13,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * @param $className
      * @param $methods
      * @param bool $constructorArgs
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function _getMock($className, $methods, $constructorArgs = false)
     {
@@ -54,7 +54,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      *
      * @param array $methods
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function _getXcooBeeMock($methods = [])
     {
