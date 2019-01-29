@@ -151,7 +151,7 @@ class UsersTest extends TestCase {
             ),
         ]);
 
-        $this->assertEquals(null, $usersMock->getUserPublicKey('~test'));
+        $this->assertNull($usersMock->getUserPublicKey('~test'));
     }
 
     /**
