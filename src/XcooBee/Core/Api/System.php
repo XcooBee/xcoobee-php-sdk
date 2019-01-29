@@ -263,21 +263,10 @@ class System extends Api
                 'UserMessage',
             ];
 
-            // Get the exact payload string to generate the correct HMAC hex digest.
-            if (in_array($eventType, $encryptedEvents)) {
-                // Remove `{"data:"}` at the beginning of the payload.
-                $payload = ltrim($responseBody, '{"data":"');
-
-                // Remove `"}` at the end of the payload.
-                $payload = rtrim($payload, '"}');
-
-                // Correctly escape new line characters.
-                $payload = str_replace('\n', "\n", $payload);
-                $payload = str_replace('\r', "\r", $payload);  
-            } else {
-                // Remove the `"` characters that enclose the payload and strip backslashes off.
-                $payload = stripslashes(trim($responseBody, '\"'));
-            }
+            // Correctly escape new line characters so we can generate the correct HMAC hash.
+            $payload = $responseBody;
+            $payload = str_replace('\n', "\n", $payload);
+            $payload = str_replace('\r', "\r", $payload);
 
             // Validate signature if found.
             if (!is_null($signature) && !empty($payload)) {
