@@ -1,5 +1,5 @@
 {
-    "name": "xcoobee/xcoobee-sdk-php",
+    "name": "xcoobee/xcoobee-sdk",
     "description": "XcooBee Privacy and GDPR SDK for PHP",
     "type": "library",
     "authors": [
