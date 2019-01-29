@@ -1,12 +1,22 @@
 {
-    "name": "XcooBee/xcoobee-sdk-php",
+    "name": "xcoobee/xcoobee-sdk-php",
     "description": "XcooBee Privacy and GDPR SDK for PHP",
     "type": "library",
     "authors": [
         {
-            "name": "XcooBee",
+            "name": "XcooBee LLC",
             "email": "info2@xcoobee.com"
-        }
+        },
+        {
+            "name": "Mahmoud Saeed",  
+            "email": "msaeed.ma@gmail.com"
+        },
+        {
+            "name": "Sunder Magar"
+        }, 
+        {
+            "name": "Volodymyr Rabeshko"
+        }         
     ],
     "repositories": [
         {
