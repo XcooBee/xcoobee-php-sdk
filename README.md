@@ -915,10 +915,9 @@ Subscriptions can be attached to the overall process. You will need to specify a
 Thus the three keys for each subscription are:
 - target => string with target endpoint URL
 - events => array with life-cycle events to subscribe to
-- signed => optional: default false, whether the content of the HTTPS POST is signed with a HMAC signature and your public PGP key
 - handler =>  required: The PHP function that will be called when we have bee api events.
 
-When using signed events, the HMAC signature will assume your XcooBee ID as the shared secret key and will use the the PGP public key to encrypt the payload. Without this you are still using SSL encryption for the transfer.
+The HMAC signature will assume your XcooBee ID as the shared secret key and will use the the PGP public key to encrypt the payload. Without this you are still using SSL encryption for the transfer.
 
 To subscribe to overall process events, the keyword `process` needs to be used. The subscription details need to be attached as subkeys to it. 
 
@@ -930,7 +929,6 @@ subscriptions example:
 ```
 Process Subscriptions:
 process.target = "https://mysite.com/beehire/notification/"
-process.signed = true
 process.events = ["error", "success", "deliver", "present", "download", "delete", "reroute"]
 process.handler = "myBeeEventHandler"
 
