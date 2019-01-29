@@ -246,23 +246,6 @@ class System extends Api
             $handler = isset($_SERVER['HTTP_XBEE_HANDLER']) ? $_SERVER['HTTP_XBEE_HANDLER'] : null;
             $responseBody = file_get_contents('php://input', true);
 
-            $encryptedEvents = [
-                'ConsentApproved',
-                'ConsentDeclined',
-                'ConsentChanged',
-                'ConsentNearExpiration',
-                'ConsentExpired',
-                'DataApproved',
-                'DataDeclined',
-                'DataChanged',
-                'DataNearExpiration',
-                'DataExpired',
-                'BreachPresented',
-                'BreachBeeUsed',
-                'UserDataRequest',
-                'UserMessage',
-            ];
-
             // Correctly escape new line characters so we can generate the correct HMAC hash.
             $payload = $responseBody;
             $payload = str_replace('\n', "\n", $payload);
