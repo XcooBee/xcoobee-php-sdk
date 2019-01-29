@@ -5,7 +5,7 @@ namespace XcooBee\Test;
 use XcooBee\XcooBee;
 use XcooBee\Http\Response;
 
-abstract class TestCase extends \PHPUnit_Framework_TestCase
+abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * Return mocked object
