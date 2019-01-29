@@ -91,48 +91,67 @@ class UsersTest extends TestCase {
     public function testGetUserPublicKey()
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(
+                200,
+                (object) [
+                    'users' => (object) [
+                        'data' => [
+                            (object) [
+                                'pgp_public_key' => 'pgp public key'
+                            ]
+                        ]
+                    ]
+                ]
+            ),
         ]);
 
-        $usersMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['xid' => 'testXid'], $params);
-                        }));
-
-        $usersMock->getUserPublicKey('testXid');
+        $this->assertEquals('pgp public key', $usersMock->getUserPublicKey('~test'));
     }
 
     public function testGetUserPublicKey_UseConfig() 
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
-            '_request' => true,
+            '_request' => $this->_createResponse(
+                200,
+                (object) [
+                    'users' => (object) [
+                        'data' => [
+                            (object) [
+                                'pgp_public_key' => 'pgp public key'
+                            ]
+                        ]
+                    ]
+                ]
+            ),
         ]);
 
         $usersMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                            $this->assertEquals(['xid' => 'testXid'], $params);
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['xid' => '~test'], $params);
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+            }));
 
-        $usersMock->getUserPublicKey('testXid', [
+        $this->assertEquals('pgp public key', $usersMock->getUserPublicKey('~test', [
             'apiKey' => 'testapikey',
             'apiSecret' => 'testapisecret'
-        ]);
+        ]));
     }
 
     public function testGetUserPublicKey_NoPgpFound()
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
-            '_request' => true,
-            'getUserPublicKey' => $this->_createResponse(200, (object) ['data' => []]),
+            '_request' => $this->_createResponse(
+                200,
+                (object) [
+                    'users' => (object) [
+                        'data' => []
+                    ]
+                ]
+            ),
         ]);
 
-        $response = $usersMock->getUserPublicKey('testXid');
-
-        $this->assertEquals(200, $response->code);
-        $this->assertEquals([], $response->result->data);
+        $this->assertEquals(null, $usersMock->getUserPublicKey('~test'));
     }
 
     /**
