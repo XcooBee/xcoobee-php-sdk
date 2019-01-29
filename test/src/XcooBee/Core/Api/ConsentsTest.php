@@ -604,5 +604,39 @@ class ConsentsTest extends TestCase
             ]
         ];
     }
-    
+
+    public function testGetDataPackage()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => $this->_createResponse(
+                200,
+                (object) [
+                    'data_package' => (object) [
+                        'data' => 'encrypted data package'
+                    ]
+                ]
+            ),
+        ]);
+
+        $encryptionMock = $this->_getMock(Encryption::class, [
+            'decrypt' => '{"test": true}',
+        ]);
+        $encryptionMock->expects($this->once())
+            ->method('decrypt')
+            ->will($this->returnValue('{"test": true}'));
+
+        $this->_setProperty($consentsMock, '_encryption', $encryptionMock);
+
+        $response = $consentsMock->getDataPackage('testConsentId');
+        $this->assertEquals('{"test": true}', $response->result->data_package->data);
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testGetDataPackage_NoConsentId()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, []);
+        $consentsMock->getDataPackage(null);
+    }
 }
