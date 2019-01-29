@@ -298,7 +298,7 @@ class System extends Api
                     $decryptedPayload = $this->_encryption->decrypt($payload);
 
                     if ($decryptedPayload !== null) {
-                        $payload = json_decode($decryptedPayload);
+                        $payload = $decryptedPayload;
                     }
                 } catch (EncryptionException $e) {
                     // Do nothing, we will pass on the payload as it is.
