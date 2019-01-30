@@ -1,7 +1,15 @@
-<phpunit bootstrap="../vendor/autoload.php">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    bootstrap="../vendor/autoload.php"
+    colors="true"
+    verbose="true">
+
     <testsuites>
         <testsuite name="xcoobee">
             <directory>src</directory>
         </testsuite>
     </testsuites>
+
+    <listeners>
+        <listener class="Zalas\PHPUnit\Globals\AnnotationListener" />
+    </listeners>
 </phpunit>

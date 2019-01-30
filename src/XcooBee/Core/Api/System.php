@@ -225,7 +225,78 @@ class System extends Api
             'type' => $this->_getSubscriptionEvent($type),
         ]], $config);
     }
-    
+
+    /**
+     * Handle event subscriptions in webhooks.
+     *
+     * @param array $events
+     *
+     * @throws EncryptionException|XcooBeeException
+     */
+    public function handleEvents($events = [])
+    {
+        // If no events array is passed on, then parse the HTTP POST request and:
+        // - validate HMAC hex digest if found,
+        // - try to decrypt payload and
+        // - create event object.
+        if (empty($events)) {
+            // Response data.
+            $eventType = isset($_SERVER['HTTP_XBEE_EVENT']) ? $_SERVER['HTTP_XBEE_EVENT'] : null;
+            $signature = isset($_SERVER['HTTP_XBEE_SIGNATURE']) ? $_SERVER['HTTP_XBEE_SIGNATURE'] : null;
+            $handler = isset($_SERVER['HTTP_XBEE_HANDLER']) ? $_SERVER['HTTP_XBEE_HANDLER'] : null;
+            $responseBody = file_get_contents('php://input', true);
+
+            // Correctly escape new line characters so we can generate the correct HMAC hash.
+            $payload = $responseBody;
+            $payload = str_replace('\n', "\n", $payload);
+            $payload = str_replace('\r', "\r", $payload);
+
+            // Validate signature if found.
+            if (!is_null($signature) && !empty($payload)) {
+                // Use XcooBee Id as the HMAC secret key.
+                $xid = $this->_xcoobee->users->getUser()->xcoobeeId;
+                
+                // Generate HMAC hash.
+                $hmac = hash_hmac('sha1', $payload, $xid);
+
+                if (!hash_equals($hmac, $signature)) {
+                    throw new EncryptionException('Invalid signature');
+                }
+            }
+
+            // Try to decrypt the payload.
+            if (!empty($payload)) {
+                try {
+                    $decryptedPayload = $this->_encryption->decrypt($payload);
+
+                    if ($decryptedPayload !== null) {
+                        $payload = $decryptedPayload;
+                    }
+                } catch (EncryptionException $e) {
+                    // Do nothing, we will pass on the payload as it is.
+                }
+            }
+
+            // Create event object.
+             $events[0] = (object) [
+                'handler' => $handler,
+                'payload' => $payload,
+            ];
+        }
+
+        // Process event objects.
+        foreach ($events as $event) {
+            // Call the handler function and pass on the payload.
+            if (isset($event->handler) && isset($event->payload)) {
+                if (!function_exists($event->handler)) {
+                    throw new XcooBeeException('The handler function does not exist');
+                }
+
+                call_user_func_array($event->handler, array($event->payload));
+            }
+        }
+    }
+
     /**
      * get events
      * 

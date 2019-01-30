@@ -12,6 +12,8 @@ use XcooBee\XcooBee;
 
 class SystemTest extends TestCase
 {
+    use \phpmock\phpunit\PHPMock;
+
     public function testPing()
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
@@ -461,5 +463,53 @@ class SystemTest extends TestCase
             'apiSecret' => 'testapisecret'
         ]);
     }
-    
+
+    /**
+     * @server HTTP_XBEE_EVENT=TestEvent
+     * @server HTTP_XBEE_SIGNATURE=03bb10b18a5c6e58cab5c7dc988e88a8d6870e0a
+     * @server HTTP_XBEE_HANDLER=Test\XcooBee\Core\Api\SystemTest::handlerFunction
+     */
+    public function testHandleEvents() {
+        $systemMock = $this->_getMock(System::class, []);
+
+        $fileGetContentsMock = $this->getFunctionMock('XcooBee\Core\Api', 'file_get_contents');
+        $fileGetContentsMock->expects($this->once())->willReturn('encrypted payload');
+
+        $XcooBeeMock = $this->_getMock(XcooBee::class, []);
+        $XcooBeeMock->users = $this->_getMock(Users::class, [
+            'getUser' => (object) ['xcoobeeId' => '~test']
+        ]);
+
+        $encryptionMock = $this->_getMock(Encryption::class, [
+            'decrypt' => '{"test": true}',
+        ]);
+        $encryptionMock->expects($this->once())
+            ->method('decrypt')
+            ->will($this->returnValue('{"test": true}'));
+
+        $this->_setProperty($systemMock, '_encryption', $encryptionMock);
+        $this->_setProperty($systemMock, '_xcoobee', $XcooBeeMock);
+
+        $this->expectOutputString('{"test": true}');
+
+        $systemMock->handleEvents();
+    }
+
+    public function testHandleEvents_withEvents() {
+        $systemMock = $this->_getMock(System::class, []);
+
+        $this->expectOutputString('encrypted payload');
+
+        $systemMock->handleEvents([
+            (object) [
+                'handler'=>'Test\XcooBee\Core\Api\SystemTest::handlerFunction',
+                'payload'=>'encrypted payload'
+            ]
+        ]);
+    }
+
+    public function handlerFunction($payload) {
+       echo $payload;
+    }
 }
+
