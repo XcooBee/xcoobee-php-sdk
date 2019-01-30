@@ -2,11 +2,23 @@
 
 namespace XcooBee\Core\Api;
 
+use XcooBee\Core\Encryption;
+use XcooBee\Exception\EncryptionException;
 use XcooBee\Exception\XcooBeeException;
 use XcooBee\Http\Response;
+use XcooBee\XcooBee;
 
 class Consents extends Api
 {
+    /** @var Encryption */
+    protected $_encryption;
+
+    public function __construct(XcooBee $xcoobee)
+    {
+        $this->_encryption = new Encryption($xcoobee);
+        parent::__construct($xcoobee);
+    }
+
     /**
      * List all campaigns
      *
@@ -325,7 +337,46 @@ class Consents extends Api
 
         return $response;
     }
-    
+
+    /**
+     * Get data package.
+     *
+     * @param string $consentId
+     * @param array $config
+     *
+     * @return Response
+     * @throws XcooBeeException
+     */
+    public function getDataPackage($consentId, $config =[])
+    {
+        if (!$consentId) {
+            throw new XcooBeeException('No "consent" provided');
+        }
+
+        $query = 'query getDataPackage($consentId: String!) {
+            data_package(consent_cursor: $consentId) {
+                data
+            }
+        }';
+
+        $response = $this->_request($query, ['consentId' => $consentId], $config);
+
+        // Try to decrypt the data.
+        if ($response->code === 200 && !empty($response->result->data_package->data)) {
+            try {
+                $decryptedData = $this->_encryption->decrypt($response->result->data_package->data);
+
+                if ($decryptedData !== null) {
+                    $response->result->data_package->data = $decryptedData;
+                }
+            } catch (EncryptionException $e) {
+                // Do nothing, we will pass on the data as it is.
+            }
+        }
+
+        return $response;
+    }
+
     protected function _getXcoobeeIdByConsent($consentId, $config = []) 
     {
         $consent = $this->getConsentData($consentId, $config = []);
