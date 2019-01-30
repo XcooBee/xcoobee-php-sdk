@@ -57,18 +57,24 @@ class ConsentsTest extends TestCase
             'apiSecret' => 'testapisecret' 
         ]);
     }
-    
+
     public function testListCampaigns()
     { 
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
-            '_getUserId' => 'testUserID',
+            '_getUserId' => 'testUserId',
             '_getPageSize' => true,
         ]);
-        
+
+        $consentsMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                    $this->assertEquals(['userId' => 'testUserId', 'first' => true, 'after' => null], $params);
+            }));
+
         $consentsMock->listCampaigns();
     }
-    
+
     public function testListCampaigns_UseConfig()
     {  
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
