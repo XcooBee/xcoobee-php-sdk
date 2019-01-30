@@ -231,7 +231,7 @@ class System extends Api
      *
      * @param array $events
      *
-     * @throws EncryptionException
+     * @throws EncryptionException|XcooBeeException
      */
     public function handleEvents($events = [])
     {
@@ -287,7 +287,11 @@ class System extends Api
         // Process event objects.
         foreach ($events as $event) {
             // Call the handler function and pass on the payload.
-            if (!is_null($event->handler)) {
+            if (isset($event->handler) && isset($event->payload)) {
+                if (!function_exists($event->handler)) {
+                    throw new XcooBeeException('The handler function does not exist');
+                }
+
                 call_user_func_array($event->handler, array($event->payload));
             }
         }
