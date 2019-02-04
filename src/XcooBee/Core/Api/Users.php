@@ -11,18 +11,18 @@ class Users extends Api
 {
     /**
      * Return current user
-     * 
+     *
      * @param array $config
      * @return UserModel
-     * 
+     *
      * @throws XcooBeeException
      */
-    public function getUser($config = []) 
-    {    
+    public function getUser($config = [])
+    {
         if($config){
             return $this->_getUser($config);
         }
-        
+
         $store = $this->_xcoobee->getStore();
         $user = $store->getStore(CachedData::CURRENT_USER_KEY);
         if ($user === null) {
@@ -32,7 +32,7 @@ class Users extends Api
 
         return $user;
     }
-    
+
     protected function _getUser($config)
     {
         $query = 'query {
@@ -46,12 +46,12 @@ class Users extends Api
         if($response->code !== 200){
             throw new XcooBeeException('invalid "user detail" provided');
         }
-        
+
         $user = new UserModel();
         $user->userId = $response->result->user->cursor;
         $user->xcoobeeId = $response->result->user->xcoobee_id;
         $user->pgp_public_key = $response->result->user->pgp_public_key;
-        
+
         return $user;
     }
 
@@ -91,11 +91,11 @@ class Users extends Api
      * @param String $consentId
      * @param String $breachId
      * @param array $config
-     * 
+     *
      * @return Response
      * @throws XcooBeeException
      */
-    public function sendUserMessage($message, $consentId, $breachId = null, $config = []) 
+    public function sendUserMessage($message, $consentId, $breachId = null, $config = [])
     {
         $mutation = 'mutation sendUserMessage($config: SendMessageConfig) {
                 send_message(config: $config) {
@@ -106,7 +106,7 @@ class Users extends Api
         if (!$userId) {
             throw new XcooBeeException('invalid "consent" provided');
         }
-        
+
         $noteType = $breachId ? 'breach' : 'consent';
         return $this->_request($mutation, ['config' => [
                         'note_type'         => $noteType,
@@ -121,11 +121,11 @@ class Users extends Api
      * list all the user conversation
      *
      * @param array $config
-     * 
+     *
      * @return Response
      * @throws XcooBeeException
      */
-    public function getConversations($config = []) 
+    public function getConversations($config = [])
     {
         $query = 'query getConversations($userId: String!, $first : Int, $after: String) {
             conversations(user_cursor: $userId, first : $first , after : $after) {
@@ -150,11 +150,11 @@ class Users extends Api
      *
      * @param string $userId
      * @param array $config
-     * 
+     *
      * @return Response
      * @throws XcooBeeException
      */
-    public function getConversation($userId, $config = []) 
+    public function getConversation($userId, $config = [])
     {
         if (!$userId) {
             throw new XcooBeeException('No "user" provided');
@@ -178,23 +178,23 @@ class Users extends Api
         return $this->_request($query, ['first' => $this->_getPageSize($config), 'after' => null, 'userId' => $userId], $config);
     }
 
-    protected function _getUserIdByConsent($consentId, $config = []) 
+    protected function _getUserIdByConsent($consentId, $config = [])
     {
         $store = $this->_xcoobee->getStore();
 
         if ($consent = $store->getConsent($consentId)) {
             return $consent->user_cursor;
         }
-        
+
         $consent = $this->_xcoobee->consents->getConsentData($consentId, $config);
         $consent = $consent->result->consent;
 
         if($consent){
             $store->setConsent($consentId, $consent);
-    
+
             return $consent->user_cursor;
         }
-       
+
         return false;
     }
 

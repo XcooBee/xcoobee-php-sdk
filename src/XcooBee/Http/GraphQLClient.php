@@ -33,7 +33,7 @@ class GraphQLClient extends Client
 
         return $responsedata;
     }
-    
+
     protected function _getRequest()
     {
         return new Request($this->_getUriFromEndpoint(self::API_URL));

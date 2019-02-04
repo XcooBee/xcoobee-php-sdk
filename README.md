@@ -8,7 +8,7 @@ Generally, all communication with XcooBee is encrypted over the wire since none 
 
 If you need to generate new PGP keys you can login to your XcooBee account and go to the settings page to do so.
 
-XcooBee systems operate globally but with regional connections. The SDK will be connecting you to your regional endpoint automatically. 
+XcooBee systems operate globally but with regional connections. The SDK will be connecting you to your regional endpoint automatically.
 
 There is more detailed and extensive API documentation available on our [documentation site](https://www.xcoobee.com/docs).
 
@@ -50,7 +50,7 @@ putenv('XBEE_STATE=test');
 
 ### The config object
 
-The config object carries all basic configuration information for your specific setup and use. It can be transparent handled by the SDK or specifically passed into every function. 
+The config object carries all basic configuration information for your specific setup and use. It can be transparent handled by the SDK or specifically passed into every function.
 The basic information in the configuration is:
 
 - your api-key from XcooBee
@@ -72,7 +72,7 @@ The SDK will attempt to determine the configuration object based on the followin
 
 All PGP data is optional to the configuration object. If you do not supply it the SDK will skip decryption/encryption steps. You will have to do these outside the SDK and supply or process the data yourself.
 
-Currently all **events** that you subscribe to from the XcooBee network will communicate with and extra layer of PGP encryption. You will need to decrypt the payload using your PGP private key. 
+Currently all **events** that you subscribe to from the XcooBee network will communicate with and extra layer of PGP encryption. You will need to decrypt the payload using your PGP private key.
 
 If you provide the PGP private key and its passphrase to the SDK, the SDK will automatically decrypt the payload and provide content for further processing.
 
@@ -124,7 +124,7 @@ pgpPassword=somethingsecret
 pageSize=10
 ```
 
-options: 
+options:
 
 ```
 apiKey         => the api-key
@@ -138,7 +138,7 @@ pageSize       => pagination limit
 
 # Standard Responses
 
-The XcooBee system has two modes of response. One, based on standard web HTTP REST API calls, and, two based on asynchronous webhooks (HTTP POST) when events occur. 
+The XcooBee system has two modes of response. One, based on standard web HTTP REST API calls, and, two based on asynchronous webhooks (HTTP POST) when events occur.
 
 The response package is structured into envelope and details. The envelope contains operational results such as `error` or `success` and time stamps. The detail contains associated return data for your call. XcooBee SDK will always return a value, even if it is an error object. In short, there is always a return. The absence of a return should be treated as error in standard responses.
 
@@ -151,7 +151,7 @@ Object structure for response:
 - time
 - code (response code 200-299)
 - request_id (the associated request reference)
-- result (data object) 
+- result (data object)
     - the result object is signed with your public PGP key if this is an **event** response.
 
 ## Error package
@@ -166,29 +166,29 @@ Object structure for error response:
 
 # Webhook Events (HTTP POST)
 
-Via the SDK, you can subscribe to many events that are available on the XcooBee network. As these occur at different times you will need to be able to accept communication from XcooBee via HTTP POST to a target site that is available via the Internet. 
+Via the SDK, you can subscribe to many events that are available on the XcooBee network. As these occur at different times you will need to be able to accept communication from XcooBee via HTTP POST to a target site that is available via the Internet.
 
 As an alternative to a public site, you can use the Event Polling mechanism as described later in this document to receive this communication.
 
 ## Methodology
 
-If there is a delayed response, the call will be accepted and the response returned via the HTTP POST event configuration. Your system should have a web-endpoint that is reachable by the XcooBee system for the event responses. A webhook is not a REST endpoint (HTTP - verb based).  
+If there is a delayed response, the call will be accepted and the response returned via the HTTP POST event configuration. Your system should have a web-endpoint that is reachable by the XcooBee system for the event responses. A webhook is not a REST endpoint (HTTP - verb based).
 
 The webhook system uses HTTPS `POST` calls to send information to you in response to event in XcooBee processing. You subscribe to events by calling the `System->addEventSubscription()` method. More information and examples available in `examples/addEventSubscription.php` in this project.
 
-Calling systems should be aware that there may be delays and that responses may be returned in different order from the call order. 
+Calling systems should be aware that there may be delays and that responses may be returned in different order from the call order.
 
 
 ## Webhook Delivery Signature
 HTTP POST payloads that are delivered to your webhook's configured URL endpoint will contain several special headers:
 
 
-| Header | Description  | 
+| Header | Description  |
 |----|---|
-|XBEE-EVENT  |Event type that triggered the delivery. E.g. ConsentApproved | 
-|XBEE-TRANS-ID  |A GUID identifying this event.  | 
-|XBEE-SIGNATURE |The HMAC hex digest of the response body*.  | 
-|XBEE-HANDLER |Name of a function that was configured as a handler for current event type | 
+|XBEE-EVENT  |Event type that triggered the delivery. E.g. ConsentApproved |
+|XBEE-TRANS-ID  |A GUID identifying this event.  |
+|XBEE-SIGNATURE |The HMAC hex digest of the response body*.  |
+|XBEE-HANDLER |Name of a function that was configured as a handler for current event type |
 
 
 * The `XBEE-SIGNATURE` header will be sent if the webhook is configured with a secret. The HMAC hex digest is generated using the sha1 hash function and the secret as the HMAC key.
@@ -227,7 +227,7 @@ You specify your target URL during the setup of your consent campaign in the Xco
 
 #### Event Polling
 
-As an alternative you can poll events from your system on a regular interval. This is useful when you do not have a web accessible system or are in development mode. The SDK has a supporting method `getEvents` which allows you to retrieve all events that you have subscribed to that occurred during the last 72 hours. 
+As an alternative you can poll events from your system on a regular interval. This is useful when you do not have a web accessible system or are in development mode. The SDK has a supporting method `getEvents` which allows you to retrieve all events that you have subscribed to that occurred during the last 72 hours.
 
 For testing purposes you will also find a single page application (SPA) in the `poller` directory of this project. It will poll and resubmit events for you to internal network endpoints.
 
@@ -240,7 +240,7 @@ This is one of the simpler parts. As you subscribe to events using the `addEvent
 
 ### `c` Process Inbound Events
 
-The easiest way to process inbound event is to invoke the `handleEvents([event])` method of the `System` class. 
+The easiest way to process inbound event is to invoke the `handleEvents([event])` method of the `System` class.
 
 Normally this is included in your site endpoint (page) that receives the HTTP POST from XcooBee. If you do event polling, you can pass the full POST body as `event` to the function.
 
@@ -270,7 +270,7 @@ Depending on your framework and syntax library this may also be:
 
 Can be called to see whether current configuration will connect to XcooBee system. This will return an error if your API user does not have a public PGP key on its profile.
 
-options: 
+options:
 
 ```
 config   => optional: the config object
@@ -282,7 +282,7 @@ standard JSON response object
 - status 400 if error
 
 
-## addEventSubscription(arrayOfEventAndHandlerPairs,[campaignId],[config])
+## addEventSubscription(arrayOfEventAndHandlerPairs[, campaignId, config])
 
 You can register subscriptions to hooks by calling the addEventSubscription function and providing the event (as specified in this document) and handler pairs `eventname => handler`.
 
@@ -304,7 +304,7 @@ All event data is attached to the `events` object in the function calls.
 
 No response is expected directly from any of the event handlers so returns are void/null.
 
-options: 
+options:
 
 ```
 arrayOfEventAndHandlerPairs  => array object with event and handler maps
@@ -321,11 +321,11 @@ standard JSON response object
 
 
 
-## listEventSubscriptions([campaignId],[config])
+## listEventSubscriptions([campaignId, config])
 
 list current subscriptions.
 
-options: 
+options:
 
 ```
 campaignId => optional: Only get subscriptions for the campaign id
@@ -334,17 +334,17 @@ config      => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data will contain current subscriptions dataset: type, campaign, last
 - status 400 if error
 
-## deleteEventSubscription(arrayOfEventNames, [campaignId] ,[config])
+## deleteEventSubscription(arrayOfEventNames[, campaignId, config])
 
 delete existing subscriptions.
 If you do not supply a campaign id the event will for the default campaign id will be deleted. If the subscription does not exists we will still return success.
 
 
-options: 
+options:
 
 ```
 arrayOfEventNames  => array object with eventnames to be unsubscribed
@@ -354,19 +354,19 @@ config             => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data will contain the number of deleted subscriptions
 - status 400 if error
 
-## triggerEvent(type, [config])
+## triggerEvent(type[, config])
 
 trigger test event to configured campaign webhook.
 The structure will be the same as real event (with encrypted payload and hmac signature).
-Also you will receive `XBEE-TEST-EVENT` header, which indicates that event is test. 
+Also you will receive `XBEE-TEST-EVENT` header, which indicates that event is test.
 If campaign webhook is not configured, you'll receive an error.
 
 
-options: 
+options:
 
 ```
 type   => name of event
@@ -375,7 +375,7 @@ config => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data will contain test event data
 - status 400 if error
 
@@ -401,7 +401,7 @@ b) With function parameter `events`:
 In case where you poll for events from XcooBee seperately you can call `handleEvents(events)` directly with the events. If you supply the events specifically, the method will not look for HTTP POST header variables for verification and instead will directly process events as provided.
 
 
-options: 
+options:
 
 ```
 events  => optional: array of objects with HTTP post data
@@ -422,7 +422,7 @@ You have 72 hours to pick up the saved events. Once pulled events will be delete
 
 Your pull intervall should not be more than 1 `getEvents()` call per minute otherwise HTTP error 429 will be returned. We recommend every 62 seconds to avoid any timer issues.
 
-options: 
+options:
 
 ```
 config             => optional: the config object
@@ -431,16 +431,16 @@ config             => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data will contain array of events since last call
 - status 400 if error
 
 # Consent Administration Calls For Consent
 
-## getCampaignInfo([campaignId], [config])
+## getCampaignInfo([campaignId, config])
 get basic info on campaign (setup, datatypes and options). The information will not return the users registered with the campaign.
 
-options: 
+options:
 
 ```
 campaignId        => optional: the campaign id to use if not default
@@ -450,14 +450,14 @@ config             => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data will contain campaign data object
 - status 400 if error
 
 ## listCampaigns([config])
 get all user campaigns
 
-options: 
+options:
 
 ```
 config          => optional: the config object
@@ -466,17 +466,17 @@ config          => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data will contain array of campaign objects
 - status 400 if error
 
-## getDataPackage(packagePointer,[config])
+## getDataPackage(packagePointer[, config])
 
-TO BE IMPLEMENTED: 
+TO BE IMPLEMENTED:
 
 When data is hosted for you at XcooBee you can request the data package each time you need to use it. You will need to provide `packagePointer`. This call will only respond to authorized call source.
 
-options: 
+options:
 
 ```
 packagePointer  => the packagePointer for the data you wish to receive
@@ -486,12 +486,12 @@ config          => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data will contain requested data object
         The SDK will decrypt this for you if it has access to PGP keys otherwise you have to decrypt this object
 - status 400 if error
 
-## listConsents([statusIds],[config])
+## listConsents([statusIds, config])
 
 Query for list of consents for a given campaign. Company can get general consentid for any consent that was created as part of a campaign. This is a multi-page recordset. Data returned: consentId, creation date, expiration date, xcoobeeId
 
@@ -499,7 +499,7 @@ possible response/filter for status:
 
 0=pending, 1=active, 2=updating, 3=offer, 4=cancelled, 5=expired, 6=rejected
 
-options: 
+options:
 
 ```
 statusIds   => optional: array of numbers, one of the valid consent statuses. If not specified all will be returned
@@ -509,15 +509,15 @@ config       => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain consent data object: consent_id, status_id, date_c, date_e, xcoobee_id
 - status 400 if error
 
-## getConsentData(consentId,[config])
+## getConsentData(consentId[, config])
 
 Query for a specific consent given. Company can get consent definition for any consent that was created. The data normally has three areas: Who, what data types, what the uses are, how long.
 
-options: 
+options:
 
 ```
 consentId   => the consent id for which to retrieve information
@@ -527,15 +527,15 @@ config       => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain consent data object: user, datatypes, consenttypes, expiration
 - status 400 if error
-   
-## getCookieConsent(xid,[campaignId],[config])
+
+## getCookieConsent(xid[, campaignId, config])
 
 This is a shortcut mechanism to query the XcooBee system for existing user consent for consent type `Website Tracking (1400), Web Application Tracking (1410)` for specific use data types (`application cookie (1600), usage cookie (1610), and advertising cookie (1620)`). We will retrieve only active consent for the cookies on the website identified in the campaign id and return whether user has agreed to any cookies.
 
-note: 
+note:
 - Your site in your campaign has to match the origin of the call since we do not use PGP encryption in this call for speed.
 - The user has to be logged in to XcooBee
 
@@ -545,7 +545,7 @@ The return is a CSV list like this:
 options:
 
 ```
-xid           => XcooBee ID of the user to check for consent         
+xid           => XcooBee ID of the user to check for consent
 campaignId   => optional: the campaign id to use if not default.
 config        => optional: the config object
 ```
@@ -553,17 +553,17 @@ config        => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain website cookie consent CSV: application,usage,advertising
 - status 400 if error
 
-## requestConsent(xid,[refId],[campaignId],[config])
+## requestConsent(xid[, refId, campaignId, config])
 
 Sends out the consent or consent and data request to a specific user using the data in the campaign. The campaign definition determines what data (only consent or consent + data) we will ask from the user.
 
 options:
 ```
-xid           => XcooBee Id of the user to check for consent 
+xid           => XcooBee Id of the user to check for consent
 refId         => optional: reference Id generated by you that identifies this request to you. Max 64 chars. This will returned to you in event response.
 campaignId   => optional: the campaign id to use if not default.
 config        => optional: the config object
@@ -574,12 +574,12 @@ When user responds to the consent request a webhook will fire from XcooBee to th
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain true
 - status 400 if error
 
 
-## confirmConsentChange(consentId,[config])
+## confirmConsentChange(consentId[, config])
 Use this call to confirm that data has been changed in company systems according to change requested by user.
 
 options:
@@ -591,11 +591,11 @@ config        => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain true
 - status 400 if error
 
-## confirmDataDelete(consentId,[config])
+## confirmDataDelete(consentId[, config])
 Send by company to confirm that data has been purged from company systems
 
 options:
@@ -607,12 +607,12 @@ config        => optional: the config object
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain true
 - status 400 if error
 
 
-## setUserDataResponse(message, consentId [requestRef, filename, config])
+## setUserDataResponse(message, consentId[, requestRef, filename, config])
 
 Companies can respond to user data requested via this call. Standard hiring points will be deducted for this. The call will send a `message` to user's communication center. You also need to send a file with user's data in order to close data request.
 
@@ -621,14 +621,14 @@ options:
 message          => the text to be sent to the user as user data
 consentId        => the consent for which data has been deleted
 requestRef      => unique identifier of the data request, you will receive this on `UserDataRequest` event
-filename         => pointer to the file which contains user's data. 
+filename         => pointer to the file which contains user's data.
 config           => optional: the config object
 ```
 
 ### response
 
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain true
 - status 400 if error
 
@@ -637,7 +637,7 @@ standard JSON response object
 These are events returned to your endpoint as part of user working with their consent center. All endpoints are determined inside each Consent Campaign.
 
 ### ConsentApproved
-Fires when a consent request is approved. 
+Fires when a consent request is approved.
 The consent object is returned. It contains:
 - consent reference
 - data types
@@ -659,7 +659,7 @@ It contains:
 
 ### ConsentNearExpiration
 Fires when an active consent is about to expire (inside 30 days).
-This is not exactly 30 days as the XcooBee system processes may push this slightly.  
+This is not exactly 30 days as the XcooBee system processes may push this slightly.
 You should plan ask for renewal of consent if you like to use the user data longer.
 It contains:
 - consent reference
@@ -673,14 +673,14 @@ It contains:
 ### UserDataRequest
 Fires when user is making a request to extract their current data from your systems.
 This is to meet data-portability of GDPR.
-You should create data extract and send it to the User's XcooBee box. 
+You should create data extract and send it to the User's XcooBee box.
 You can do so hiring the `xcoobee-data-response` bee with the GUID reference of the request.
 It contains:
 - consent reference
 - xcoobeeId
 
 ### UserMessage
-Fires when user is sending you a message regarding a consent request. 
+Fires when user is sending you a message regarding a consent request.
 Your campaign can enable/disable this feature in the `campaign options`. You can respond to this using a `sendUserMessage()` call.
 It contains:
 - consent reference
@@ -720,7 +720,7 @@ It contains:
 
 ### DataNearExpiration
 Fires when an active consent is about to expire (inside 30 days).
-This is not exactly 30 days as the XcooBee system processes may push this slightly.  
+This is not exactly 30 days as the XcooBee system processes may push this slightly.
 You should plan ask for renewal of consent if you like to use the user data longer.
 It contains:
 - consent reference
@@ -734,14 +734,14 @@ It contains:
 ### UserDataRequest
 Fires when user is making a request to extract their current data from your systems.
 This is to meet data-portability of GDPR.
-You should create data extract and send it to the User's XcooBee box. 
+You should create data extract and send it to the User's XcooBee box.
 You can do so hiring the `xcoobee-data-response` bee with the GUID reference of the request.
 It contains:
 - consent reference
 - xcoobeeId
 
 ### UserMessage
-Fires when user is sending you a message regarding a consent request. 
+Fires when user is sending you a message regarding a consent request.
 Your campaign can enable/disable this feature in the `campaign options`. You can respond to this using the `sendUserMessage()` function.
 It contains:
 - consent reference
@@ -764,7 +764,7 @@ config        => optional: the config object
 
 ### response
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain true
 - status 400 if error
 
@@ -778,22 +778,22 @@ config        => optional: the config object
 
 ### response
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain true
 - status 400 if error
 
-## getConversation(userId, [config])
+## getConversation(userId[, config])
 This function allows you to get full discussion with selected user.
 
 options:
 ```
-userId        => the user id 
+userId        => the user id
 config        => optional: the config object
 ```
 
 ### response
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain true
 - status 400 if error
 
@@ -816,7 +816,7 @@ It contains:
 - bee reference
 
 ### UserMessage
-Fires when user is sending you a message regarding a consent request. 
+Fires when user is sending you a message regarding a consent request.
 Your campaign can enable/disable this feature in the `campaign options`. You can respond to this using the `sendUserMessage()` function.
 It contains:
 - consent reference
@@ -831,7 +831,7 @@ The Bee api is the principal interface to hire bees. Most of the times this will
 The immediate response will only cover issues with files for the first bee. If you want to be informed about the progress of the processing you will need to subscribe to events.
 
 
-## listBees(searchText, [config])
+## listBees(searchText[, config])
 
 This function will help you search through the bees in the system that your account is able to hire. This is a simple keyword search interface.
 
@@ -844,11 +844,11 @@ config       => optional: the config object
 
 ### response
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain basic bee data: bee-systemname, bee-label, bee-cost, cost-type
 - status 400 if error
 
-## uploadFiles(files, [endpoint], [config])
+## uploadFiles(files[, endpoint, config])
 
 You use the uploadFiles function to upload files from your server to XcooBee. You can upload multiple files and you can optionally supply an outbox endpoint. If you have an outbox endpoint you do not need to call the `takeOff` function as the endpoint already specifies all processing parameters. If your subscription allows you can configure the outbox endpoints in the XcooBee UI.
 
@@ -862,11 +862,11 @@ config     => optional: the config object
 
 ### response
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain true
 - status 400 if error
 
-## takeOff(bees, [options], [subscriptions], [config])
+## takeOff(bees, options[, subscriptions, config])
 
 You normally use this as follow up call to `uploadFiles()`. This will start your processing. You specify the bee(s) that you want to hire and the parameter that are needed for the bee to work on your file(s). If you want to be kept up to date you can supply subscriptions. Please note that subscriptions will deduct points from your balance and will cause errors when your balance is insufficient.
 
@@ -879,8 +879,8 @@ c) subscription events
 options:
 
 ```
-bees          => array of bee system names (e.g. "xcoobee_digital_signature_detection") and their parameters.
-options       => optional: the parameters array. For each bee by bee name.
+bees          => array of bee system names (e.g. "xcoobee_digital_signature_detection") as key and their parameters as value.
+options       => general options.
 subscriptions => optional: the subscriptions array. Specifies the subscriptions.
 config        => optional: the config array.
 ```
@@ -888,6 +888,14 @@ config        => optional: the config array.
 ### `a` Parameters
 
 Parameters can be bee specific or apply to the overall job.
+
+specific bee parameters example:
+```
+$bees['xcoobee_testbee'] = [
+    'height' => 599,
+    'width' => 1200,
+];
+```
 
 Overall job parameters to be used for the hiring are specified with the `process` prefix including destinations (recipients) to which you wish to send the output of the processing.
 
@@ -900,14 +908,6 @@ $options['process']['fileNames] = ['filename.png'];
 
 Bee parameters that are specified require the bee name prefix. If the bee name is `xcoobee_testbee` and it requires two parameters `height` and `width` then you will need to add these into an associative array inside the parameters array with a key of bee name.
 
-bee parameters example:
-```
-$options['xcoobee_testbee'] = [
-    'height' => 599,
-    'width' => 1200,
-];
-```
-
 ### `b` Subscriptions
 
 Subscriptions can be attached to the overall process. You will need to specify a `target`, an `events` and a `handler` argument at minimum. The `target` endpoint has to be reachable by the XcooBee system via **HTTP/S POST**. The `events` determines which events you are subscribing to.
@@ -919,7 +919,7 @@ Thus the three keys for each subscription are:
 
 The HMAC signature will assume your XcooBee ID as the shared secret key and will use the the PGP public key to encrypt the payload. Without this you are still using SSL encryption for the transfer.
 
-To subscribe to overall process events, the keyword `process` needs to be used. The subscription details need to be attached as subkeys to it. 
+To subscribe to overall process events, the keyword `process` needs to be used. The subscription details need to be attached as subkeys to it.
 
 Remember that subscriptions deduct points from your balance even if they are not successful so please validate that the endpoints you specify in `target` are valid.
 
@@ -976,7 +976,7 @@ The event system for bees uses process level events.
     "source": "Block4-post",
     "beeName": "xcoobee_image_resizer",
     "transactionName": "9SDd8ccb"
-}    
+}
 ```
 
 - error event example:
@@ -998,7 +998,7 @@ The event system for bees uses process level events.
 
 ### response
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain true
 - status 400 if error
 
@@ -1032,50 +1032,50 @@ config   => optional: the config object
 
 ### response
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain list of inbox items in array: messageId, sender, fileName, fileSize, receiptDate, expirationDate, downloadDate
 - status 400 if error
 
 
-## getInboxItem(messageId, [config])
+## getInboxItem(messageId[, config])
 
 This method will return a file and file meta tags. Upon first downloaded, the `downloadDate` for the item will be populated.
 
 
 options:
 ```
-messageId     => required: the message id for the file to be downloaded. 
+messageId     => required: the message id for the file to be downloaded.
 config        => optional: the config object
 ```
 
 ### response
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain the file and file_meta object (userRef, fileType, fileTags)
 - status 400 if error
 
 
-## deleteInboxItem(messageId, [config])
+## deleteInboxItem(messageId[, config])
 
 This method will delete a file that corresponds to your messageid. If the file does not exist, an error will be returned.
 
 
 options:
 ```
-messageId     => required: the message id for the file to be deleted. 
+messageId     => required: the message id for the file to be deleted.
 config        => optional: the config object
 ```
 
 ### response
 standard JSON response object
-- status 200 if success: 
+- status 200 if success:
     - data object will contain true
 - status 400 if error
 
 
 # User API
 
-## getUserPublicKey(xid,[config])
+## getUserPublicKey(xid[, config])
 
 Retrieves a user's public PGP key as published on their public profile. If the user chose to hide it or the user is not known, it returns `null`.
 
@@ -1098,7 +1098,7 @@ public PGP or `null`
 ## Error 401
 Certain SDK calls require authorized origins.
 
-You may receive `401` error responses from XcooBee if your API call originates from an unauthorized domain or IP. Please make sure you registered your domain in your XcooBee campaign `CallBack URL` option. 
+You may receive `401` error responses from XcooBee if your API call originates from an unauthorized domain or IP. Please make sure you registered your domain in your XcooBee campaign `CallBack URL` option.
 
 
 ## Error 429

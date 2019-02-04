@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace XcooBee\Core\Api;
 
@@ -23,7 +23,7 @@ class Consents extends Api
      * List all campaigns
      *
      * @param array $config
-     * 
+     *
      * @return Response
      * @throws XcooBeeException
      */
@@ -47,7 +47,7 @@ class Consents extends Api
 
     /**
      * Return information about campaign
-     * 
+     *
      * @param string $campaignId
      * @param array $config
      * @return Response
@@ -56,7 +56,7 @@ class Consents extends Api
     public function getCampaignInfo($campaignId = null, $config = [])
     {
         $campaignId = $this->_getCampaignId($campaignId, $config);
-        
+
         $query = 'query getCampaignInfo($campaignId: String!) {
                 campaign(campaign_cursor: $campaignId) {
                     campaign_name
@@ -77,14 +77,14 @@ class Consents extends Api
      * @param string $refId
      * @param string $campaignId
      * @param string $config
-     * 
+     *
      * @return Response
      * @throws XcooBeeException
      */
     public function requestConsent($xid, $refId = null, $campaignId = null, $config = [])
     {
         $campaignId = $this->_getCampaignId($campaignId, $config);
-        
+
         $mutation = 'mutation requestConsent($config: AdditionalRequestConfig) {
                 send_consent_request(config: $config) {
                     ref_id
@@ -93,14 +93,14 @@ class Consents extends Api
 
         return $this->_request($mutation, ['config' => ['reference' => $refId, 'xcoobee_id' => $xid, 'campaign_cursor' => $campaignId]], $config);
     }
-    
+
     /**
      * @param string $message
      * @param string $consentId
      * @param string $requestRef
      * @param array $filename
      * @param array $config
-     * 
+     *
      * @return Response
      * @throws XcooBeeException
      */
@@ -124,7 +124,7 @@ class Consents extends Api
                         'destinations' => [$xcoobeeId],
                     ],
                 ],
-                [], 
+                [],
                 $config);
 
             if ($hireBeeResponse->code !== 200) {
@@ -138,18 +138,19 @@ class Consents extends Api
 
         return $response;
     }
-    
+
     /**
      * confirm that data has been changed
-     * 
+     *
      * @param string $consentId
      * @param array $config
-     * 
+     *
      * @return Response
-     * 
+     *
      * @throws XcooBeeException
      */
-    public function confirmConsentChange($consentId, $config = []) {
+    public function confirmConsentChange($consentId, $config = [])
+    {
         if (!$consentId) {
             throw new XcooBeeException('No "consent" provided');
         }
@@ -174,12 +175,12 @@ class Consents extends Api
 
     /**
      * confirm that data has been purged from company systems
-     * 
+     *
      * @param string $consentId
      * @param array $config
-     * 
+     *
      * @return Response
-     * 
+     *
      * @throws XcooBeeException
      */
     public function confirmDataDelete($consentId, $config = [])
@@ -245,18 +246,18 @@ class Consents extends Api
 
     /**
      * list all consents
-     * 
+     *
      * @param int $statusId
      * @param array $config
-     * 
+     *
      * @return Response
-     * 
+     *
      * @throws XcooBeeException
      */
-    public function listConsents($statusId = null, $config = [])
+    public function listConsents($statusIds = [], $config = [])
     {
-        $query = 'query listConsents($userId: String!, $statusId: ConsentStatus, $first : Int, $after: String) {
-            consents(campaign_owner_cursor: $userId, statuses : [$statusId], first : $first , after : $after) {
+        $query = 'query listConsents($userId: String!, $statuses: [ConsentStatus], $first : Int, $after: String) {
+            consents(campaign_owner_cursor: $userId, statuses : $statuses, first : $first , after : $after) {
                 data {
                     consent_cursor,
                     consent_status,
@@ -271,17 +272,22 @@ class Consents extends Api
             }
         }';
 
+        $statuses = [];
+        foreach ($statusIds as $statusId) {
+            $statuses[] = $this->_getConsentStatus($statusId);
+        }
+
         return $this->_request($query, [
-            'statusId' => $this->_getConsentStatus($statusId),
+            'statuses' => $statuses ? : null,
             'userId' => $this->_getUserId($config),
             'first' => $this->_getPageSize($config),
-            'after' => null, 
+            'after' => null,
         ], $config);
     }
-    
+
     /**
      * Query the XcooBee system for existing user consent.
-     * 
+     *
      * @param string $xid
      * @param string $campaignId
      * @param array $config
@@ -377,7 +383,7 @@ class Consents extends Api
         return $response;
     }
 
-    protected function _getXcoobeeIdByConsent($consentId, $config = []) 
+    protected function _getXcoobeeIdByConsent($consentId, $config = [])
     {
         $consent = $this->getConsentData($consentId, $config = []);
         if (!empty($consent->result->consent)) {
@@ -386,7 +392,7 @@ class Consents extends Api
 
         return false;
     }
-    
+
     protected function _getConsentStatus($statusId)
     {
         if ($statusId === null) {
@@ -402,7 +408,7 @@ class Consents extends Api
             'expired',
             'rejected'
         ];
-        
+
         if (array_key_exists($statusId, $availableStatus)) {
             return $availableStatus[$statusId];
         }
