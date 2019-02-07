@@ -330,7 +330,7 @@ config     => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data will contain current subscriptions dataset: type, campaign, last
+    - result will contain current subscriptions dataset: type, campaign, last
 - status 400 if error
 
 ## deleteEventSubscription(arrayOfEventNames[, campaignId, config])
@@ -349,7 +349,7 @@ config            => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data will contain the number of deleted subscriptions
+    - result will contain the number of deleted subscriptions
 - status 400 if error
 
 ## triggerEvent(type[, config])
@@ -367,7 +367,7 @@ config => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data will contain test event data
+    - result will contain test event data
 - status 400 if error
 
 
@@ -422,7 +422,7 @@ config => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data will contain array of events since last call
+    - result will contain array of events since last call
 - status 400 if error
 
 # Consent Administration Calls For Consent
@@ -441,7 +441,7 @@ config     => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data will contain campaign data object
+    - result will contain campaign data object
 - status 400 if error
 
 ## listCampaigns([config])
@@ -457,7 +457,7 @@ config => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data will contain array of campaign objects
+    - result will contain array of campaign objects
 - status 400 if error
 
 ## getDataPackage(packagePointer[, config])
@@ -477,7 +477,7 @@ config         => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data will contain requested data object
+    - result will contain requested data object
         The SDK will decrypt this for you if it has access to PGP keys otherwise you have to decrypt this object
 - status 400 if error
 
@@ -500,7 +500,7 @@ config    => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data object will contain consent data object: consent_id, status_id, date_c, date_e, xcoobee_id
+    - result will contain consent data object: consent_id, status_id, date_c, date_e, xcoobee_id
 - status 400 if error
 
 ## getConsentData(consentId[, config])
@@ -518,7 +518,7 @@ config    => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data object will contain consent data object: user, datatypes, consenttypes, expiration
+    - result will contain consent data object: user, datatypes, consenttypes, expiration
 - status 400 if error
 
 ## getCookieConsent(xid[, campaignId, config])
@@ -544,7 +544,7 @@ config     => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data object will contain website cookie consent CSV: application,usage,advertising
+    - result will contain website cookie consent CSV: application,usage,advertising
 - status 400 if error
 
 ## requestConsent(xid[, refId, campaignId, config])
@@ -565,7 +565,7 @@ When user responds to the consent request a webhook will fire from XcooBee to th
 
 standard JSON response object
 - status 200 if success:
-    - data object will contain true
+    - result will contain true
 - status 400 if error
 
 
@@ -582,7 +582,7 @@ config    => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data object will contain true
+    - result will contain true
 - status 400 if error
 
 ## confirmDataDelete(consentId[, config])
@@ -598,7 +598,7 @@ config    => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data object will contain true
+    - result will contain true
 - status 400 if error
 
 
@@ -619,7 +619,7 @@ config     => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - data object will contain true
+    - result will contain true
 - status 400 if error
 
 ## Consent Events (webhooks)
@@ -748,7 +748,7 @@ config    => optional: the config object
 ### response
 standard JSON response object
 - status 200 if success:
-    - data object will contain true
+    - result will contain true
 - status 400 if error
 
 ## getConversations([config])
@@ -762,7 +762,7 @@ config => optional: the config object
 ### response
 standard JSON response object
 - status 200 if success:
-    - data object will contain true
+    - result will contain list of conversations
 - status 400 if error
 
 ## getConversation(userId[, config])
@@ -777,7 +777,7 @@ config => optional: the config object
 ### response
 standard JSON response object
 - status 200 if success:
-    - data object will contain true
+    - result will contain list of messages with certain user
 - status 400 if error
 
 
@@ -828,7 +828,7 @@ config     => optional: the config object
 ### response
 standard JSON response object
 - status 200 if success:
-    - data object will contain basic bee data: bee-systemname, bee-label, bee-cost, cost-type
+    - result will contain basic bee data: bee-systemname, bee-label, bee-cost, cost-type
 - status 400 if error
 
 ## uploadFiles(files[, endpoint, config])
@@ -846,7 +846,7 @@ config   => optional: the config object
 ### response
 standard JSON response object
 - status 200 if success:
-    - data object will contain true
+    - result will contain true
 - status 400 if error
 
 ## takeOff(bees, options[, subscriptions, config])
@@ -981,7 +981,7 @@ The event system for bees uses process level events.
 ### response
 standard JSON response object
 - status 200 if success:
-    - data object will contain true
+    - result will contain true
 - status 400 if error
 
 
@@ -1014,7 +1014,7 @@ config => optional: the config object
 ### response
 standard JSON response object
 - status 200 if success:
-    - data object will contain list of inbox items in array: messageId, sender, fileName, fileSize, receiptDate, expirationDate, downloadDate
+    - result will contain list of inbox items in array: messageId, sender, fileName, fileSize, receiptDate, expirationDate, downloadDate
 - status 400 if error
 
 
@@ -1031,7 +1031,7 @@ config    => optional: the config object
 ### response
 standard JSON response object
 - status 200 if success:
-    - data object will contain the file and file_meta object (userRef, fileType, fileTags)
+    - result will contain the file and file_meta object (userRef, fileType, fileTags)
 - status 400 if error
 
 
@@ -1048,7 +1048,7 @@ config    => optional: the config object
 ### response
 standard JSON response object
 - status 200 if success:
-    - data object will contain true
+    - result will contain true
 - status 400 if error
 
 
