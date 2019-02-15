@@ -791,19 +791,19 @@ The breach API is the main way to interact with users during breach. The breach 
 ### BreachPresented
 Fires when user has opened breach advice.
 It contains:
-- consent reference
+- breach reference
 
 ### BreachBeeUsed
 Fires when user has used a bee that you have identified in the breach advice.
 It contains:
-- consent reference
+- breach reference
 - bee reference
 
 ### UserMessage
 Fires when user is sending you a message regarding a consent request.
 Your campaign can enable/disable this feature in the `campaign options`. You can respond to this using the `sendUserMessage()` function.
 It contains:
-- consent reference
+- breach reference
 - xcoobeeId
 - message
 
