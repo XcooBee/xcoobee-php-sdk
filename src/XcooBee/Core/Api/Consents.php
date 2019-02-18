@@ -104,32 +104,30 @@ class Consents extends Api
      * @return Response
      * @throws XcooBeeException
      */
-    public function setUserDataResponse($message, $consentId, $requestRef = null, $filename = null, $config = [])
+    public function setUserDataResponse($message, $consentId, $requestRef, $filename, $config = [])
     {
         $messageResponse = $this->_xcoobee->users->sendUserMessage($message, $consentId, null, $config);
         if ($messageResponse->code !== 200) {
             return $messageResponse;
         }
 
-        if ($requestRef && $filename) {
-            $this->_xcoobee->bees->uploadFiles($filename, 'outbox', $config);
-            $xcoobeeId = $this->_getXcoobeeIdByConsent($consentId, $config);
-            $hireBeeResponse = $this->_xcoobee->bees->takeOff(
-                [
-                    'transfer' => [],
-                ], [
-                    'process' => [
-                        'fileNames' => $filename,
-                        'userReference' => $requestRef,
-                        'destinations' => [$xcoobeeId],
-                    ],
+        $this->_xcoobee->bees->uploadFiles($filename, 'outbox', $config);
+        $xcoobeeId = $this->_getXcoobeeIdByConsent($consentId, $config);
+        $hireBeeResponse = $this->_xcoobee->bees->takeOff(
+            [
+                'transfer' => [],
+            ], [
+                'process' => [
+                    'fileNames' => $filename,
+                    'userReference' => $requestRef,
+                    'destinations' => [$xcoobeeId],
                 ],
-                [],
-                $config);
+            ],
+            [],
+            $config);
 
-            if ($hireBeeResponse->code !== 200) {
-                return $hireBeeResponse;
-            }
+        if ($hireBeeResponse->code !== 200) {
+            return $hireBeeResponse;
         }
 
         $response = new Response();

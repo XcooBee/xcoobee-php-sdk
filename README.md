@@ -602,7 +602,7 @@ standard JSON response object
 - status 400 if error
 
 
-## setUserDataResponse(message, consentId[, requestRef, filename, config])
+## setUserDataResponse(message, consentId, requestRef, filename[, config])
 
 Companies can respond to user data requested via this call. Standard hiring points will be deducted for this. The call will send a `message` to user's communication center. You also need to send a file with user's data in order to close data request.
 
@@ -661,6 +661,7 @@ It contains:
 ### UserDataRequest
 Fires when user is making a request to extract their current data from your systems. This is to meet data-portability of GDPR. You should create data extract and send it to the User's XcooBee box. You can do so hiring the `xcoobee-data-response` bee with the GUID reference of the request.
 It contains:
+- consent reference
 - request reference
 - xcoobeeId
 
