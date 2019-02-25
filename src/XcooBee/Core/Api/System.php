@@ -8,7 +8,7 @@ use XcooBee\Http\Response;
 use XcooBee\Exception\XcooBeeException;
 use XcooBee\XcooBee;
 
-class System extends Api 
+class System extends Api
 {
     /** @var Encryption */
     protected $_encryption;
@@ -24,11 +24,11 @@ class System extends Api
      * method to check if pgp key and Campaign is correct.
      *
      * @param array $config
-     * 
+     *
      * @return Response
      * @throws XcooBeeException
      */
-    public function ping($config = []) 
+    public function ping($config = [])
     {
         $user = $this->_xcoobee->users->getUser($config);
         $response = new Response();
@@ -51,26 +51,26 @@ class System extends Api
 
         return $response;
     }
-    
+
     /**
      * List all Events
      *
      * @param string $campaignId
      * @param array $config
-     *  
+     *
      * @return Response
      * @throws XcooBeeException
      */
-    public function listEventSubscriptions($campaignId = null, $config = []) 
+    public function listEventSubscriptions($campaignId = null, $config = [])
     {
         $campaignId = $this->_getCampaignId($campaignId, $config);
-        
+
         $query = 'query listEventSubscriptions($campaignId: String!) {
             event_subscriptions(campaign_cursor: $campaignId) {
                 data {
                     event_type,
                     handler,
-                    date_c 
+                    date_c
                 }
             }
         }';
@@ -88,10 +88,10 @@ class System extends Api
      * @return Response
      * @throws XcooBeeException
      */
-    public function addEventSubscription($events, $campaignId = null, $config = []) 
+    public function addEventSubscription($events, $campaignId = null, $config = [])
     {
         $campaignId = $this->_getCampaignId($campaignId, $config);
-        
+
         $mutation = 'mutation addEventSubscription($config: AddSubscriptionsConfig!) {
             add_event_subscriptions(config: $config) {
                 data{
@@ -99,7 +99,7 @@ class System extends Api
                 }
             }
         }';
-        
+
         $mappedEvents = [];
         foreach ($events as $type => $handler) {
             $mappedEvents[] = [
@@ -120,20 +120,20 @@ class System extends Api
      * @param array $events
      * @param string $campaignId
      * @param array $config
-     *  
+     *
      * @return Response
      * @throws XcooBeeException
      */
-    public function deleteEventSubscription($events, $campaignId = null, $config = []) 
+    public function deleteEventSubscription($events, $campaignId = null, $config = [])
     {
         $campaignId = $this->_getCampaignId($campaignId, $config);
-        
+
         $mutation = 'mutation deleteEventSubscription($config: DeleteSubscriptionsConfig!) {
             delete_event_subscriptions(config: $config) {
                 deleted_number
             }
         }';
-        
+
         $mappedEvents = [];
         foreach ($events as $key => $type) {
             $mappedEvents[] = $this->_getSubscriptionEvent($type);
@@ -144,12 +144,12 @@ class System extends Api
                 'events' => $mappedEvents,
             ]], $config);
     }
-    
+
     /**
      * get all events
      *
      * @param array $config
-     *  
+     *
      * @return Response
      * @throws XcooBeeException
      */
@@ -255,7 +255,7 @@ class System extends Api
             if (!is_null($signature) && !empty($payload)) {
                 // Use XcooBee Id as the HMAC secret key.
                 $xid = $this->_xcoobee->users->getUser()->xcoobeeId;
-                
+
                 // Generate HMAC hash.
                 $hmac = hash_hmac('sha1', $payload, $xid);
 
@@ -288,7 +288,7 @@ class System extends Api
         foreach ($events as $event) {
             // Call the handler function and pass on the payload.
             if (isset($event->handler) && isset($event->payload)) {
-                if (!function_exists($event->handler)) {
+                if (!is_callable($event->handler)) {
                     throw new XcooBeeException('The handler function does not exist');
                 }
 
@@ -299,13 +299,13 @@ class System extends Api
 
     /**
      * get events
-     * 
+     *
      * @param string $event
      *
-     * @return array 
+     * @return array
      * @throws XcooBeeException
      */
-    protected function _getSubscriptionEvent($event) 
+    protected function _getSubscriptionEvent($event)
     {
         $events = [
             'ConsentApproved'        => 'consent_approved',

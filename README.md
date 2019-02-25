@@ -602,7 +602,7 @@ standard JSON response object
 - status 400 if error
 
 
-## setUserDataResponse(message, consentId[, requestRef, filename, config])
+## setUserDataResponse(message, consentId, requestRef, filename[, config])
 
 Companies can respond to user data requested via this call. Standard hiring points will be deducted for this. The call will send a `message` to user's communication center. You also need to send a file with user's data in order to close data request.
 
@@ -631,8 +631,8 @@ Fires when a consent request is approved. The consent object is returned.
 It contains:
 - consent reference
 - data types
-- consent types
-- expiration
+- consent type
+- expiration date
 
 ### ConsentDeclined
 Fires when a consent request is declined. You should remove user data and sent a XcooBee confirmation via `confirmDataDelete()`.
@@ -644,14 +644,14 @@ Fires when consent is changed. A standard consent object is returned.
 It contains:
 - consent reference
 - data types
-- consent types
-- expiration
+- consent type
+- expiration date
 
 ### ConsentNearExpiration
 Fires when an active consent is about to expire (inside 30 days). This is not exactly 30 days as the XcooBee system processes may push this slightly. You should plan ask for renewal of consent if you like to use the user data longer.
 It contains:
 - consent reference
-- expiration
+- expiration date
 
 ### ConsentExpired
 Fires when consent expired. You should remove user data and sent XcooBee confirmation via `confirmDataDelete()`.
@@ -662,6 +662,7 @@ It contains:
 Fires when user is making a request to extract their current data from your systems. This is to meet data-portability of GDPR. You should create data extract and send it to the User's XcooBee box. You can do so hiring the `xcoobee-data-response` bee with the GUID reference of the request.
 It contains:
 - consent reference
+- request reference
 - xcoobeeId
 
 ### UserMessage
@@ -671,6 +672,7 @@ It contains:
 - consent reference
 - xcoobeeId
 - message
+- request reference
 
 
 # Consent Administration Calls For Data
@@ -790,19 +792,19 @@ The breach API is the main way to interact with users during breach. The breach 
 ### BreachPresented
 Fires when user has opened breach advice.
 It contains:
-- consent reference
+- breach reference
 
 ### BreachBeeUsed
 Fires when user has used a bee that you have identified in the breach advice.
 It contains:
-- consent reference
+- breach reference
 - bee reference
 
 ### UserMessage
 Fires when user is sending you a message regarding a consent request.
 Your campaign can enable/disable this feature in the `campaign options`. You can respond to this using the `sendUserMessage()` function.
 It contains:
-- consent reference
+- breach reference
 - xcoobeeId
 - message
 
