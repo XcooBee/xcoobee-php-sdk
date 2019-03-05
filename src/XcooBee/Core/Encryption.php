@@ -29,7 +29,7 @@ class Encryption
         $config = $this->_xcoobee->getConfig();
 
         if (!$config->pgpSecret || !$config->pgpPassword) {
-            throw new EncryptionException('PGP private key or PGP pathphrase not provided');
+            throw new EncryptionException('PGP private key or PGP passphrase not provided');
         }
 
         $encryptedPrivateKey = \OpenPGP_Message::parse(\OpenPGP::unarmor($config->pgpSecret, 'PGP PRIVATE KEY BLOCK'));
