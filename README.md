@@ -737,13 +737,16 @@ It contains:
 # Message
 
 ## sendUserMessage(message, consentid, [breachid], [config])
-This function allows you to send a message to users. You can communicate issues regarding breach, consent, and data this way. It will create a threaded discussion for the user and for you and append to it this message.
+This function allows you to send a message to users. You can communicate issues regarding consent, ticket and data request this way. It will create a threaded discussion for the user and for you and append to it this message.
 
 options:
 ```
 message   => the text to be sent to the user as user data, can be html formatted. Max 2000 characters
-consentId => the consent Id that triggers the notification
-breachId  => optional: related breach, user will receive a message with proposed actions declared in a breach
+reference => object with type as key and identifier as value. e.g. ['consentId' => '...']. Currently supported identifiers:
+    - consentId
+    - ticketId
+    - requestRef - data request reference (can be obtained in `UserDataRequest` event)
+    At least one of identifiers should be provided
 config    => optional: the config object
 ```
 

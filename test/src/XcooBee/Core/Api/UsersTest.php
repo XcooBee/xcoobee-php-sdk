@@ -7,7 +7,7 @@ use \XcooBee\Core\Api\Users as User;
 
 class UsersTest extends TestCase {
 
-    public function testGetConversation() 
+    public function testGetConversation()
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
@@ -22,7 +22,7 @@ class UsersTest extends TestCase {
         $usersMock->getConversation('testuserId');
     }
 
-    public function testGetConversation_UseConfig() 
+    public function testGetConversation_UseConfig()
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
@@ -36,11 +36,11 @@ class UsersTest extends TestCase {
                         }));
 
         $usersMock->getConversation('testuserId', [
-            'apiKey' => 'testapikey' , 
-            'apiSecret' => 'testapisecret' 
+            'apiKey' => 'testapikey' ,
+            'apiSecret' => 'testapisecret'
         ]);
     }
-    
+
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
@@ -52,7 +52,7 @@ class UsersTest extends TestCase {
         $users->getConversation(null);
     }
 
-    public function testGetConversations() 
+    public function testGetConversations()
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
@@ -64,27 +64,27 @@ class UsersTest extends TestCase {
             ->will($this->returnCallback(function ($query, $params) {
                 $this->assertEquals(['userId' => 'testUserID', 'first' => true, 'after' => null], $params);
         }));
-        
+
         $usersMock->getConversations();
     }
-    
-    public function testGetConversations_UseConfig() 
+
+    public function testGetConversations_UseConfig()
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
             '_getUserId' => 'testUserID',
             '_getPageSize' => true
         ]);
-        
+
         $usersMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params, $config) {
                 $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
         }));
-                
+
         $usersMock->getConversations([
-            'apiKey' => 'testapikey' , 
-            'apiSecret' => 'testapisecret' 
+            'apiKey' => 'testapikey' ,
+            'apiSecret' => 'testapisecret'
         ]);
     }
 
@@ -108,7 +108,7 @@ class UsersTest extends TestCase {
         $this->assertEquals('pgp public key', $usersMock->getUserPublicKey('~test'));
     }
 
-    public function testGetUserPublicKey_UseConfig() 
+    public function testGetUserPublicKey_UseConfig()
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => $this->_createResponse(
@@ -168,111 +168,117 @@ class UsersTest extends TestCase {
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
-            '_getUserIdByConsent' => 'testuserID'
+            '_getUserIdByReference' => 'testuserID'
         ]);
 
         $usersMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['config' => [
-                                    'message' => 'test message',
-                                    'consent_cursor' => 'testconsentId',
-                                    'note_type' => 'consent',
-                                    'user_cursor' => 'testuserID',
-                                    'breach_cursor' => null
-                                ]], $params);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['config' => [
+                        'message' => 'test message',
+                        'reference_cursor' => 'testconsentId',
+                        'note_type' => 'consent',
+                        'user_cursor' => 'testuserID',
+                    ]], $params);
+            }));
 
-        $usersMock->sendUserMessage('test message', 'testconsentId');
+        $usersMock->sendUserMessage('test message', ['consentId' => 'testconsentId']);
     }
-    
-    public function testSendUserMessage_UseConfig() 
+
+    public function testSendUserMessage_UseTicketId()
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
-            '_getUserIdByConsent' => 'testuserID'
+            '_getUserIdByReference' => 'testuserID'
         ]);
 
         $usersMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                            $this->assertEquals(['config' => [
-                                    'message' => 'test message',
-                                    'consent_cursor' => 'testconsentId',
-                                    'note_type' => 'consent',
-                                    'user_cursor' => 'testuserID',
-                                    'breach_cursor' => null
-                                ]], $params);
-                            
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['config' => [
+                        'message' => 'test message',
+                        'reference_cursor' => 'testTicketId',
+                        'note_type' => 'ticket',
+                        'user_cursor' => 'testuserID',
+                    ]], $params);
+            }));
 
-        $usersMock->sendUserMessage('test message', 'testconsentId', null, [
-            'apiKey' => 'testapikey' , 
-            'apiSecret' => 'testapisecret' 
-        ]);
+        $usersMock->sendUserMessage('test message', ['ticketId' => 'testTicketId']);
     }
-    
-    public function testSendUserMessageWithBreachId() 
+
+    public function testSendUserMessage_UseDataRequestRef()
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
             '_request' => true,
-            '_getUserIdByConsent' => 'testuserID'
+            '_getUserIdByReference' => 'testuserID'
         ]);
 
         $usersMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['config' => [
-                                    'message' => 'test message',
-                                    'consent_cursor' => 'testconsentId',
-                                    'note_type' => 'breach',
-                                    'user_cursor' => 'testuserID',
-                                    'breach_cursor' => 'testBreachID'
-                                ]], $params);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['config' => [
+                        'message' => 'test message',
+                        'reference_cursor' => 'dataRequestRef',
+                        'note_type' => 'data_request',
+                        'user_cursor' => 'testuserID',
+                    ]], $params);
+            }));
 
-        $usersMock->sendUserMessage('test message', 'testconsentId', 'testBreachID');
-    }
-
-    public function testSendUserMessageBreachidNotProvided() 
-    {
-        $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
-            '_request' => true,
-            '_getUserIdByConsent' => 'testuserID'
-        ]);
-
-        $usersMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['config' => [
-                                    'message' => 'test message',
-                                    'consent_cursor' => 'testconsentId',
-                                    'note_type' => 'consent',
-                                    'user_cursor' => 'testuserID',
-                                    'breach_cursor' => null
-                                ]], $params);
-                        }));
-
-        $usersMock->sendUserMessage('test message', 'testconsentId', null);
+        $usersMock->sendUserMessage('test message', ['requestRef' => 'dataRequestRef']);
     }
 
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
-    public function testSendUserMessageInvalidConsent() 
+    public function testSendUserMessage_InvalidType()
+    {
+        $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, []);
+
+        $usersMock->sendUserMessage('test message', ['test' => 'dataRequestRef']);
+    }
+
+    public function testSendUserMessage_UseConfig()
     {
         $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
-            '_getUserIdByConsent' => false
+            '_request' => true,
+            '_getUserIdByReference' => 'testuserID'
         ]);
 
-        $usersMock->sendUserMessage('test message', 'testconsentId', null);
+        $usersMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['config' => [
+                    'message' => 'test message',
+                    'reference_cursor' => 'testconsentId',
+                    'note_type' => 'consent',
+                    'user_cursor' => 'testuserID',
+                ]], $params);
+
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+            }));
+
+        $usersMock->sendUserMessage('test message', ['consentId' => 'testconsentId'], [
+            'apiKey' => 'testapikey',
+            'apiSecret' => 'testapisecret',
+        ]);
     }
 
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
-    public function testSendUserMessageNodataProvided() 
+    public function testSendUserMessageInvalidConsent()
+    {
+        $usersMock = $this->_getMock(\XcooBee\Core\Api\Users::class, [
+            '_getUserIdByReference' => false
+        ]);
+
+        $usersMock->sendUserMessage('test message', ['consentId' => 'testconsentId']);
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testSendUserMessageNodataProvided()
     {
         $xcooBeeMock = $this->_getXcooBeeMock();
         $users = new User($xcooBeeMock);
