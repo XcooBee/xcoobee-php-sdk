@@ -259,6 +259,24 @@ Depending on your framework and syntax library this may also be:
 - `/xbee/webhook.aspx`
 
 
+# Tests
+
+## Running Unit Tests
+
+You can use the following command line to run unit test to validate the project
+
+`phpunit -c ./test/phpunit.xml`
+
+## Running Integration Tests
+
+When your initial developer account is created it will be populated with data so that you can test the project against actual data and system.
+You will have to configure your `test/integration/assets/config/.xcoobee/config` file prior to running the integration tests.
+
+You can use a command line to run the integration tests for this project. You will need to **clone the repo** from GitHub and run the following command line:
+
+`phpunit -c ./test/integration/phpunit.xml`
+
+
 # System Calls
 
 ## ping([config])

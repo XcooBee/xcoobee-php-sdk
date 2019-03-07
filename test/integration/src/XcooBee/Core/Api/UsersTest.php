@@ -20,7 +20,7 @@ class UsersTest extends IntegrationTestCase
 
     public function testSendUserMessage()
     {
-        $response = self::$xcoobee->users->sendUserMessage("test message", self::$consentId);
+        $response = self::$xcoobee->users->sendUserMessage("test message", ['consentId' => self::$consentId]);
         $this->assertEquals('200', $response->code);
         $this->assertEquals((object) ['note_text' => "test message"], $response->result->send_message);
     }

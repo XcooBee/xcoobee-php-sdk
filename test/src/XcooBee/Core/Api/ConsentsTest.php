@@ -387,7 +387,7 @@ class ConsentsTest extends TestCase
 
         $XcooBeeMock->users->expects($this->once())
                 ->method('sendUserMessage')
-                ->will($this->returnCallback(function ($message, $consentId, $breach, $config) {
+                ->will($this->returnCallback(function ($message, $reference, $config) {
                             $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
                 }));
         $XcooBeeMock->bees->expects($this->once())
