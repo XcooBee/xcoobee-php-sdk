@@ -112,7 +112,7 @@ class Users extends Api
             $noteType = 'data_request';
             $referenceCursor = $reference['requestRef'];
         } else {
-            throw new XcooBeeException('At least one reference should be provided');
+            throw new XcooBeeException('Only one reference should be provided');
         }
 
         $userId = $this->_getUserIdByReference($referenceCursor, $noteType);

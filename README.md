@@ -754,7 +754,7 @@ It contains:
 
 # Message
 
-## sendUserMessage(message, consentid, [breachid], [config])
+## sendUserMessage(message, reference, [config])
 This function allows you to send a message to users. You can communicate issues regarding consent, ticket and data request this way. It will create a threaded discussion for the user and for you and append to it this message.
 
 options:
@@ -764,7 +764,7 @@ reference => object with type as key and identifier as value. e.g. ['consentId' 
     - consentId
     - ticketId
     - requestRef - data request reference (can be obtained in `UserDataRequest` event)
-    At least one of identifiers should be provided
+    Only one of identifiers should be provided
 config    => optional: the config object
 ```
 
