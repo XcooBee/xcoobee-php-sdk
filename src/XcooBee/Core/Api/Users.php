@@ -88,32 +88,43 @@ class Users extends Api
      * send message to user
      *
      * @param String $message
-     * @param String $consentId
-     * @param String $breachId
+     * @param array $reference
      * @param array $config
      *
      * @return Response
      * @throws XcooBeeException
      */
-    public function sendUserMessage($message, $consentId, $breachId = null, $config = [])
+    public function sendUserMessage($message, $reference, $config = [])
     {
         $mutation = 'mutation sendUserMessage($config: SendMessageConfig) {
                 send_message(config: $config) {
                     note_text,
                 }
             }';
-        $userId = $this->_getUserIdByConsent($consentId);
-        if (!$userId) {
-            throw new XcooBeeException('invalid "consent" provided');
+
+        if (array_key_exists('consentId', $reference)) {
+            $noteType = 'consent';
+            $referenceCursor = $reference['consentId'];
+        } else if (array_key_exists('ticketId', $reference)) {
+            $noteType = 'ticket';
+            $referenceCursor = $reference['ticketId'];
+        } else if (array_key_exists('requestRef', $reference)) {
+            $noteType = 'data_request';
+            $referenceCursor = $reference['requestRef'];
+        } else {
+            throw new XcooBeeException('Only one reference should be provided');
         }
 
-        $noteType = $breachId ? 'breach' : 'consent';
+        $userId = $this->_getUserIdByReference($referenceCursor, $noteType);
+        if (!$userId) {
+            throw new XcooBeeException('invalid "reference" provided');
+        }
+
         return $this->_request($mutation, ['config' => [
-                        'note_type'         => $noteType,
-                        'user_cursor'       => $userId,
-                        'breach_cursor'     => $breachId,
-                        'consent_cursor'    => $consentId,
-                        'message'           => $message
+            'note_type'         => $noteType,
+            'user_cursor'       => $userId,
+            'reference_cursor'  => $referenceCursor,
+            'message'           => $message
         ]], $config);
     }
 
@@ -131,7 +142,7 @@ class Users extends Api
             conversations(user_cursor: $userId, first : $first , after : $after) {
                 data {
                     display_name,
-                    consent_cursor,
+                    reference_cursor,
                     target_cursor,
                     date_c,
                 }
@@ -161,41 +172,34 @@ class Users extends Api
         }
 
         $query = 'query getConversation($userId: String!, $first : Int, $after: String) {
-		conversation(target_cursor : $userId, first : $first, after : $after) {
-                    data {
-                        display_name,
-                        consent_cursor,
-                        target_cursor,
-                        date_c,
-                    }
-                    page_info {
-                        end_cursor
-                        has_next_page
-                    }
-		}
-	}';
+            conversation(target_cursor : $userId, first : $first, after : $after) {
+                data {
+                    reference_cursor
+                    date_c
+                    note_text
+                    note_type
+                }
+                page_info {
+                    end_cursor
+                    has_next_page
+                }
+            }
+        }';
 
         return $this->_request($query, ['first' => $this->_getPageSize($config), 'after' => null, 'userId' => $userId], $config);
     }
 
-    protected function _getUserIdByConsent($consentId, $config = [])
+    protected function _getUserIdByReference($referenceId, $noteType, $config = [])
     {
-        $store = $this->_xcoobee->getStore();
+        $query = 'query getNoteTarget($referenceId: String!, $type: NoteType!){
+            note_target (reference_cursor: $referenceId, note_type: $type){
+                cursor
+            }
+        }';
 
-        if ($consent = $store->getConsent($consentId)) {
-            return $consent->user_cursor;
-        }
+        $response = $this->_request($query, ['referenceId' => $referenceId, 'type' => $noteType], $config);
 
-        $consent = $this->_xcoobee->consents->getConsentData($consentId, $config);
-        $consent = $consent->result->consent;
-
-        if($consent){
-            $store->setConsent($consentId, $consent);
-
-            return $consent->user_cursor;
-        }
-
-        return false;
+        return $response->result->note_target->cursor;
     }
 
 }

@@ -32,6 +32,7 @@ class Consents extends Api
         $query = 'query getCampaigns($userId: String!, $first : Int, $after: String) {
             campaigns(user_cursor: $userId, first : $first , after : $after) {
                 data {
+                    campaign_cursor
                     campaign_name
                     status
                 }
@@ -106,19 +107,19 @@ class Consents extends Api
      */
     public function setUserDataResponse($message, $consentId, $requestRef, $filename, $config = [])
     {
-        $messageResponse = $this->_xcoobee->users->sendUserMessage($message, $consentId, null, $config);
+        $messageResponse = $this->_xcoobee->users->sendUserMessage($message, ['consentId' => $consentId], $config);
         if ($messageResponse->code !== 200) {
             return $messageResponse;
         }
 
-        $this->_xcoobee->bees->uploadFiles($filename, 'outbox', $config);
+        $this->_xcoobee->bees->uploadFiles([$filename], 'outbox', $config);
         $xcoobeeId = $this->_getXcoobeeIdByConsent($consentId, $config);
         $hireBeeResponse = $this->_xcoobee->bees->takeOff(
             [
                 'transfer' => [],
             ], [
                 'process' => [
-                    'fileNames' => $filename,
+                    'fileNames' => [basename($filename)],
                     'userReference' => $requestRef,
                     'destinations' => [$xcoobeeId],
                 ],

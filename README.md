@@ -259,6 +259,24 @@ Depending on your framework and syntax library this may also be:
 - `/xbee/webhook.aspx`
 
 
+# Tests
+
+## Running Unit Tests
+
+You can use the following command line to run unit test to validate the project
+
+`phpunit -c ./test/phpunit.xml`
+
+## Running Integration Tests
+
+When your initial developer account is created it will be populated with data so that you can test the project against actual data and system.
+You will have to configure your `test/integration/assets/config/.xcoobee/config` file prior to running the integration tests.
+
+You can use a command line to run the integration tests for this project. You will need to **clone the repo** from GitHub and run the following command line:
+
+`phpunit -c ./test/integration/phpunit.xml`
+
+
 # System Calls
 
 ## ping([config])
@@ -736,14 +754,17 @@ It contains:
 
 # Message
 
-## sendUserMessage(message, consentid, [breachid], [config])
-This function allows you to send a message to users. You can communicate issues regarding breach, consent, and data this way. It will create a threaded discussion for the user and for you and append to it this message.
+## sendUserMessage(message, reference, [config])
+This function allows you to send a message to users. You can communicate issues regarding consent, ticket and data request this way. It will create a threaded discussion for the user and for you and append to it this message.
 
 options:
 ```
 message   => the text to be sent to the user as user data, can be html formatted. Max 2000 characters
-consentId => the consent Id that triggers the notification
-breachId  => optional: related breach, user will receive a message with proposed actions declared in a breach
+reference => object with type as key and identifier as value. e.g. ['consentId' => '...']. Currently supported identifiers:
+    - consentId
+    - ticketId
+    - requestRef - data request reference (can be obtained in `UserDataRequest` event)
+    Only one of identifiers should be provided
 config    => optional: the config object
 ```
 

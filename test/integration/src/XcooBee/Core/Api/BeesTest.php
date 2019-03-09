@@ -11,7 +11,12 @@ class BeesTest extends IntegrationTestCase
     {
         $bees = self::$xcoobee->bees->listBees();
         $this->assertEquals(200, $bees->code);
-        $this->assertEquals('xcoobee_dropbox_uploader', $bees->result->bees->data[0]->bee_system_name);
+        $bee = $bees->result->bees->data[0];
+        $this->assertTrue(isset($bee->cursor));
+        $this->assertTrue(isset($bee->bee_system_name));
+        $this->assertTrue(isset($bee->category));
+        $this->assertTrue(isset($bee->bee_icon));
+        $this->assertTrue(isset($bee->label));
     }
 
     public function testUploadFiles()
@@ -21,20 +26,17 @@ class BeesTest extends IntegrationTestCase
     }
 
     public function testTakeOff()
-    {  
+    {
         $user = self::$xcoobee->users->getUser();
         $response = self::$xcoobee->bees->takeOff(
-            [
-                'xcoobee_message' => [
-                    'xcoobee_simple_message' => ['message' => 'Test post'], 'recipient' => ['xcoobee_id' => $user->xcoobeeId]
-                ]
-            ], 
+            [],
             [
                 'process' => [
                     'fileNames' => ['testfile.txt'],
                     'destinations' => [$user->xcoobeeId],
                 ],
             ]);
+
         $this->assertEquals(200, $response->code);
     }
 
