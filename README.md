@@ -628,8 +628,8 @@ options:
 ```
 message    => the text to be sent to the user as user data
 consentId  => the consent for which data has been deleted
-requestRef => optional: unique identifier of the data request, you will receive this on `UserDataRequest` event
-filename   => optional: pointer to the file which contain user's data
+requestRef => unique identifier of the data request, you will receive this on `UserDataRequest` event
+filename   => pointer to the file which contain user's data
 config     => optional: the config object
 ```
 
