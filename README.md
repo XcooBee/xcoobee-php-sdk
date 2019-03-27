@@ -620,7 +620,7 @@ standard JSON response object
 - status 400 if error
 
 
-## setUserDataResponse(message, consentId, requestRef, filename[, config])
+## setUserDataResponse(message, requestRef, filename[, config])
 
 Companies can respond to user data requested via this call. Standard hiring points will be deducted for this. The call will send a `message` to user's communication center. You also need to send a file with user's data in order to close data request.
 
@@ -628,8 +628,8 @@ options:
 ```
 message    => the text to be sent to the user as user data
 consentId  => the consent for which data has been deleted
-requestRef => optional: unique identifier of the data request, you will receive this on `UserDataRequest` event
-filename   => optional: pointer to the file which contains user's data
+requestRef => unique identifier of the data request, you will receive this on `UserDataRequest` event
+filename   => pointer to the file which contain user's data
 config     => optional: the config object
 ```
 
@@ -637,7 +637,7 @@ config     => optional: the config object
 
 standard JSON response object
 - status 200 if success:
-    - result will contain true
+    - result will contain refId
 - status 400 if error
 
 ## Consent Events (webhooks)
@@ -763,6 +763,7 @@ message   => the text to be sent to the user as user data, can be html formatted
 reference => object with type as key and identifier as value. e.g. ['consentId' => '...']. Currently supported identifiers:
     - consentId
     - ticketId
+    - complaintRef
     - requestRef - data request reference (can be obtained in `UserDataRequest` event)
     Only one of identifiers should be provided
 config    => optional: the config object

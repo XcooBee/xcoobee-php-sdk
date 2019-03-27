@@ -59,16 +59,16 @@ class Consents extends Api
         $campaignId = $this->_getCampaignId($campaignId, $config);
 
         $query = 'query getCampaignInfo($campaignId: String!) {
-                campaign(campaign_cursor: $campaignId) {
-                    campaign_name
-                    date_c
-                    date_e
-                    status
-                    xcoobee_targets {
-                        xcoobee_id
-                    }
+            campaign(campaign_cursor: $campaignId) {
+                campaign_name
+                date_c
+                date_e
+                status
+                xcoobee_targets {
+                    xcoobee_id
                 }
-            }';
+            }
+        }';
 
         return $this->_request($query, ['campaignId' => $campaignId], $config);
     }
@@ -87,17 +87,16 @@ class Consents extends Api
         $campaignId = $this->_getCampaignId($campaignId, $config);
 
         $mutation = 'mutation requestConsent($config: AdditionalRequestConfig) {
-                send_consent_request(config: $config) {
-                    ref_id
-                }
-            }';
+            send_consent_request(config: $config) {
+                ref_id
+            }
+        }';
 
         return $this->_request($mutation, ['config' => ['reference' => $refId, 'xcoobee_id' => $xid, 'campaign_cursor' => $campaignId]], $config);
     }
 
     /**
      * @param string $message
-     * @param string $consentId
      * @param string $requestRef
      * @param array $filename
      * @param array $config
@@ -105,37 +104,17 @@ class Consents extends Api
      * @return Response
      * @throws XcooBeeException
      */
-    public function setUserDataResponse($message, $consentId, $requestRef, $filename, $config = [])
+    public function setUserDataResponse($message, $requestRef, $filename, $config = [])
     {
-        $messageResponse = $this->_xcoobee->users->sendUserMessage($message, ['consentId' => $consentId], $config);
-        if ($messageResponse->code !== 200) {
-            return $messageResponse;
-        }
+        $mutation = 'mutation sendDataResponse($config: SendDataResponseConfig!) {
+            send_data_response(config: $config) {
+                ref_id
+            }
+        }';
 
         $this->_xcoobee->bees->uploadFiles([$filename], 'outbox', $config);
-        $xcoobeeId = $this->_getXcoobeeIdByConsent($consentId, $config);
-        $hireBeeResponse = $this->_xcoobee->bees->takeOff(
-            [
-                'transfer' => [],
-            ], [
-                'process' => [
-                    'fileNames' => [basename($filename)],
-                    'userReference' => $requestRef,
-                    'destinations' => [$xcoobeeId],
-                ],
-            ],
-            [],
-            $config);
 
-        if ($hireBeeResponse->code !== 200) {
-            return $hireBeeResponse;
-        }
-
-        $response = new Response();
-        $response->code = 200;
-        $response->result = true;
-
-        return $response;
+        return $this->_request($mutation, ['config' => ['message' => $message, 'request_ref' => $requestRef, 'filenames' => [$filename]]], $config);
     }
 
     /**
@@ -155,10 +134,10 @@ class Consents extends Api
         }
 
         $mutation = 'mutation confirmConsentChange($consentId: String!) {
-                confirm_consent_change(consent_cursor: $consentId) {
-                    consent_cursor
-                }
-            }';
+            confirm_consent_change(consent_cursor: $consentId) {
+                consent_cursor
+            }
+        }';
 
         $ConsentChangeResponse = $this->_request($mutation, ['consentId' => $consentId], $config);
         if ($ConsentChangeResponse->code !== 200) {
@@ -189,10 +168,10 @@ class Consents extends Api
         }
 
         $mutation = 'mutation confirmDataDelete($consentId: String!) {
-                confirm_consent_deletion(consent_cursor: $consentId) {
-                    consent_cursor
-                }
-            }';
+            confirm_consent_deletion(consent_cursor: $consentId) {
+                consent_cursor
+            }
+        }';
 
         $confirmDataResponse = $this->_request($mutation, ['consentId' => $consentId], $config);
         if ($confirmDataResponse->code !== 200) {
@@ -220,25 +199,25 @@ class Consents extends Api
         }
 
         $query = 'query getConsentData($consentId: String!) {
-                consent(consent_cursor: $consentId) {
-                    user_display_name,
-                    user_xcoobee_id,
-                    user_cursor,
-                    consent_name,
-                    consent_description,
-                    consent_status,
-                    consent_type,
-                    consent_details {
-                      datatype
-                    },
-                    campaign_cursor,
-                    date_c,
-                    date_e,
-                    request_owner,
-                    request_data_types,
-                    required_data_types
-                }
-            }';
+            consent(consent_cursor: $consentId) {
+                user_display_name,
+                user_xcoobee_id,
+                user_cursor,
+                consent_name,
+                consent_description,
+                consent_status,
+                consent_type,
+                consent_details {
+                    datatype
+                },
+                campaign_cursor,
+                date_c,
+                date_e,
+                request_owner,
+                request_data_types,
+                required_data_types
+            }
+        }';
 
         return $this->_request($query, ['consentId' => $consentId], $config);
     }

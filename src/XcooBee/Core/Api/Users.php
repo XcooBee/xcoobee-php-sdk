@@ -111,6 +111,9 @@ class Users extends Api
         } else if (array_key_exists('requestRef', $reference)) {
             $noteType = 'data_request';
             $referenceCursor = $reference['requestRef'];
+        } else if (array_key_exists('complaintRef', $reference)) {
+            $noteType = 'complaint';
+            $referenceCursor = $reference['complaintRef'];
         } else {
             throw new XcooBeeException('Only one reference should be provided');
         }
