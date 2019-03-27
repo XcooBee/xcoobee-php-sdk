@@ -104,7 +104,7 @@ class Consents extends Api
      * @return Response
      * @throws XcooBeeException
      */
-    public function setUserDataResponse($message, $requestRef, $filenames, $config = [])
+    public function setUserDataResponse($message, $requestRef, $filename, $config = [])
     {
         $mutation = 'mutation sendDataResponse($config: SendDataResponseConfig!) {
             send_data_response(config: $config) {
@@ -112,9 +112,9 @@ class Consents extends Api
             }
         }';
 
-        $this->_xcoobee->bees->uploadFiles($filenames, 'outbox', $config);
+        $this->_xcoobee->bees->uploadFiles([$filename], 'outbox', $config);
 
-        return $this->_request($mutation, ['config' => ['message' => $message, 'request_ref' => $requestRef, 'filenames' => $filenames]], $config);
+        return $this->_request($mutation, ['config' => ['message' => $message, 'request_ref' => $requestRef, 'filenames' => [$filename]]], $config);
     }
 
     /**

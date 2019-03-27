@@ -620,7 +620,7 @@ standard JSON response object
 - status 400 if error
 
 
-## setUserDataResponse(message, requestRef, filenames[, config])
+## setUserDataResponse(message, requestRef, filename[, config])
 
 Companies can respond to user data requested via this call. Standard hiring points will be deducted for this. The call will send a `message` to user's communication center. You also need to send a file with user's data in order to close data request.
 
@@ -629,7 +629,7 @@ options:
 message    => the text to be sent to the user as user data
 consentId  => the consent for which data has been deleted
 requestRef => optional: unique identifier of the data request, you will receive this on `UserDataRequest` event
-filenames  => optional: pointer to the files which contain user's data
+filename   => optional: pointer to the file which contain user's data
 config     => optional: the config object
 ```
 

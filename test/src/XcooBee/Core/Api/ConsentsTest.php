@@ -377,7 +377,7 @@ class ConsentsTest extends TestCase
             }));
         $this->_setProperty($consentsMock, '_xcoobee', $XcooBeeMock);
 
-        $response = $consentsMock->setUserDataResponse('testMessage', 'testReference', ['testFile'], [
+        $response = $consentsMock->setUserDataResponse('testMessage', 'testReference', 'testFile', [
             'apiKey' => 'testapikey',
             'apiSecret' => 'testapisecret'
         ]);
@@ -398,7 +398,7 @@ class ConsentsTest extends TestCase
         ]);
         $this->_setProperty($consentsMock, '_xcoobee', $XcooBeeMock);
 
-        $response = $consentsMock->setUserDataResponse('testMessage', 'testReference', ['testFile']);
+        $response = $consentsMock->setUserDataResponse('testMessage', 'testReference', 'testFile');
         $this->assertEquals(200, $response->code);
         $this->assertEquals(true, $response->result);
     }

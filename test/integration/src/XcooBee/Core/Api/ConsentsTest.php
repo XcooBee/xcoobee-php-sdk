@@ -33,7 +33,7 @@ class ConsentsTest extends IntegrationTestCase
 
     public function testSetUserDataResponse()
     {
-        $consent = self::$xcoobee->consents->setUserDataResponse('test message', 'requestRef', [__DIR__ . '/../../../../assets/testfile.txt']);
+        $consent = self::$xcoobee->consents->setUserDataResponse('test message', 'requestRef', __DIR__ . '/../../../../assets/testfile.txt');
         $this->assertEquals(400, $consent->code);
         $this->assertEquals('Data request not found', $consent->errors[0]->message);
     }
