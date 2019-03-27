@@ -130,10 +130,10 @@ class ConsentsTest extends TestCase
             '_getPageSize' => true,
         ]);
         $consentsMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['statuses' => null, 'userId' => 'testUser', 'first' => true, 'after' => null], $params);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['statuses' => null, 'userId' => 'testUser', 'first' => true, 'after' => null], $params);
+            }));
 
         $consentsMock->listConsents();
     }
@@ -160,10 +160,10 @@ class ConsentsTest extends TestCase
             '_getPageSize' => true,
         ]);
         $consentsMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['statuses' => ['testStatus'], 'userId' => 'testUser', 'first' => true, 'after' => null], $params);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['statuses' => ['testStatus'], 'userId' => 'testUser', 'first' => true, 'after' => null], $params);
+            }));
 
         $consentsMock->listConsents(['testStatus']);
     }
@@ -176,11 +176,11 @@ class ConsentsTest extends TestCase
             '_getPageSize' => true,
         ]);
         $consentsMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                            $this->assertEquals(['statuses' => null, 'userId' => 'testUser', 'first' => true, 'after' => null], $params);
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['statuses' => null, 'userId' => 'testUser', 'first' => true, 'after' => null], $params);
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+            }));
 
         $consentsMock->listConsents([], [
             'apiKey' => 'testapikey',
@@ -194,10 +194,10 @@ class ConsentsTest extends TestCase
             '_request' => true,
         ]);
         $consentsMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                    $this->assertEquals(['consentId' => 'testConsentID'], $params);
-                }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['consentId' => 'testConsentID'], $params);
+            }));
 
         $consentsMock->getConsentData('testConsentID');
     }
@@ -208,11 +208,11 @@ class ConsentsTest extends TestCase
             '_request' => true,
         ]);
         $consentsMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                    $this->assertEquals(['consentId' => 'testConsentID'], $params);
-                    $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['consentId' => 'testConsentID'], $params);
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+            }));
 
         $consentsMock->getConsentData('testConsentID', [
             'apiKey' => 'testapikey' ,
@@ -237,10 +237,10 @@ class ConsentsTest extends TestCase
         ]);
 
         $consentsMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['consentId' => 'testconsentId'], $params);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['consentId' => 'testconsentId'], $params);
+            }));
 
         $response = $consentsMock->confirmDataDelete('testconsentId');
 
@@ -255,10 +255,10 @@ class ConsentsTest extends TestCase
         ]);
 
         $consentsMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['consentId' => 'testconsentId'], $params);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['consentId' => 'testconsentId'], $params);
+            }));
 
         $response = $consentsMock->confirmDataDelete('testconsentId');
 
@@ -285,11 +285,11 @@ class ConsentsTest extends TestCase
         ]);
 
         $consentsMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                            $this->assertEquals(['consentId' => 'testconsentId'], $params);
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['consentId' => 'testconsentId'], $params);
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+            }));
 
         $response = $consentsMock->confirmDataDelete('testconsentId', [
             'apiKey' => 'testapikey',
@@ -343,11 +343,11 @@ class ConsentsTest extends TestCase
         ]);
 
         $consentsMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                            $this->assertEquals(['consentId' => 'testconsentId'], $params);
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['consentId' => 'testconsentId'], $params);
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+            }));
 
         $response = $consentsMock->confirmConsentChange('testconsentId', [
             'apiKey' => 'testapikey',
@@ -358,101 +358,49 @@ class ConsentsTest extends TestCase
         $this->assertTrue($response->result);
     }
 
-    public function testSetUserDataResponse_messageFailed()
-    {
-        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
-        $XcooBeeMock->users = $this->_getMock(Users::class, [
-            'sendUserMessage' => $this->_createResponse(400, true, ["error to send message"])
-        ]);
-        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => true,
-        ]);
-        $this->_setProperty($consentsMock, '_xcoobee', $XcooBeeMock);
-
-        $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId', 'refId', 'test.png');
-        $this->assertEquals(400, $response->code);
-        $this->assertEquals("error to send message", $response->errors[0]);
-    }
-
     public function testSetUserDataResponse_useConfig()
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
-        $XcooBeeMock->users = $this->_getMock(Users::class, [
-            'sendUserMessage' => $this->_createResponse(200, true)
-        ]);
         $XcooBeeMock->bees = $this->_getMock(Bees::class, [
-            'uploadFiles' => $this->_createResponse(200, true),
-            'takeOff' => $this->_createResponse(200, true),
+            'uploadFiles' => $this->_createResponse(200, true)
         ]);
 
-        $XcooBeeMock->users->expects($this->once())
-                ->method('sendUserMessage')
-                ->will($this->returnCallback(function ($message, $reference, $config) {
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                }));
-        $XcooBeeMock->bees->expects($this->once())
-                ->method('uploadFiles')
-                ->will($this->returnCallback(function ($files, $endpoint, $config) {
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                }));
-        $XcooBeeMock->bees->expects($this->once())
-                ->method('takeOff')
-                ->will($this->returnCallback(function ($bees, $options, $subscriptions, $config) {
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                }));
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => true,
-            '_getXcoobeeIdByConsent' => 'testXcoobeeId'
+            '_request' => $this->_createResponse(200, "testData")
         ]);
+
+        $consentsMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['config' => ['message' => 'testMessage', 'request_ref' => 'testReference', 'filenames' => ['testFile']]], $params);
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+            }));
         $this->_setProperty($consentsMock, '_xcoobee', $XcooBeeMock);
 
-        $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId', 'testReference', 'testFile', [
-            'apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'
+        $response = $consentsMock->setUserDataResponse('testMessage', 'testReference', ['testFile'], [
+            'apiKey' => 'testapikey',
+            'apiSecret' => 'testapisecret'
         ]);
         $this->assertEquals(200, $response->code);
-        $this->assertEquals(true, $response->result);
+        $this->assertEquals("testData", $response->result);
     }
 
     public function testSetUserDataResponse_fileUpload()
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
-        $XcooBeeMock->users = $this->_getMock(Users::class, [
-            'sendUserMessage' => $this->_createResponse(200, true)
-        ]);
         $XcooBeeMock->bees = $this->_getMock(Bees::class, [
-            'uploadFiles' => $this->_createResponse(200, true),
-            'takeOff' => $this->_createResponse(200, true),
+            'uploadFiles' => $this->_createResponse(200, true)
         ]);
+        $XcooBeeMock->bees->expects($this->once())
+            ->method('uploadFiles');
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => true,
-            '_getXcoobeeIdByConsent' => 'testXcoobeeId'
+            '_request' => $this->_createResponse(200, true)
         ]);
         $this->_setProperty($consentsMock, '_xcoobee', $XcooBeeMock);
 
-        $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId', 'testReference', 'testFile');
+        $response = $consentsMock->setUserDataResponse('testMessage', 'testReference', ['testFile']);
         $this->assertEquals(200, $response->code);
         $this->assertEquals(true, $response->result);
-    }
-
-    public function testSetUserDataResponse_takeOffError()
-    {
-        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
-        $XcooBeeMock->users = $this->_getMock(Users::class, [
-            'sendUserMessage' => $this->_createResponse(200, true)
-        ]);
-        $XcooBeeMock->bees = $this->_getMock(Bees::class, [
-            'uploadFiles' => $this->_createResponse(200, true),
-            'takeOff' => $this->_createResponse(400, true, ["error to takeoff"]),
-        ]);
-        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => true,
-            '_getXcoobeeIdByConsent' => 'testXcoobeeId'
-        ]);
-        $this->_setProperty($consentsMock, '_xcoobee', $XcooBeeMock);
-
-        $response = $consentsMock->setUserDataResponse('testMessage', 'testConsentId', 'testReference', 'testFile');
-        $this->assertEquals(400, $response->code);
-        $this->assertEquals("error to takeoff", $response->errors[0]);
     }
 
     /**
@@ -501,10 +449,13 @@ class ConsentsTest extends TestCase
 
     public function consentProvider()
     {
-        return [[
+        return [
+            [
                 200,
                 (object) [
-                    'consents' => (object) ['data' => [(object) [
+                    'consents' => (object) [
+                        'data' => [
+                            (object) [
                                 'consent_type' => 'web_application_tracking',
                                 'user_xcoobee_id' => 'testxID',
                                 'request_data_types' => ['application_cookie', 'usage_cookie', 'advertising_cookie']
@@ -524,7 +475,8 @@ class ConsentsTest extends TestCase
                                 'user_xcoobee_id' => 'demoxID',
                                 'request_data_types' => ['usage_cookie']
                             ],
-                        ]]
+                        ]
+                    ]
                 ],
                 [],
                 ['application' => true, 'usage' => true, 'advertising' => true, 'statistics' => true],
@@ -533,7 +485,9 @@ class ConsentsTest extends TestCase
             [
                 200,
                 (object) [
-                    'consents' => (object) ['data' => [(object) [
+                    'consents' => (object) [
+                        'data' => [
+                            (object) [
                                 'consent_type' => 'website_tracking',
                                 'user_xcoobee_id' => 'testxID',
                                 'request_data_types' => ['usage_cookie']
@@ -548,7 +502,8 @@ class ConsentsTest extends TestCase
                                 'user_xcoobee_id' => 'demoxId',
                                 'request_data_types' => []
                             ],
-                        ]]
+                        ]
+                    ]
                 ],
                 [],
                 ['application' => false, 'usage' => false, 'advertising' => false, 'statistics' => false],
@@ -557,7 +512,9 @@ class ConsentsTest extends TestCase
             [
                 200,
                 (object) [
-                    'consents' => (object) ['data' => [(object) [
+                    'consents' => (object) [
+                        'data' => [
+                            (object) [
                                 'consent_type' => 'web_application_tracking',
                                 'user_xcoobee_id' => 'testxID',
                                 'request_data_types' => ['application_cookie', 'advertising_cookie']
@@ -567,7 +524,8 @@ class ConsentsTest extends TestCase
                                 'user_xcoobee_id' => 'testxID',
                                 'request_data_types' => ['advertising_cookie']
                             ]
-                        ]]
+                        ]
+                    ]
                 ],
                 [],
                 ['application' => true, 'usage' => false, 'advertising' => true, 'statistics' => false],
@@ -576,11 +534,15 @@ class ConsentsTest extends TestCase
             [
                 200,
                 (object) [
-                    'consents' => (object) ['data' => [(object) [
+                    'consents' => (object) [
+                        'data' => [
+                            (object) [
                                 'consent_type' => 'web_application_tracking',
                                 'user_xcoobee_id' => 'testxID',
                                 'request_data_types' => ['application_cookie', 'usage_cookie', 'statistics_cookie']
-                            ]]]
+                            ]
+                        ]
+                    ]
                 ],
                 [],
                 ['application' => true, 'usage' => true, 'advertising' => false, 'statistics' => true],
