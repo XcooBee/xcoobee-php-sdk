@@ -34,6 +34,8 @@ $.validator.setDefaults({
         if (submitButtonName == 'manual_poll' || pollinterval == 0) {
             DisplayResponse(posturl);
         }
+
+        return false;
     }
 });
 function pollServer(serverPollIntervall, posturl) {
@@ -67,11 +69,13 @@ var DisplayResponse = function (posturl)
     var xcooBeeSdk = new XcooBee.sdk.Sdk(config);
     xcooBeeSdk.system.getEvents()
             .then(function (response) {
-                //console.log(response.data);
-
-                if (response.data && response.data.length) {
+                if (response.result
+                    && response.result
+                    && response.result.data
+                    && response.result.data.length
+                ) {
                     var html;
-                    response.data.forEach(function (elm) {
+                    response.result.data.forEach(function (elm) {
                         html += '<tr>';
                         html += '<td>' + StringToCamelCase(elm.event_type) + '</td>';
                         html += '<td>' + elm.payload + '</td>';
