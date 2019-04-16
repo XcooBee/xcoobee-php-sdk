@@ -114,7 +114,7 @@ class Consents extends Api
 
         $this->_xcoobee->bees->uploadFiles([$filename], 'outbox', $config);
 
-        return $this->_request($mutation, ['config' => ['message' => $message, 'request_ref' => $requestRef, 'filenames' => [$filename]]], $config);
+        return $this->_request($mutation, ['config' => ['message' => $message, 'request_ref' => $requestRef, 'filenames' => [basename($filename)]]], $config);
     }
 
     /**
