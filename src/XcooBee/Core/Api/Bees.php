@@ -140,10 +140,14 @@ class Bees extends Api
             $params['filenames'] = $options['process']['fileNames'];
         }
 
+        if (array_key_exists('custom', $options)) {
+            $params['custom'] = $options['custom'];
+        }
+
         if ($subscriptions) {
             $params['subscriptions'] = $subscriptions;
         }
-        
+
         $destinations = array_key_exists('destinations', $options['process']) ? $options['process']['destinations'] : [];
         foreach($destinations as $key => $destination) {
             if (Validation::isValidEmail($destination)) {
@@ -157,8 +161,8 @@ class Bees extends Api
         foreach ($bees as $beeName => $beeParams) {
             if($beeName !== 'transfer'){
                 $params['bees'][] = [
-                    'bee_name'  => $beeName,
-                    'params'    => count($beeParams) ? json_encode($beeParams) : "{}",
+                    'bee_name' => $beeName,
+                    'params'   => count($beeParams) ? json_encode($beeParams) : "{}",
                 ];
             }
         }
