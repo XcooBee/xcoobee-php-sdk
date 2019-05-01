@@ -372,12 +372,18 @@ class ConsentsTest extends TestCase
         $consentsMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params, $config) {
-                $this->assertEquals(['config' => ['message' => 'testMessage', 'request_ref' => 'testReference', 'filenames' => ['testFile']]], $params);
+                $this->assertEquals(['config' => [
+                    'message' => 'testMessage',
+                    'request_ref' => 'testReference',
+                    'target_url' => 'url',
+                    'event_handler' => 'handler',
+                    'filenames' => ['testFile']]
+                ], $params);
                 $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
             }));
         $this->_setProperty($consentsMock, '_xcoobee', $XcooBeeMock);
 
-        $response = $consentsMock->setUserDataResponse('testMessage', 'testReference', 'testFile', [
+        $response = $consentsMock->setUserDataResponse('testMessage', 'testReference', 'testFile', 'url', 'handler', [
             'apiKey' => 'testapikey',
             'apiSecret' => 'testapisecret'
         ]);
@@ -398,7 +404,7 @@ class ConsentsTest extends TestCase
         ]);
         $this->_setProperty($consentsMock, '_xcoobee', $XcooBeeMock);
 
-        $response = $consentsMock->setUserDataResponse('testMessage', 'testReference', 'testFile');
+        $response = $consentsMock->setUserDataResponse('testMessage', 'testReference', 'testFile', 'url', 'handler');
         $this->assertEquals(200, $response->code);
         $this->assertEquals(true, $response->result);
     }
