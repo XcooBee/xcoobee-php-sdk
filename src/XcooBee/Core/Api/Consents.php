@@ -99,12 +99,14 @@ class Consents extends Api
      * @param string $message
      * @param string $requestRef
      * @param array $filename
+     * @param string $targetUrl
+     * @param string $eventHandler
      * @param array $config
      *
      * @return Response
      * @throws XcooBeeException
      */
-    public function setUserDataResponse($message, $requestRef, $filename, $config = [])
+    public function setUserDataResponse($message, $requestRef, $filename, $targetUrl, $eventHandler, $config = [])
     {
         $mutation = 'mutation sendDataResponse($config: SendDataResponseConfig!) {
             send_data_response(config: $config) {
@@ -114,7 +116,15 @@ class Consents extends Api
 
         $this->_xcoobee->bees->uploadFiles([$filename], 'outbox', $config);
 
-        return $this->_request($mutation, ['config' => ['message' => $message, 'request_ref' => $requestRef, 'filenames' => [basename($filename)]]], $config);
+        return $this->_request($mutation, [
+            'config' => [
+                'message' => $message,
+                'request_ref' => $requestRef,
+                'target_url' => $targetUrl,
+                'event_handler' => $eventHandler,
+                'filenames' => [basename($filename)]
+            ]
+        ], $config);
     }
 
     /**
