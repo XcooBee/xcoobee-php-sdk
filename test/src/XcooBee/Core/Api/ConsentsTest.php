@@ -358,6 +358,36 @@ class ConsentsTest extends TestCase
         $this->assertTrue($response->result);
     }
 
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testDeclineConsentChange_noConsentProvided()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+
+        $consentsMock->declineConsentChange(null);
+    }
+
+    public function testDeclineConsentChange()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => $this->_createResponse(200, "testData")
+        ]);
+
+        $consentsMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['consentId' => 'testconsentId'], $params);
+            }));
+
+        $response = $consentsMock->declineConsentChange('testconsentId');
+
+        $this->assertEquals(200, $response->code);
+        $this->assertTrue($response->result);
+    }
+
     public function testSetUserDataResponse_useConfig()
     {
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
