@@ -162,6 +162,40 @@ class Consents extends Api
     }
 
     /**
+     * Opens consent related dispute
+     *
+     * @param string $consentId
+     * @param array $config
+     *
+     * @return Response
+     *
+     * @throws XcooBeeException
+     */
+    public function declineConsentChange($consentId, $config = [])
+    {
+        if (!$consentId) {
+            throw new XcooBeeException('No "consent" provided');
+        }
+
+        $mutation = 'mutation declineConsentChange($consentId: String!) {
+            decline_consent_change(consent_cursor: $consentId) {
+                consent_cursor
+            }
+        }';
+
+        $ConsentChangeResponse = $this->_request($mutation, ['consentId' => $consentId], $config);
+        if ($ConsentChangeResponse->code !== 200) {
+            return $ConsentChangeResponse;
+        }
+
+        $response = new Response();
+        $response->code = 200;
+        $response->result = true;
+
+        return $response;
+    }
+
+    /**
      * confirm that data has been purged from company systems
      *
      * @param string $consentId
