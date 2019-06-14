@@ -947,14 +947,8 @@ $options['process']['fileNames] = ['filename.png'];
 general custom parameters example:
 ```
 $options['custom'] = [
-    [
-        'name'  => 'full_name',
-        'value' => 'John Doe',
-    ],
-    [
-        'name'  => 'age',
-        'value' => 29
-    ],
+    'full_name' => 'John Doe',
+    'age'       => 29
 ]
 ```
 
