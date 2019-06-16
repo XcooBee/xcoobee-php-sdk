@@ -131,7 +131,7 @@ class Bees extends Api
         }';
 
         $params = [
-            'user_reference'    => array_key_exists('userReference', $options['process'])
+            'user_reference' => array_key_exists('userReference', $options['process'])
                 ? $options['process']['userReference']
                 : null,
         ];
@@ -140,8 +140,14 @@ class Bees extends Api
             $params['filenames'] = $options['process']['fileNames'];
         }
 
-        if (array_key_exists('custom', $options)) {
-            $params['custom'] = $options['custom'];
+        if (array_key_exists('custom', $options) && is_array($options['custom'])) {
+            $params['custom'] = [];
+            foreach ($options['custom'] as $name => $value) {
+                $params['custom'][] = [
+                    'name'  => $name,
+                    'value' => $value
+                ];
+            }
         }
 
         if ($subscriptions) {
