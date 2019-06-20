@@ -405,6 +405,42 @@ class Consents extends Api
         return $response;
     }
 
+    /**
+     * @param string $filename
+     * @param array $targets
+     * @param string $reference
+     * @param string $campaignId
+     * @param array $config
+     *
+     * @return Response
+     * @throws XcooBeeException
+     */
+    public function registerConsents($filename = null, $targets = [], $reference = null, $campaignId = null, $config = [])
+    {
+        if (!$filename && !count($targets)) {
+            throw new XcooBeeException('At least one of arguments [$filename, $targets] must be provided');
+        }
+
+        $campaignId = $this->_getCampaignId($campaignId, $config);
+
+        $mutation = 'mutation registerConsents($config: RegisterConsentsConfig) {
+            register_consents(config: $config) {
+                ref_id
+            }
+        }';
+
+        $this->_xcoobee->bees->uploadFiles([$filename], 'outbox', $config);
+
+        return $this->_request($mutation, [
+            'config' => [
+                'filename' => basename($filename),
+                'targets' => $targets,
+                'reference' => $reference,
+                'campaign_cursor' => $campaignId,
+            ]
+        ], $config);
+    }
+
     protected function _getXcoobeeIdByConsent($consentId, $config = [])
     {
         $consent = $this->getConsentData($consentId, $config = []);
