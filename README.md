@@ -659,6 +659,55 @@ standard JSON response object
     - result will contain refId
 - status 400 if error
 
+## registerConsents([filename, targets, reference, campaignId, config])
+
+Register consents received outside of XcooBee
+
+Must be provided at least one argument `filename` or `targets` otherwise will throws error.
+
+options:
+```
+filename    => optional: pointer to the csv file which contains list of targets
+targets     => optional: list of users whose consents we need to register
+reference   => optional: user reference
+campaignId  => optional: id of campaign to which consents must be assigned
+config      => optional: the config object
+```
+
+### targets
+
+targets is an array of objects:
+```
+target          => XiD or email address of a user whose consent we need to register
+date_received   => date when a consent was received, optional, we'll use current date as default
+date_expires    => date when a consent expires, optional, we'll set expiration date based on campaign's settings if missing
+```
+
+example:
+```
+[
+   [ 'target' => 'example@test.com' ],
+   [ 'target' => 'someTestXid', 'date_expires' => '2019-06-14T08:35:35.866Z' ],
+]
+```
+
+### filename
+
+filename is a path to a file
+it must be a csv format where each line represents target, file should not contain headers
+
+| target           | date_received            | date_expires             |
+|------------------|--------------------------|--------------------------|
+| example@test.com | 2019-06-14T08:35:35.866Z | 2019-06-14T08:35:35.866Z |
+| ~someTestXid     | 2019-06-14T08:35:35.866Z | 2019-06-14T08:35:35.866Z |
+
+### response
+
+standard response object
+- status 200 if success:
+  - result will contain refId
+- status 400 if error
+
 ## Consent Events (webhooks)
 
 These are events returned to your endpoint as part of user working with their consent center. All endpoints are determined inside each Consent Campaign.

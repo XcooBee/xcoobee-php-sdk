@@ -483,6 +483,44 @@ class ConsentsTest extends TestCase
         $this->assertEquals($requestError, $response->errors);
     }
 
+    public function testRegisterConsents()
+    {
+        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
+        $XcooBeeMock->bees = $this->_getMock(Bees::class, [
+            'uploadFiles' => $this->_createResponse(200, true)
+        ]);
+        $XcooBeeMock->bees->expects($this->once())
+            ->method('uploadFiles');
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => $this->_createResponse(200, true)
+        ]);
+        $consentsMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['config' => [
+                    'filename' => 'file.csv',
+                    'targets' => [[ 'target' => '~xid' ]],
+                    'reference' => 'testReference',
+                    'campaign_cursor' => 'campaignId',
+                ]], $params);
+            }));
+        $this->_setProperty($consentsMock, '_xcoobee', $XcooBeeMock);
+
+        $consentsMock->registerConsents('file.csv', [[ 'target' => '~xid' ]], 'testReference', 'campaignId');
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testRegisterConsents_NoTargetsAndFile()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+        ]);
+
+        $consentsMock->registerConsents();
+    }
+
     public function consentProvider()
     {
         return [
