@@ -718,4 +718,27 @@ class ConsentsTest extends TestCase
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, []);
         $consentsMock->getDataPackage(null);
     }
+
+    public function testGetCampaignIdByRef()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => $this->_createResponse(200, (object)['campaign' => (object)['campaign_cursor' => 'campaignId']])
+        ]);
+        $consentsMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['campaignRef' => 'testRef'], $params);
+            }));
+
+        $this->assertEquals("campaignId", $consentsMock->getCampaignIdByRef("testRef")->result);
+    }
+
+    public function testGetCampaignIdByRef_NotFound()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => $this->_createResponse(400, "response", "someErr")
+        ]);
+
+        $this->assertEquals(null, $consentsMock->getCampaignIdByRef("testRef")->result);
+    }
 }
