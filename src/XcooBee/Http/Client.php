@@ -65,7 +65,7 @@ class Client
         if ($config) {
             return $this->_fetchToken($config);
         }
-        
+
         $store = $this->_xcoobee->getStore();
         $token = $store->getStore(CachedData::AUTH_TOKEN_KEY);
 
@@ -90,7 +90,7 @@ class Client
             'secret' => $config->apiSecret
         ])]);
         $token = json_decode($res->getBody());
-        
+
         return $token->token;
     }
 }

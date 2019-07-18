@@ -33,6 +33,7 @@ class Consents extends Api
             campaigns(user_cursor: $userId, first : $first , after : $after) {
                 data {
                     campaign_cursor
+                    campaign_reference
                     campaign_name
                     status
                 }
@@ -439,6 +440,33 @@ class Consents extends Api
                 'campaign_cursor' => $campaignId,
             ]
         ], $config);
+    }
+
+    /**
+     * Return campaign id by it's reference
+     *
+     * @param string $campaignRef
+     * @param array $config
+     * @return Response
+     * @throws XcooBeeException
+     */
+    public function getCampaignIdByRef($campaignRef, $config = [])
+    {
+        $query = 'query getCampaignId($campaignRef: String!) {
+            campaign(campaign_ref: $campaignRef) {
+                campaign_cursor
+            }
+        }';
+
+        $campaign = $this->_request($query, ['campaignRef' => $campaignRef], $config);
+
+        $response = new Response();
+        $response->code = 200;
+        $response->result = !empty($campaign->result->campaign->campaign_cursor)
+            ? $campaign->result->campaign->campaign_cursor
+            : null;
+
+        return $response;
     }
 
     protected function _getXcoobeeIdByConsent($consentId, $config = [])
