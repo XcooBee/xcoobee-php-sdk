@@ -13,7 +13,7 @@ There is detailed and extensive [API documentation](https://github.com/XcooBee/x
 
 # Instalatiom
 
-`composer require xcoobee-php-sdk`
+`composer require xcoobee-php-sdk`  
 
 # Usage
 
