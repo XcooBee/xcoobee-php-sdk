@@ -796,6 +796,16 @@ it must be a csv format where each line represents target, file should not conta
 
 ### response
 
+You should save the refId that is returned from XcooBee. This is your reference to the consent for lookup purposes. 
+XcooBee does not save the actual email of the user for the consent record, it uses a one way hash pattern. XcooBee technology is unable to resolve consent record via email until user has created an account.  Thus, you should save the refId returned. This is the only link between data stored in your system and XcooBee consent. 
+
+When you submit multiple records via array object or file, the refId returned is only the **prefix** to the final reference for each consent. The final reference Id can be determined by the ordinal position (zero based index) of the record you submitted `refId-[ordinal position]`. Thus if you have a reference Id of `3657f2c0-d6a7-4a83-88db-0ad8ac4ca4e9` and you submitted two records, the final reference Id for each of the consent records would be:
+
+- `3657f2c0-d6a7-4a83-88db-0ad8ac4ca4e9-0` for first record
+- `3657f2c0-d6a7-4a83-88db-0ad8ac4ca4e9-1` for second record etc.
+
+
+
 standard response object
 - status 200 if success:
   - returns refId
