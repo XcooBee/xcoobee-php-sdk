@@ -747,14 +747,21 @@ standard response object
 
 ## registerConsents([filename, targets, reference, campaignId, config]) {#register-consents}
 
-Register consents received outside of XcooBee
+Generally register/save consents that you received outside of XcooBee.
 
+a) You may have already a list of consents that you have obtained from user but wish to use XcooBee as a system of record so you can manage them through XcooBee.
+b) Or, you would like for XcooBee to verify the consent that you have in your corporate system. 
+
+You can upload a list of emails for your campaign and, if your campaign is setup for it,  XcooBee will validate the consent for you with the users.
+
+The list of users can be either provided in separate file or object array.
 Must be provided at least one argument `filename` or `targets` otherwise will throws error.
 
 options:
 ```
-filename    => optional: pointer to the csv file which contains list of targets
+filename    => optional: pointer to the csv file which contains list of targets. 
 targets     => optional: list of users whose consents we need to register
+
 reference   => optional: user reference
 campaignId  => optional: id of campaign to which consents must be assigned
 config      => optional: the config object
