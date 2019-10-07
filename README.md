@@ -9,7 +9,7 @@ If you need to generate new PGP keys you can login to your XcooBee account and g
 
 XcooBee systems operate globally but with regional connections. The SDK will be connecting you to your regional endpoint automatically.
 
-There is detailed and extensive [API documentation](https://github.com/XcooBee/xcoobee-php-sdk/blob/1.2.0/API.md).
+There is detailed and extensive [API documentation](API.md).
 
 # Instalatiom
 
