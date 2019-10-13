@@ -11,9 +11,9 @@ XcooBee systems operate globally but with regional connections. The SDK will be 
 
 There is detailed and extensive [API documentation](API.md).
 
-# Instalatiom
+# Installation
 
-`composer require xcoobee-php-sdk`  
+`composer require xcoobee/xcoobee-sdk`  
 
 # Usage
 
