@@ -245,6 +245,14 @@ It contains:
 - consent type
 - expiration date
 
+### ConsentPartiallyChanged
+Fires when some consent's properties were changed. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirm-consent-change). A standard consent object is returned, but only updated data type are available.
+It contains:
+- consent reference
+- data types
+- consent type
+- expiration date
+
 ### ConsentNearExpiration
 Fires when an active consent is about to expire (inside 30 days). This is not exactly 30 days as the XcooBee system processes may push this slightly. You should plan ask for renewal of consent if you like to use the user data longer.
 It contains:
@@ -301,6 +309,14 @@ It contains:
 - data types with data
 - consent types
 - expiration
+
+### DataPartiallyChanged
+Fires when some consent's properties were changed. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirm-consent-change). A standard consent object is returned, but only updated data type are available.
+It contains:
+- consent reference
+- data types
+- consent type
+- expiration date
 
 ### DataNearExpiration
 Fires when an active consent is about to expire (inside 30 days).
