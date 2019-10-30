@@ -5,20 +5,21 @@ namespace XcooBee\Store;
 use Stash\Pool;
 use Stash\Driver\FileSystem;
 
+use XcooBee\Exception\XcooBeeException;
+
 class CachedData
 {
     const CONFIG_KEY = "CONFIG_KEY";
     const CURRENT_USER_KEY = "CURRENT_USER";
     const AUTH_TOKEN_KEY = "AUTH_TOKEN";
     const CONSENT_KEY = "CONSENT_KEY_";
-    
+
     protected static $_instance = null;
 
     protected $_store;
 
-    public function __construct()
+    public function __construct(FileSystem $driver)
     {
-        $driver = new FileSystem([]);
         $this->_store = new Pool($driver);
     }
 
@@ -30,10 +31,31 @@ class CachedData
     public static function getInstance()
     {
         if (self::$_instance === null) {
-            self::$_instance = new self();
+            self::$_instance = new self(self::_getDriver());
         }
 
         return self::$_instance;
+    }
+
+    /**
+     * Creates cache filesystem driver
+     *
+     * @return FileSystem
+     *
+     * @throws XcooBeeException
+     */
+    private static function _getDriver() {
+        try {
+            // try use root of sdk as cache folder
+            return new FileSystem(['path' => __DIR__ . '/../../../cache']);
+        } catch (\Exception $ex) {
+            // in case when no permission, try to use system tmp folder
+            try {
+                return new FileSystem([]);
+            } catch (\Exception $ex) {
+                throw new XcooBeeException('Couldn\'t init cache driver. Add correct permission to SDK directory');
+            }
+        }
     }
 
     /**
@@ -67,7 +89,7 @@ class CachedData
     {
         $this->_store->clear();
     }
-    
+
     /**
      * setting consent data
      *
@@ -77,7 +99,7 @@ class CachedData
     {
         $this->setStore(self::CONSENT_KEY . $consentId, $consent);
     }
-    
+
     /**
      * Getting consent data from storage
      *
