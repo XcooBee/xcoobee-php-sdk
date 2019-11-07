@@ -2,7 +2,7 @@
 
 - [Call limits](#call-limits)
 - [Logs](#logs)
-- [PGP Secret and password](#pgp)
+- [PGP Secret and password](#about-pgp-secret-and-password)
 - [Responses](#responses)
     - [Success package](#success-package)
     - [Error package](#error-package)
@@ -31,40 +31,41 @@
         - [BreachBeeUsed](#breachbeeused)
         - [UserMessage](#usermessage-2)
 - [System API](#system-api)
-    - [ping](#ping)
-    - [addEventSubscription](#add-event-subscription)
-    - [listEventSubscriptions](#list-event-subscriptions)
-    - [deleteEventSubscription](#delete-event-subscription)
-    - [triggerEvent](#trigger-event)
-    - [handleEvents](#handle-events)
-    - [getEvents](#get-events)
+    - [ping](#pingconfig)
+    - [addEventSubscription](#addeventsubscriptionarrayofeventandhandlerpairs-campaignid-config)
+    - [listEventSubscriptions](#listeventsubscriptionscampaignid-config)
+    - [deleteEventSubscription](#deleteeventsubscriptionarrayofeventnames-campaignid-config)
+    - [triggerEvent](#triggereventtype-config)
+    - [handleEvents](#handleeventsevents)
+    - [getEvents](#geteventsconfig)
 - [Consent Administration API](#consent-administration-api)
-    - [getCampaignInfo](#get-campaign-info)
-    - [listCampaigns](#list-campaigns)
-    - [getDataPackage](#get-data-package)
-    - [listConsents](#list-consents)
-    - [getConsentData](#get-consent-data)
-    - [getCookieConsent](#get-cookie-consent)
-    - [requestConsent](#request-consent)
-    - [confirmConsentChange](#confirm-consent-change)
-    - [declineConsentChange](#decline-consent-change)
-    - [confirmDataDelete](#confirm-data-delete)
-    - [setUserDataResponse](#set-user-data-response)
-    - [registerConsents](#register-consents)
-    - [getCampaignIdByRef](#get-campaign-id)
+    - [getCampaignInfo](#getcampaigninfocampaignid-config)
+    - [listCampaigns](#listcampaignsconfig)
+    - [getDataPackage](#getdatapackageconsentid-config)
+    - [listConsents](#listconsentsfilters-config)
+    - [getConsentData](#getconsentdataconsentid-config)
+    - [getCookieConsent](#getcookieconsentxid-campaignid-config)
+    - [requestConsent](#requestconsentxid-refid-campaignid-config)
+    - [confirmConsentChange](#confirmconsentchangeconsentid-config)
+    - [declineConsentChange](#declineconsentchangeconsentid-config)
+    - [confirmDataDelete](#confirmdatadeleteconsentid-config)
+    - [setUserDataResponse](#setuserdataresponsemessage-requestref-filename-targeturl-eventhandler-config)
+    - [registerConsents](#registerconsentsfilename-targets-reference-campaignid-config)
+    - [getCampaignIdByRef](#getcampaignidbyrefcampaignref-config)
+    - [shareConsents](#shareconsentscampaignref-campaignid-consentids-config)
 - [User API](#user-api)
-    - [getUsePublicKey](#get-user-public-key)
-    - [sendUserMessage](#send-user-message)
-    - [getConversations](#get-conversations)
-    - [getConversation](#get-conversation)
+    - [getUsePublicKey](#getuserpublickeyxid-config)
+    - [sendUserMessage](#sendusermessagemessage-reference-config)
+    - [getConversations](#getconversationsconfig)
+    - [getConversation](#getconversationuserid-config)
 - [Bee API](#bee-api)
-    - [listBees](#list-bees)
-    - [uploadFiles](#upload-files)
-    - [takeOff](#take-off)
+    - [listBees](#listbeessearchtext-config)
+    - [uploadFiles](#uploadfilesfiles-endpoint-config)
+    - [takeOff](#takeoffbees-options-subscriptions-config)
 - [Inbox API](#inbox-api)
-    - [listInbox](#list-inbox)
-    - [getInboxItem](#get-inbox-item)
-    - [deleteInboxItem](#delete-inbox-item)
+    - [listInbox](#listinboxconfig)
+    - [getInboxItem](#getinboxitemmessageid-config)
+    - [deleteInboxItem](#deleteinboxitemmessageid-config)
 - [Troubleshooting](#troubleshooting)
 
 # Call limits
@@ -86,7 +87,7 @@ API calls are logged like standard transactions with the same time to live
 constraints.
 
 
-# About PGP Secret and password {#pgp}
+# About PGP Secret and password
 
 All PGP data is optional to the configuration object.  If you do not supply it,
 then the SDK will skip decryption/encryption steps.  You will have to do these
@@ -380,7 +381,7 @@ It contains:
 **All system methods are available in** `$sdk->system`
 For example: `$pingResult = $sdk->system->ping();`
 
-## ping([config]) {#ping}
+## ping([config])
 
 Can be called to see whether current configuration will connect to XcooBee system. This will return an error if your API user does not have a public PGP key on its profile.
 
@@ -397,7 +398,7 @@ standard response object
 - status 400 if error
 
 
-## addEventSubscription(arrayOfEventAndHandlerPairs[, campaignId, config]) {#add-event-subscription}
+## addEventSubscription(arrayOfEventAndHandlerPairs[, campaignId, config])
 
 You can register subscriptions to hooks by calling the addEventSubscription function and providing the event (as specified in this document) and handler pairs `eventname: handler`.
 
@@ -435,7 +436,7 @@ standard response object
 - status 400 if error
 
 
-## listEventSubscriptions([campaignId, config]) {#list-event-subscriptions}
+## listEventSubscriptions([campaignId, config])
 
 list current subscriptions.
 
@@ -453,7 +454,7 @@ standard response object
 - status 400 if error
 
 
-## deleteEventSubscription(arrayOfEventNames[, campaignId, config]) {#delete-event-subscription}
+## deleteEventSubscription(arrayOfEventNames[, campaignId, config])
 
 delete existing subscriptions.
 If you do not supply a campaign Id the event will for the default campaign Id will be deleted. If the subscription does not exists we will still return success.
@@ -473,7 +474,7 @@ standard response object
 - status 400 if error
 
 
-## triggerEvent(type[, config]) {#trigger-event}
+## triggerEvent(type[, config])
 
 Trigger test event to configured campaign webhook. The structure will be the same as real event (with encrypted payload and HMAC signature).
 Also you will receive `XBEE-TEST-EVENT` header, which indicates that event is test. If campaign webhook is not configured, you'll receive an error.
@@ -523,7 +524,7 @@ events => optional: array of objects with HTTP post data
 - no response, since this is an internal call to the mapped event handlers
 
 
-## getEvents([config]) {#get-events}
+## getEvents([config])
 
 In cases where you are not able to use direct webhook posts to your sites, for example you are in development or your system cannot be accessed via the Internet directly, you can pull your events from XcooBee.
 
@@ -551,7 +552,7 @@ standard response object
 **All consent administration methods are available in** `$sdk->consents`
 For example: `$campaigns = $sdk->consents->listCampaigns();`
 
-## getCampaignInfo([campaignId, config]) {#get-campaign-info}
+## getCampaignInfo([campaignId, config])
 get basic info on campaign (setup, datatypes and options). The information will not return the users registered with the campaign.
 
 options:
@@ -568,7 +569,7 @@ standard response object
     - result will contain campaign data object
 - status 400 if error
 
-## listCampaigns([config]) {#list-campaigns}
+## listCampaigns([config])
 get all user campaigns
 
 options:
@@ -584,7 +585,7 @@ standard response object
     - result will contain array of campaign objects
 - status 400 if error
 
-## getDataPackage(consentId[, config]) {#get-data-package}
+## getDataPackage(consentId[, config])
 
 When data is hosted for you at XcooBee you can request the data package each time you need to use it. You will need to provide `consentId`. This call will only respond to authorized call source.
 
@@ -599,33 +600,63 @@ config    => optional: the config object
 
 standard response object
 - status 200 if success:
-    - result will contain requested data object
+    - result will contain array of data objects
         The SDK will decrypt this for you if it has access to PGP keys otherwise you have to decrypt this object
 - status 400 if error
 
-## listConsents([statuses, config]) {#list-consents}
+## listConsents([statuses, config])
 
-Query for list of consents for a given campaign. Company can get general consentId for any consent that was created as part of a campaign. This is a multi-page recordset. Data returned: consentId, creation date, expiration date, xcoobeeId
-
-possible response/filter for status:
-
-pending, active, updating, offer, cancelled, expired, rejected
+Query for list of consents for a given campaign. Company can get general consentId for any consent that was created as part of a campaign. This is a multi-page recordset.
 
 options:
 
 ```
-statuses  => optional: array of numbers, one of the valid consent statuses, if not specified all will be returned
+filters   => optional: array of different filters, if not specified all will be returned
 config    => optional: the config object
 ```
+
+example:
+```
+$filters = [
+   'search'         => 'Cool',
+   'country'        => 'US',
+   'province'       => 'California',
+   'city'           => 'Los Angeles',
+   'dateFrom'       => '2019-01-01',
+   'dateTo'         => '2019-12-31',
+   'statuses'       => ['expired', 'rejected'],
+   'consentTypes'   => ['perform_contract', 'perform_a_service'],
+   'dataTypes'      => ['first_name', 'middle_name', 'last_name'],
+];
+```
+
+`search` - filters out consents with name or campaign description, that include passed string
+`country` - country code of consent owner
+`province` - country province of consent owner
+`city` - city of consent owner
+`dateFrom` - string date. Min date, when consent was created
+`dateTo` - string date. Max date, when consent was created
+
+possible `statuses`:
+
+pending, active, updating, offer, cancelled, expired, rejected
+
+possible `consentTypes`:
+
+missing, perform_contract, perform_a_service, deliver_a_product, order_fullfillment, shipping, billing, subscription, support, support_a_service, support_a_product, warranty, create_custom_service_and_product, create_custom_service, create_custom_product, travel, deliver_itiniary_changes, government_services, emergency_services, law_enforcement, health_care_services, care_delivery, health_billing, emergency_request, product_announcement, product_information, survey, marketing, promotion, data_aggregation, anonymized_data_aggregation, company_information, press_releaseases, financial_reports, website_tracking, web_application_tracking, mobile_device_tracking, iot_device_tracking, payment_processing, donation, private_consent, employee_administration, employee_management, contractor_management, training, it_administration, supplier_screening, other
+
+possible `dataTypes`:
+
+first_name, middle_name, last_name, name_prefix, name_suffix, xcoobee_id, email, alternate_email, phone, alternate_phone, street1, street2, city, state, postal_code, country, date_of_birth, image, ethnicity_race, genetic_data, biometric_data, bank_account_description, bank_name, bank_routing_number, bank_swift, bank_isfc, bank_account_number, bank_iban, paypal_email, payment_token, government_document_references, government_id, location_data, health_record, emergency_medical_record, physical_health_record, dental_record, mental_health_record, health_metrics, internet_access_record, ip_address, device_identifiers, browser_details, meter_reading, party_affiliation, religion, sexual_orientation, criminal_conviction, membership, application_cookie, usage_cookie, statistics_cookie, advertising_cookie, social_posts, twitter_handle, family_members, friends, colleagues, custom, other1, other2, other3, other4, other5, other6, other7, other8, other9
 
 ### response
 
 standard response object
 - status 200 if success:
-    - result will contain consent data object: consent_id, status_id, date_c, date_e, xcoobee_id
+    - result will contain consent data objects
 - status 400 if error
 
-## getConsentData(consentId[, config]) {#get-consent-data}
+## getConsentData(consentId[, config])
 
 Query for a specific consent given. Company can get consent definition for any consent that was created. The data normally has three areas: Who, what data types, what the uses are, how long.
 
@@ -643,7 +674,7 @@ standard response object
     - result will contain consent data object: user, datatypes, consenttypes, expiration
 - status 400 if error
 
-## getCookieConsent(xid[, campaignId, config]) {#get-cookie-consent}
+## getCookieConsent(xid[, campaignId, config])
 
 This is a shortcut mechanism to query the XcooBee system for existing user consent for consent type `Website Tracking (1400), Web Application Tracking (1410)` for specific use data types (`application cookie (1600), usage cookie (1610), and advertising cookie (1620)`). We will retrieve only active consent for the cookies on the website identified in the campaign Id and return whether user has agreed to any cookies.
 
@@ -669,7 +700,7 @@ standard response object
     - result will contain website cookie consent CSV: application,usage,advertising
 - status 400 if error
 
-## requestConsent(xid[, refId, campaignId, config]) {#request-consent}
+## requestConsent(xid[, refId, campaignId, config])
 
 Sends out the consent or consent and data request to a specific user using the data in the campaign. The campaign definition determines what data (only consent or consent + data) we will ask from the user.
 
@@ -691,7 +722,7 @@ standard response object
 - status 400 if error
 
 
-## confirmConsentChange(consentId[, config]) {#confirm-consent-change}
+## confirmConsentChange(consentId[, config])
 Use this call to confirm that data has been changed in company systems according to change requested by user.
 
 options:
@@ -708,7 +739,7 @@ standard response object
 - status 400 if error
 
 
-## declineConsentChange(consentId[, config]) {#decline-consent-change}
+## declineConsentChange(consentId[, config])
 Use this call to open dispute on consent.
 
 options:
@@ -724,7 +755,7 @@ standard response object
     - result will contain object with confirmed status
 - status 400 if error
 
-## confirmDataDelete(consentId[, config]) {#confirm-data-delete}
+## confirmDataDelete(consentId[, config])
 Send by company to confirm that data has been purged from company systems
 
 options:
@@ -741,7 +772,7 @@ standard response object
 - status 400 if error
 
 
-## setUserDataResponse(message, requestRef, filename, targetUrl, eventHandler[, config]) {#set-user-data-response}
+## setUserDataResponse(message, requestRef, filename, targetUrl, eventHandler[, config])
 
 Companies can respond to user data requested via this call. Standard hiring points will be deducted for this. The call will send a `message` to user's communication center. You also need to send a file with user's data in order to close data request.
 
@@ -763,12 +794,12 @@ standard response object
 - status 400 if error
 
 
-## registerConsents([filename, targets, reference, campaignId, config]) {#register-consents}
+## registerConsents([filename, targets, reference, campaignId, config])
 
 Generally register/save consents that you received outside of XcooBee.
 
 a) You may have already a list of consents that you have obtained from user but wish to use XcooBee as a system of record so you can manage them through XcooBee.
-b) Or, you would like for XcooBee to verify the consent that you have in your corporate system. 
+b) Or, you would like for XcooBee to verify the consent that you have in your corporate system.
 
 You can upload a list of emails for your campaign and, if your campaign is setup for it,  XcooBee will validate the consent for you with the users.
 
@@ -777,7 +808,7 @@ Must be provided at least one argument `filename` or `targets` otherwise will th
 
 options:
 ```
-filename    => optional: pointer to the csv file which contains list of targets. 
+filename    => optional: pointer to the csv file which contains list of targets.
 targets     => optional: list of users whose consents we need to register
 
 reference   => optional: user reference
@@ -792,12 +823,13 @@ targets is an array of objects:
 target          => XiD or email address of a user whose consent we need to register
 date_received   => date when a consent was received, optional, we'll use current date as default
 date_expires    => date when a consent expires, optional, we'll set expiration date based on campaign's settings if missing
+contract_ref    => unique reference provided to allow match specific consent
 ```
 
 example:
 ```
 [
-   [ 'target' => 'example@test.com' ],
+   [ 'target' => 'example@test.com', 'contract_ref' => 'refId123' ],
    [ 'target' => 'someTestXid', 'date_expires' => '2019-06-14T08:35:35.866Z' ],
 ]
 ```
@@ -807,20 +839,20 @@ example:
 filename is either an instance of File or a path to a file
 it must be a csv format where each line represents target, file should not contain headers
 
-| target           | date_received            | date_expires             |
-|------------------|--------------------------|--------------------------|
-| example@test.com | 2019-06-14T08:35:35.866Z | 2019-06-14T08:35:35.866Z |
-| ~someTestXid     | 2019-06-14T08:35:35.866Z | 2019-06-14T08:35:35.866Z |
+| target           | date_received            | date_expires             | contract_ref             |
+|------------------|--------------------------|--------------------------|--------------------------|
+| example@test.com | 2019-06-14T08:35:35.866Z | 2019-06-14T08:35:35.866Z | qwerty123                |
+| ~someTestXid     | 2019-06-14T08:35:35.866Z | 2019-06-14T08:35:35.866Z | qwerty456                |
 
 ### response
 
-You should save the refId that is returned from XcooBee. This is your reference to the consent for lookup purposes. 
-XcooBee does not save the actual email of the user for the consent record, it uses a one way hash pattern. XcooBee technology is unable to resolve consent record via email until user has created an account.  Thus, you should save the refId returned. This is the only link between data stored in your system and XcooBee consent. 
+You should save the refId that is returned from XcooBee. This is your reference to the consent for lookup purposes.
+XcooBee does not save the actual email of the user for the consent record, it uses a one way hash pattern. XcooBee technology is unable to resolve consent record via email until user has created an account.  Thus, you should save the refId returned. This is the only link between data stored in your system and XcooBee consent.
 
 When you submit multiple records via array object or file, the refId returned is only the **prefix** to the final reference for each consent. The final reference Id can be determined by the ordinal position (zero based index) of the record you submitted `refId-[ordinal position]`. Thus if you have a reference Id of `3657f2c0-d6a7-4a83-88db-0ad8ac4ca4e9` and you submitted two records, the final reference Id for each of the consent records would be:
 
-- `3657f2c0-d6a7-4a83-88db-0ad8ac4ca4e9-0` for first record
-- `3657f2c0-d6a7-4a83-88db-0ad8ac4ca4e9-1` for second record etc.
+- `3657f2c0-d6a7-4a83-88db-0ad8ac4ca4e9-1` for first record
+- `3657f2c0-d6a7-4a83-88db-0ad8ac4ca4e9-2` for second record etc.
 
 
 
@@ -829,7 +861,7 @@ standard response object
   - returns refId
 - status 400 if error
 
-## getCampaignIdByRef(campaignRef[, config]) {#get-campaign-id}
+## getCampaignIdByRef(campaignRef[, config])
 get campaign id by it's reference
 
 options:
@@ -846,13 +878,33 @@ standard response object
   - returns campaignId or `null` if not found
 - status 400 if error
 
+## shareConsents(campaignRef[, campaignId, consentIds, config])
+Creates new consents based on existing ones on behalf of other company
+
+options:
+```
+campaignRef => the campaign reference which consents will be shared with
+campaignId  => the campaign id which consents will be shared from
+consentIds  => the consent ids which will be shared
+config      => optional: the config object
+```
+
+Either `campaignId` or `consentIds` should be provided.
+
+### response
+
+standard response object
+- status 200 if success:
+    - result will contains reference
+- status 400 if error
+
 
 # User API
 
 **All users methods are available in** `$sdk->users`
 For example: `$conversations = $sdk->users->getConversations();`
 
-## getUserPublicKey(xid[, config]) {#get-user-public-key}
+## getUserPublicKey(xid[, config])
 
 Retrieves a user's public PGP key as published on their public profile. If the user chose to hide it or the user is not known, it returns `null`.
 
@@ -870,7 +922,7 @@ config => optional: the config object
 ### response
 public PGP or empty string
 
-## sendUserMessage(message, reference, [config]) {#send-user-message}
+## sendUserMessage(message, reference, [config])
 This function allows you to send a message to users. You can communicate issues regarding consent, ticket and data request this way. It will create a threaded discussion for the user and for you and append to it this message.
 
 options:
@@ -891,7 +943,7 @@ standard response object
     - data object will contain message object
 - status 400 if error
 
-## getConversations([config]) {#get-conversations}
+## getConversations([config])
 This function allows you to get a list of discussions with users regarding breaches, consents and so on.
 
 options:
@@ -905,7 +957,7 @@ standard response object
     - result will contain list of conversations
 - status 400 if error
 
-## getConversation(userId[, config]) {#get-conversation}
+## getConversation(userId[, config])
 This function allows you to get full discussion with selected user.
 
 options:
@@ -932,7 +984,7 @@ The immediate response will only cover issues with files for the first bee. If y
 For example: `bees = $sdk->bees->listBees();`
 
 
-## listBees([searchText, config]) {#list-bees}
+## listBees([searchText, config])
 
 This function will help you search through the bees in the system that your account is able to hire. This is a simple keyword search interface.
 
@@ -949,7 +1001,7 @@ standard response object
     - result will contain basic bee data: bee-systemname, bee-label, bee-cost, cost-type
 - status 400 if error
 
-## uploadFiles(files[, endpoint, config]) {#upload-files}
+## uploadFiles(files[, endpoint, config])
 
 You use the uploadFiles function to upload files from your server to XcooBee. You can upload multiple files and you can optionally supply an outbox endpoint. If you have an outbox endpoint you do not need to call the [`takeOff()`](#take-off) function as the endpoint already specifies all processing parameters. If your subscription allows you can configure the outbox endpoints in the XcooBee UI.
 
@@ -967,7 +1019,7 @@ standard response object
     - result will contain true
 - status 400 if error
 
-## takeOff(bees, options[, subscriptions, config]) {#take-off}
+## takeOff(bees, options[, subscriptions, config])
 
 You normally use this as follow up call to [`uploadFiles()`](#upload-files). This will start your processing. You specify the bee(s) that you want to hire and the parameter that are needed for the bee to work on your file(s). If you want to be kept up to date you can supply subscriptions. Please note that subscriptions will deduct points from your balance and will cause errors when your balance is insufficient.
 
@@ -1118,7 +1170,7 @@ The inbox API governs the access to your inbox. You can list, download, and dele
 **All inbox methods are available in** `$sdk->inbox`
 For example: `$inboxItems = $sdk->inbox->listInbox();`
 
-## listInbox([config]) {#list-inbox}
+## listInbox([config])
 
 This method will present a paged list of inbox items that you can download. The listing will be for the user connected to you API key. You cannot check any other user's inbox using this method. You can return up to 100 items in one call.
 Calling this method more than once per minute will result in HTTP 429 error (exceeding call limits).
@@ -1147,7 +1199,7 @@ standard response object
 - status 400 if error
 
 
-## getInboxItem(messageId[, config]) {#get-inbox-item}
+## getInboxItem(messageId[, config])
 
 This method will return a file and file meta tags. Upon first downloaded, the `downloadDate` for the item will be populated.
 
@@ -1164,7 +1216,7 @@ standard response object
 - status 400 if error
 
 
-## deleteInboxItem(messageId[, config]) {#delete-inbox-item}
+## deleteInboxItem(messageId[, config])
 
 This method will delete a file that corresponds to your messageid. If the file does not exist, an error will be returned.
 

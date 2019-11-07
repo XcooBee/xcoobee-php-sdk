@@ -122,7 +122,7 @@ class ConsentsTest extends TestCase
         $consentsMock->requestConsent('~testXcooBeeId', 'testReferance', 'testCampaignId');
     }
 
-    public function testListConsents()
+    public function testListConsents_WithoutFilters()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
@@ -132,10 +132,38 @@ class ConsentsTest extends TestCase
         $consentsMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) {
-                $this->assertEquals(['statuses' => null, 'userId' => 'testUser', 'first' => true, 'after' => null], $params);
+                $this->assertEquals(['userId' => 'testUser', 'first' => true, 'after' => null], $params);
             }));
 
         $consentsMock->listConsents();
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testListConsents_invalidDateFrom()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+            '_getPageSize' => true,
+            '_getUserId' => 'testUser'
+        ]);
+
+        $consentsMock->listConsents(['dateFrom' => 'invalid_date']);
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testListConsents_invalidDateTo()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+            '_getPageSize' => true,
+            '_getUserId' => 'testUser'
+        ]);
+
+        $consentsMock->listConsents(['dateTo' => 'invalid_date']);
     }
 
     /**
@@ -145,46 +173,77 @@ class ConsentsTest extends TestCase
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
+            '_getPageSize' => true,
             '_getUserId' => 'testUser'
         ]);
 
-        $consentsMock->listConsents(['testStatus']);
+        $consentsMock->listConsents(['statuses' => ['testStatus']]);
     }
 
-    public function testListConsents_withStatus()
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testListConsents_invalidConsentType()
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
-            '_getConsentStatus' => 'testStatus',
+            '_getPageSize' => true,
+            '_getUserId' => 'testUser'
+        ]);
+
+        $consentsMock->listConsents(['consentTypes' => ['testType']]);
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testListConsents_invalidDataType()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
+            '_getPageSize' => true,
+            '_getUserId' => 'testUser'
+        ]);
+
+        $consentsMock->listConsents(['dataTypes' => ['testType']]);
+    }
+
+    public function testListConsents_withFilters()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => true,
             '_getUserId' => 'testUser',
             '_getPageSize' => true,
         ]);
         $consentsMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) {
-                $this->assertEquals(['statuses' => ['testStatus'], 'userId' => 'testUser', 'first' => true, 'after' => null], $params);
+                $this->assertEquals([
+                    'search'        => 'Cool',
+                    'country'       => 'US',
+                    'province'      => 'California',
+                    'city'          => 'Los Angeles',
+                    'dateFrom'      => '2019-01-01',
+                    'dateTo'        => '2019-12-31',
+                    'statuses'      => ['expired', 'rejected'],
+                    'consentTypes'  => ['perform_contract', 'perform_a_service'],
+                    'dataTypes'     => ['first_name', 'middle_name', 'last_name'],
+                    'userId'        => 'testUser',
+                    'first'         => true,
+                    'after'         => null,
+                ], $params);
             }));
 
-        $consentsMock->listConsents(['testStatus']);
-    }
-
-    public function testListConsents__UseConfig()
-    {
-        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => true,
-            '_getUserId' => 'testUser',
-            '_getPageSize' => true,
-        ]);
-        $consentsMock->expects($this->once())
-            ->method('_request')
-            ->will($this->returnCallback(function ($query, $params, $config) {
-                $this->assertEquals(['statuses' => null, 'userId' => 'testUser', 'first' => true, 'after' => null], $params);
-                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-            }));
-
-        $consentsMock->listConsents([], [
-            'apiKey' => 'testapikey',
-            'apiSecret' => 'testapisecret'
+        $consentsMock->listConsents([
+            'search'        => 'Cool',
+            'country'       => 'US',
+            'province'      => 'California',
+            'city'          => 'Los Angeles',
+            'dateFrom'      => '2019-01-01',
+            'dateTo'        => '2019-12-31',
+            'statuses'      => ['expired', 'rejected'],
+            'consentTypes'  => ['perform_contract', 'perform_a_service'],
+            'dataTypes'     => ['first_name', 'middle_name', 'last_name'],
         ]);
     }
 
@@ -638,8 +697,10 @@ class ConsentsTest extends TestCase
             '_request' => $this->_createResponse(
                 200,
                 (object) [
-                    'data_package' => (object) [
-                        'data' => 'encrypted data package'
+                    'data_package' => [
+                        (object) [
+                            'data' => 'encrypted data package'
+                        ]
                     ]
                 ]
             ),
@@ -655,7 +716,7 @@ class ConsentsTest extends TestCase
         $this->_setProperty($consentsMock, '_encryption', $encryptionMock);
 
         $response = $consentsMock->getDataPackage('testConsentId');
-        $this->assertEquals('{"test": true}', $response->result->data_package->data);
+        $this->assertEquals('{"test": true}', $response->result->data_package[0]->data);
     }
 
     public function testGetDataPackage_SkipDecryptingIfNoPGPKeyProvided()
@@ -664,8 +725,10 @@ class ConsentsTest extends TestCase
             '_request' => $this->_createResponse(
                 200,
                 (object) [
-                    'data_package' => (object) [
-                        'data' => 'encrypted data package'
+                    'data_package' => [
+                        (object) [
+                            'data' => 'encrypted data package'
+                        ]
                     ]
                 ]
             ),
@@ -681,7 +744,7 @@ class ConsentsTest extends TestCase
         $this->_setProperty($consentsMock, '_encryption', $encryptionMock);
 
         $response = $consentsMock->getDataPackage('testConsentId');
-        $this->assertEquals('encrypted data package', $response->result->data_package->data);
+        $this->assertEquals('encrypted data package', $response->result->data_package[0]->data);
     }
 
     public function testGetDataPackage_DecryptingError()
@@ -690,8 +753,10 @@ class ConsentsTest extends TestCase
             '_request' => $this->_createResponse(
                 200,
                 (object) [
-                    'data_package' => (object) [
-                        'data' => 'encrypted data package'
+                    'data_package' => [
+                        (object) [
+                            'data' => 'encrypted data package'
+                        ],
                     ]
                 ]
             ),
@@ -707,7 +772,7 @@ class ConsentsTest extends TestCase
         $this->_setProperty($consentsMock, '_encryption', $encryptionMock);
 
         $response = $consentsMock->getDataPackage('testConsentId');
-        $this->assertEquals('encrypted data package', $response->result->data_package->data);
+        $this->assertEquals('encrypted data package', $response->result->data_package[0]->data);
     }
 
     /**
@@ -740,5 +805,34 @@ class ConsentsTest extends TestCase
         ]);
 
         $this->assertEquals(null, $consentsMock->getCampaignIdByRef("testRef")->result);
+    }
+
+    public function testShareConsents()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => $this->_createResponse(200, true)
+        ]);
+        $consentsMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals([
+                    'config' => [
+                        'campaign_reference' => 'campaignRef',
+                        'campaign_cursor' => 'campaignId',
+                        'consent_cursors' => [],
+                    ]
+                ], $params);
+            }));
+
+        $consentsMock->shareConsents('campaignRef', 'campaignId');
+    }
+
+    /**
+     * @expectedException \XcooBee\Exception\XcooBeeException
+     */
+    public function testShareConsents_InvalidArguments()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, []);
+        $consentsMock->shareConsents('campaignRef');
     }
 }
