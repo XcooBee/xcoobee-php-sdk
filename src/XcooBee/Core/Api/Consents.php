@@ -270,23 +270,49 @@ class Consents extends Api
     /**
      * list all consents
      *
-     * @param int $statusId
+     * @param array $filters
      * @param array $config
      *
      * @return Response
      *
      * @throws XcooBeeException
      */
-    public function listConsents($statusIds = [], $config = [])
+    public function listConsents($filters = [], $config = [])
     {
-        $query = 'query listConsents($userId: String!, $statuses: [ConsentStatus], $first : Int, $after: String) {
-            consents(campaign_owner_cursor: $userId, statuses : $statuses, first : $first , after : $after) {
+        $query = 'query listConsents($userId: String!, $statuses: [ConsentStatus], $consentTypes: [ConsentType], $dataTypes: [ConsentDatatype], $dateFrom: String, $dateTo: String, $search: String, $country: String, $province: String, $city: String, $first: Int, $after: String) {
+            consents(campaign_owner_cursor: $userId, statuses : $statuses, consent_types: $consentTypes, data_types: $dataTypes, date_from: $dateFrom, date_to: $dateTo, search: $search, country: $country, province: $province, city: $city, first: $first, after: $after) {
                 data {
-                    consent_cursor,
-                    consent_status,
-                    user_xcoobee_id,
-                    date_c,
-                    date_e,
+                    consent_cursor
+                    user_cursor
+                    user_display_name
+                    user_xcoobee_id
+                    campaign_cursor
+                    campaign_status
+                    consent_name
+                    consent_description
+                    consent_status
+                    consent_type
+                    consent_source
+                    consent_details {
+                        datatype
+                        marker
+                        share_hash
+                    }
+                    date_c
+                    date_e
+                    date_u
+                    date_approved
+                    date_deleted
+                    update_confirmed
+                    deletion_confirmed
+                    request_data_types
+                    request_data_sections {
+                        section_fields {
+                            datatype
+                        }
+                    }
+                    is_data_request
+                    user_email_mask
                 }
                 page_info {
                     end_cursor
@@ -295,17 +321,114 @@ class Consents extends Api
             }
         }';
 
-        $statuses = [];
-        foreach ($statusIds as $statusId) {
-            $statuses[] = $this->_getConsentStatus($statusId);
-        }
-
-        return $this->_request($query, [
-            'statuses' => $statuses ? : null,
+        $variables = [
             'userId' => $this->_getUserId($config),
             'first' => $this->_getPageSize($config),
             'after' => null,
-        ], $config);
+        ];
+
+        if (array_key_exists('search', $filters)) {
+            $variables['search'] = $filters['search'];
+        }
+
+        if (array_key_exists('country', $filters)) {
+            $variables['country'] = $filters['country'];
+        }
+
+        if (array_key_exists('province', $filters)) {
+            $variables['province'] = $filters['province'];
+        }
+
+        if (array_key_exists('city', $filters)) {
+            $variables['city'] = $filters['city'];
+        }
+
+        if (array_key_exists('dateFrom', $filters)) {
+            $dateString = $filters['dateFrom'];
+            try {
+                $from = new \DateTime($dateString);
+                $variables['dateFrom'] = $dateString;
+            } catch (\Exception $e) {
+                throw new XcooBeeException("Invalid date string '$dateString' provided");
+            }
+        }
+
+        if (array_key_exists('dateTo', $filters)) {
+            $dateString = $filters['dateTo'];
+            try {
+                $from = new \DateTime($dateString);
+                $variables['dateTo'] = $dateString;
+            } catch (\Exception $e) {
+                throw new XcooBeeException("Invalid date string '$dateString' provided");
+            }
+        }
+
+        if (array_key_exists('statuses', $filters)) {
+            $availableStatuses = [
+                'pending',
+                'active',
+                'updating',
+                'offer',
+                'cancelled',
+                'expired',
+                'rejected'
+            ];
+            foreach ($filters['statuses'] as $status) {
+                if (!in_array($status, $availableStatuses)) {
+                    throw new XcooBeeException("Invalid status '$status' provided");
+                }
+            }
+
+            $variables['statuses'] = $filters['statuses'];
+        }
+
+        if (array_key_exists('consentTypes', $filters)) {
+            $availableTypes = [
+                'missing', 'perform_contract', 'perform_a_service', 'deliver_a_product', 'order_fullfillment', 'shipping',
+                'billing', 'subscription', 'support', 'support_a_service', 'support_a_product', 'warranty',
+                'create_custom_service_and_product', 'create_custom_service', 'create_custom_product', 'travel',
+                'deliver_itiniary_changes', 'government_services', 'emergency_services', 'law_enforcement',
+                'health_care_services', 'care_delivery', 'health_billing', 'emergency_request', 'product_announcement',
+                'product_information', 'survey', 'marketing', 'promotion', 'data_aggregation', 'anonymized_data_aggregation',
+                'company_information', 'press_releaseases', 'financial_reports', 'website_tracking', 'web_application_tracking',
+                'mobile_device_tracking', 'iot_device_tracking', 'payment_processing', 'donation', 'private_consent',
+                'employee_administration', 'employee_management', 'contractor_management', 'training', 'it_administration',
+                'supplier_screening', 'other',
+            ];
+            foreach ($filters['consentTypes'] as $type) {
+                if (!in_array($type, $availableTypes)) {
+                    throw new XcooBeeException("Invalid type '$type' provided");
+                }
+            }
+
+            $variables['consentTypes'] = $filters['consentTypes'];
+        }
+
+        if (array_key_exists('dataTypes', $filters)) {
+            $availableDataTypes = [
+                'first_name', 'middle_name', 'last_name', 'name_prefix', 'name_suffix', 'xcoobee_id',
+                'email', 'alternate_email', 'phone', 'alternate_phone', 'street1', 'street2', 'city',
+                'state', 'postal_code', 'country', 'date_of_birth', 'image', 'ethnicity_race', 'genetic_data',
+                'biometric_data', 'bank_account_description', 'bank_name', 'bank_routing_number', 'bank_swift',
+                'bank_isfc', 'bank_account_number', 'bank_iban', 'paypal_email', 'payment_token',
+                'government_document_references', 'government_id', 'location_data', 'health_record',
+                'emergency_medical_record', 'physical_health_record', 'dental_record', 'mental_health_record',
+                'health_metrics', 'internet_access_record', 'ip_address', 'device_identifiers', 'browser_details',
+                'meter_reading', 'party_affiliation', 'religion', 'sexual_orientation', 'criminal_conviction', 'membership',
+                'application_cookie', 'usage_cookie', 'statistics_cookie', 'advertising_cookie', 'social_posts',
+                'twitter_handle', 'family_members', 'friends', 'colleagues', 'custom', 'other1', 'other2', 'other3',
+                'other4', 'other5', 'other6', 'other7', 'other8', 'other9'
+            ];
+            foreach ($filters['dataTypes'] as $type) {
+                if (!in_array($type, $availableDataTypes)) {
+                    throw new XcooBeeException("Invalid data type '$type' provided");
+                }
+            }
+
+            $variables['dataTypes'] = $filters['dataTypes'];
+        }
+
+        return $this->_request($query, $variables, $config);
     }
 
     /**
@@ -391,15 +514,17 @@ class Consents extends Api
         $response = $this->_request($query, ['consentId' => $consentId], $config);
 
         // Try to decrypt the data.
-        if ($response->code === 200 && !empty($response->result->data_package->data)) {
-            try {
-                $decryptedData = $this->_encryption->decrypt($response->result->data_package->data);
+        if ($response->code === 200 && !empty($response->result->data_package)) {
+            foreach ($response->result->data_package as $key => $dataPackage) {
+                try {
+                    $decryptedData = $this->_encryption->decrypt($dataPackage->data);
 
-                if ($decryptedData !== null) {
-                    $response->result->data_package->data = $decryptedData;
+                    if ($decryptedData !== null) {
+                        $response->result->data_package[$key]->data = $decryptedData;
+                    }
+                } catch (EncryptionException $e) {
+                    // Do nothing, we will pass on the data as it is.
                 }
-            } catch (EncryptionException $e) {
-                // Do nothing, we will pass on the data as it is.
             }
         }
 
@@ -469,36 +594,34 @@ class Consents extends Api
         return $response;
     }
 
-    protected function _getXcoobeeIdByConsent($consentId, $config = [])
+    /**
+     * Share consents to another campaign
+     *
+     * @param string $campaignRef
+     * @param string $campaignId
+     * @param array $consetnIds
+     * @param array $config
+     * @return Response
+     * @throws XcooBeeException
+     */
+    public function shareConsents($campaignRef, $campaignId = null, $consentIds = [], $config = [])
     {
-        $consent = $this->getConsentData($consentId, $config = []);
-        if (!empty($consent->result->consent)) {
-            return $consent->result->consent->user_xcoobee_id;
+        if (!$campaignId && !$consentIds) {
+            throw new XcooBeeException('Either campaignId or consentIds should be provided');
         }
 
-        return false;
-    }
+        $query = 'mutation shareConsents($config: ShareConsentsConfig!){
+            share_consents(config: $config){
+                ref_id
+            }
+        }';
 
-    protected function _getConsentStatus($statusId)
-    {
-        if ($statusId === null) {
-            return null;
-        }
-
-        $availableStatus = [
-            'pending',
-            'active',
-            'updating',
-            'offer',
-            'cancelled',
-            'expired',
-            'rejected'
-        ];
-
-        if (array_key_exists($statusId, $availableStatus)) {
-            return $availableStatus[$statusId];
-        }
-
-        throw new XcooBeeException('invalid "statusId" provided');
+        return  $this->_request($query, [
+            'config' => [
+                'campaign_reference' => $campaignRef,
+                'campaign_cursor' => $campaignId,
+                'consent_cursors' => $consentIds,
+            ]
+        ], $config);
     }
 }
