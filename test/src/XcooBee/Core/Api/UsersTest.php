@@ -14,10 +14,10 @@ class UsersTest extends TestCase {
             '_getPageSize' => true
         ]);
         $usersMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['first' => true, 'after' => null, 'userId' => 'testuserId'], $params);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['first' => true, 'after' => null, 'userId' => 'testuserId'], $params);
+            }));
 
         $usersMock->getConversation('testuserId');
     }
@@ -29,11 +29,11 @@ class UsersTest extends TestCase {
             '_getPageSize' => true
         ]);
         $usersMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                            $this->assertEquals(['first' => true, 'after' => null, 'userId' => 'testuserId'], $params);
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params, $config) {
+                $this->assertEquals(['first' => true, 'after' => null, 'userId' => 'testuserId'], $params);
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+            }));
 
         $usersMock->getConversation('testuserId', [
             'apiKey' => 'testapikey' ,
@@ -175,11 +175,11 @@ class UsersTest extends TestCase {
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) {
                 $this->assertEquals(['config' => [
-                        'message' => 'test message',
-                        'reference_cursor' => 'testconsentId',
-                        'note_type' => 'consent',
-                        'user_cursor' => 'testuserID',
-                    ]], $params);
+                    'message' => 'test message',
+                    'reference_cursor' => 'testconsentId',
+                    'note_type' => 'consent',
+                    'user_cursor' => 'testuserID',
+                ]], $params);
             }));
 
         $usersMock->sendUserMessage('test message', ['consentId' => 'testconsentId']);
@@ -196,11 +196,11 @@ class UsersTest extends TestCase {
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) {
                 $this->assertEquals(['config' => [
-                        'message' => 'test message',
-                        'reference_cursor' => 'testTicketId',
-                        'note_type' => 'ticket',
-                        'user_cursor' => 'testuserID',
-                    ]], $params);
+                    'message' => 'test message',
+                    'reference_cursor' => 'testTicketId',
+                    'note_type' => 'ticket',
+                    'user_cursor' => 'testuserID',
+                ]], $params);
             }));
 
         $usersMock->sendUserMessage('test message', ['ticketId' => 'testTicketId']);
