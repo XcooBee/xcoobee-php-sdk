@@ -900,7 +900,8 @@ standard response object
 - status 400 if error
 
 ## dontSellData(email[, config])
-Set `Do Not Sell` flag for user. Consents for this users won't be shared between campaigns for 1 year. After expiration it should be extended
+
+Set `Do Not Sell` flag for user. Consents for this user won't be shared between campaigns for 1 year. After expiration, it should be extended.
 
 options:
 ```
@@ -1259,4 +1260,3 @@ You may receive `401` error responses from XcooBee if your API call originates f
 ## Error 429
 
 Once you have exceeded your call limits, your call will return status `429` too many requests. Please update your subscription or contact support.
-
