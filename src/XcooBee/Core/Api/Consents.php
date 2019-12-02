@@ -642,7 +642,7 @@ class Consents extends Api
 
         $query = 'mutation dontSellData($email: String!) {
             do_not_sell_data(email: $email) {
-                user_email
+              user_email
             }
         }';
 
