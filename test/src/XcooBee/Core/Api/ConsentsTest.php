@@ -835,4 +835,18 @@ class ConsentsTest extends TestCase
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, []);
         $consentsMock->shareConsents('campaignRef');
     }
+
+    public function testDontSellData()
+    {
+        $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
+            '_request' => $this->_createResponse(200, true),
+        ]);
+        $consentsMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['email' => 'test@test.email'], $params);
+            }));
+
+        $consentsMock->dontSellData('test@test.email');
+    }
 }

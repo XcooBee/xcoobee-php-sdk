@@ -624,4 +624,37 @@ class Consents extends Api
             ]
         ], $config);
     }
+
+    /**
+     * Set or extend `Do Not Sell Data` flag
+     *
+     * @param string $email
+     * @param array $config
+     *
+     * @return Response
+     * @throws XcooBeeException
+     */
+    public function dontSellData($email, $config = [])
+    {
+        if (!$email) {
+            throw new XcooBeeException('No "email" provided');
+        }
+
+        $query = 'mutation dontSellData($email: String!) {
+            do_not_sell_data(email: $email) {
+              user_email
+            }
+        }';
+
+        $response = $this->_request($query, ['email' => $email], $config);
+        if ($response->code !== 200) {
+            return $response;
+        }
+
+        $response = new Response();
+        $response->code = 200;
+        $response->result = true;
+
+        return $response;
+    }
 }
