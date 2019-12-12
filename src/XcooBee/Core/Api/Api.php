@@ -13,10 +13,10 @@ class Api
 
     /** @var GraphQLClient */
     protected $_client;
-    
+
     /** @var XcooBee */
     protected $_xcoobee;
-    
+
     public function __construct(XcooBee $xcoobee)
     {
         $this->_xcoobee = $xcoobee;
@@ -49,28 +49,28 @@ class Api
         if($config){
             $config = \XcooBee\Models\ConfigModel::createFromData($config);
         }
-        
+
         return $this->_client->request($query, $variables, [
             'Content-Type' => 'application/json',
         ], $config);
     }
-    
+
     /**
      * Get default Campaign
      */
-    protected function _getDefaultCampaignId() 
+    protected function _getDefaultCampaignId()
     {
-        return $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY)->campaignId;
+        return $this->_xcoobee->getConfig()->campaignId;
     }
-    
+
     /**
      * Get Campaign id
-     * 
+     *
      * @param String $campaignId
      * @param array $config
-     * 
+     *
      * @return String
-     * 
+     *
      * @throws XcooBeeException
      */
     protected function _getCampaignId($campaignId, $config)
@@ -81,14 +81,14 @@ class Api
         if(array_key_exists('campaignId', $config)){
             return $config['campaignId'];
         }
-        
+
         if ($campaignId = $this->_getDefaultCampaignId()) {
             return $campaignId;
         }
-        
+
         throw new XcooBeeException('No "campaignId" provided');
     }
-    
+
     /**
      * Get page size.
      *
@@ -103,7 +103,7 @@ class Api
             return $config['pageSize'] > self::MAX_PAGE_SIZE ? self::MAX_PAGE_SIZE : $config['pageSize'];
         }
 
-        $cachedPageSize = $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY)->pageSize;
+        $cachedPageSize = $this->_xcoobee->getConfig()->pageSize;
 
         return  is_null($cachedPageSize) || $cachedPageSize > self::MAX_PAGE_SIZE ? self::MAX_PAGE_SIZE : $cachedPageSize;
     }

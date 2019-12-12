@@ -16,11 +16,13 @@ class CachedData
 
     protected static $_instance = null;
 
-    protected $_store;
+    protected $_store = null;
 
-    public function __construct(FileSystem $driver)
+    public function __construct(FileSystem $driver = null)
     {
-        $this->_store = new Pool($driver);
+        if ($driver !== null) {
+            $this->_store = new Pool($driver);
+        }
     }
 
     /**
@@ -53,7 +55,8 @@ class CachedData
             try {
                 return new FileSystem([]);
             } catch (\Exception $ex) {
-                throw new XcooBeeException('Couldn\'t init cache driver. Add correct permission to SDK directory');
+                // in case we weren't able to use filesystem, don't use cache at all
+                return null;
             }
         }
     }
@@ -66,6 +69,10 @@ class CachedData
      */
     public function setStore($key, $value)
     {
+        if ($this->_store === null) {
+            return null;
+        }
+
         $item = $this->_store->getItem(md5($key));
         $this->_store->save($item->set($value));
     }
@@ -78,6 +85,10 @@ class CachedData
      */
     public function getStore($key)
     {
+        if ($this->_store === null) {
+            return null;
+        }
+
         $item = $this->_store->getItem(md5($key));
         return $item->get();
     }
@@ -87,6 +98,10 @@ class CachedData
      */
     public function clearStore()
     {
+        if ($this->_store === null) {
+            return null;
+        }
+
         $this->_store->clear();
     }
 

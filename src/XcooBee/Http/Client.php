@@ -70,7 +70,7 @@ class Client
         $token = $store->getStore(CachedData::AUTH_TOKEN_KEY);
 
         if($token === null){
-            $config = $store->getStore(CachedData::CONFIG_KEY);
+            $config = $this->_xcoobee->getConfig();
             $token = $this->_fetchToken($config);
             $store->setStore(CachedData::AUTH_TOKEN_KEY, $token);
         }

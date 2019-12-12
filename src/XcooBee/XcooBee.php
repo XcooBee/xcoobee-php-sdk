@@ -32,7 +32,7 @@ class XcooBee
     public $inbox;
     /** @var CachedData */
     private $_store;
-    
+
     public function __construct()
     {
         $this->configuration = new Configuration($this);
@@ -72,7 +72,7 @@ class XcooBee
     {
         $this->configuration->clearConfig();
     }
-    
+
     /**
      * Get CachedData
      *
@@ -80,7 +80,6 @@ class XcooBee
      */
     public function getStore()
     {
-        
         return $this->_store;
     }
 }
