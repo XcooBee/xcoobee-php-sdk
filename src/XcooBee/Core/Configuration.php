@@ -10,12 +10,15 @@ class Configuration
 {
     /** @var XcooBee */
     protected $_xcoobee;
-    
+
+    /** @var ConfigModel */
+    protected $_config = null;
+
     public function __construct(XcooBee $xcoobee)
     {
         $this->_xcoobee = $xcoobee;
     }
-    
+
     /**
      * Set configuration data
      *
@@ -23,6 +26,8 @@ class Configuration
      */
     public function setConfig(ConfigModel $config)
     {
+        $this->_config = $config;
+
         $savedConfig = $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY);
         if($savedConfig != $config){
             $this->_xcoobee->getStore()->setStore(CachedData::CONFIG_KEY, $config);
@@ -36,6 +41,10 @@ class Configuration
      */
     public function getConfig()
     {
+        if ($this->_config !== null) {
+            return $this->_config;
+        }
+
         return $this->_xcoobee->getStore()->getStore(CachedData::CONFIG_KEY);
     }
 
