@@ -53,7 +53,7 @@
     - [registerConsents](#registerconsentsfilename-targets-reference-campaignid-config)
     - [getCampaignIdByRef](#getcampaignidbyrefcampaignref-config)
     - [shareConsents](#shareconsentscampaignref-campaignid-consentids-config)
-    - [dontSellData](#dontselldataemail-config)
+    - [dontSellData](#dontselldataemail-dontsell-config)
 - [User API](#user-api)
     - [getUsePublicKey](#getuserpublickeyxid-config)
     - [sendUserMessage](#sendusermessagemessage-reference-config)
@@ -899,14 +899,15 @@ standard response object
     - result will contain reference
 - status 400 if error
 
-## dontSellData(email[, config])
+## dontSellData(email[, dontSell, config])
 
 Set `Do Not Sell` flag for user. Consents for this user won't be shared between campaigns for 1 year. After expiration, it should be extended.
 
 options:
 ```
-email  => the email of user, that flag should be set for
-config => optional: the config object
+email    => the email of user, that flag should be set for
+dontSell => optional: flag state, `true` by default.
+config   => optional: the config object
 ```
 
 ### response
