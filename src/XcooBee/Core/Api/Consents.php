@@ -641,7 +641,7 @@ class Consents extends Api
             throw new XcooBeeException('No "email" provided');
         }
 
-        $query = 'mutation dontSellData($email: String!, $dontSell: Boolean){
+        $query = 'mutation dontSellData($email: String, $dontSell: Boolean){
             do_not_sell_data(email: $email, dont_sell: $dontSell){
                 user_email
             }
