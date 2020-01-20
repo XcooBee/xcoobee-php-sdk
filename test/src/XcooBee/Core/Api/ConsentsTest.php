@@ -844,7 +844,7 @@ class ConsentsTest extends TestCase
         $consentsMock->expects($this->once())
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) {
-                $this->assertEquals(['email' => 'test@test.email'], $params);
+                $this->assertEquals(['email' => 'test@test.email', 'dontSell' => true], $params);
             }));
 
         $consentsMock->dontSellData('test@test.email');

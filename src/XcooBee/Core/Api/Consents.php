@@ -629,24 +629,25 @@ class Consents extends Api
      * Set or extend `Do Not Sell Data` flag
      *
      * @param string $email
+     * @param boolean $dontSell
      * @param array $config
      *
      * @return Response
      * @throws XcooBeeException
      */
-    public function dontSellData($email, $config = [])
+    public function dontSellData($email, $dontSell = true, $config = [])
     {
         if (!$email) {
             throw new XcooBeeException('No "email" provided');
         }
 
-        $query = 'mutation dontSellData($email: String!) {
-            do_not_sell_data(email: $email) {
-              user_email
+        $query = 'mutation dontSellData($email: String, $dontSell: Boolean){
+            do_not_sell_data(email: $email, dont_sell: $dontSell){
+                user_email
             }
         }';
 
-        $response = $this->_request($query, ['email' => $email], $config);
+        $response = $this->_request($query, ['email' => $email, 'dontSell' => $dontSell], $config);
         if ($response->code !== 200) {
             return $response;
         }
