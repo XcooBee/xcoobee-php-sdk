@@ -53,96 +53,147 @@ class System extends Api
     }
 
     /**
-     * List all Events
+     * List event subscriptions
      *
-     * @param string $campaignId
+     * @param string $referenceId
+     * @param string $referenceType
      * @param array $config
      *
      * @return Response
      * @throws XcooBeeException
      */
-    public function listEventSubscriptions($campaignId = null, $config = [])
+    public function listEventSubscriptions($referenceId = null, $referenceType = null, $config = [])
     {
-        $campaignId = $this->_getCampaignId($campaignId, $config);
-
-        $query = 'query listEventSubscriptions($campaignId: String!) {
-            event_subscriptions(campaign_cursor: $campaignId) {
+        $query = 'query getEventSubscriptions($referenceType: EventReferenceType, $referenceId: String) {
+            event_subscriptions (reference_type: $referenceType, reference_cursor: $referenceId) {
                 data {
-                    event_type,
-                    handler,
-                    date_c
+                    topic
+                    channel
+                    handler
+                    status
+                    event_type
+                    reference_cursor
+                    reference_type
                 }
             }
         }';
 
-        return $this->_request($query, ['campaignId' => $campaignId], $config);
+        return $this->_request($query, [
+            'referenceId' => $referenceId,
+            'referenceType' => $referenceType,
+        ], $config);
     }
 
     /**
-     * add an Event
+     * List all possible event topics and channels
      *
-     * @param array $events
-     * @param string $campaignId
+     * @param string $referenceId
+     * @param string $referenceType
      * @param array $config
      *
      * @return Response
      * @throws XcooBeeException
      */
-    public function addEventSubscription($events, $campaignId = null, $config = [])
+    public function getAvailableSubscriptions($referenceId = null, $referenceType = null, $config = [])
     {
-        $campaignId = $this->_getCampaignId($campaignId, $config);
+        $query = 'query getAvailableSubscriptions($referenceType: EventReferenceType, $referenceId: String){
+            available_subscriptions (reference_type: $referenceType, reference_cursor: $referenceId) {
+                topic
+                channels
+            }
+        }';
 
-        $mutation = 'mutation addEventSubscription($config: AddSubscriptionsConfig!) {
+        return $this->_request($query, [
+            'referenceId' => $referenceId,
+            'referenceType' => $referenceType,
+        ], $config);
+    }
+
+    /**
+     * Add new event subscriptions
+     *
+     * @param array $eventSubscriptions
+     * @param array $config
+     *
+     * @return Response
+     * @throws XcooBeeException
+     */
+    public function addEventSubscriptions($eventSubscriptions, $config = [])
+    {
+        $mutation = 'mutation addEventSubscriptions($config: AddSubscriptionsConfig!) {
             add_event_subscriptions(config: $config) {
-                data{
-                    event_type
+                data {
+                    topic
+                    channel
+                    handler
                 }
             }
         }';
 
-        $mappedEvents = [];
-        foreach ($events as $type => $handler) {
-            $mappedEvents[] = [
-                'handler' => $handler,
-                'event_type' => $this->_getSubscriptionEvent($type)
-            ];
+        foreach ($eventSubscriptions as $eventSubscription) {
+            if (!array_key_exists('topic', $eventSubscription) || !array_key_exists('channel', $eventSubscription)) {
+                throw new XcooBeeException('topic and channel should be provided');
+            }
         }
 
         return $this->_request($mutation, ['config' => [
-                        'campaign_cursor' => $campaignId,
-                        'events' => $mappedEvents,
-                ]], $config);
+            'events' => $eventSubscriptions,
+        ]], $config);
     }
 
     /**
-     * delete an Event
+     * Delete event subscriptions
      *
-     * @param array $events
-     * @param string $campaignId
+     * @param array $eventSubscriptions
      * @param array $config
      *
      * @return Response
      * @throws XcooBeeException
      */
-    public function deleteEventSubscription($events, $campaignId = null, $config = [])
+    public function deleteEventSubscriptions($eventSubscriptions, $config = [])
     {
-        $campaignId = $this->_getCampaignId($campaignId, $config);
-
-        $mutation = 'mutation deleteEventSubscription($config: DeleteSubscriptionsConfig!) {
+        $mutation = 'mutation deleteEventSubscriptions($config: DeleteSubscriptionsConfig!) {
             delete_event_subscriptions(config: $config) {
                 deleted_number
             }
         }';
 
-        $mappedEvents = [];
-        foreach ($events as $key => $type) {
-            $mappedEvents[] = $this->_getSubscriptionEvent($type);
+        foreach ($eventSubscriptions as $eventSubscription) {
+            if (!array_key_exists('topic', $eventSubscription) || !array_key_exists('channel', $eventSubscription)) {
+                throw new XcooBeeException('topic and channel should be provided');
+            }
         }
 
         return $this->_request($mutation, ['config' => [
-                'campaign_cursor' => $campaignId,
-                'events' => $mappedEvents,
-            ]], $config);
+            'events' => $eventSubscriptions,
+        ]], $config);
+    }
+
+    /**
+     * Insuspend event subscription
+     *
+     * @param string $topic
+     * @param string $channel
+     * @param array $config
+     *
+     * @return Response
+     * @throws XcooBeeException
+     */
+    public function unsuspendEventSubscription($topic, $channel, $config = [])
+    {
+        $mutation = 'mutation unsuspendEventSubscriptions($config: EditSubscriptionConfig!) {
+            edit_event_subscription(config: $config) {
+                topic
+                channel
+                status
+            }
+        }';
+
+        return $this->_request($mutation, ['config' => [
+            'topic' => $topic,
+            'channel' => $channel,
+            'status' => 'active',
+        ]], $config);
     }
 
     /**
@@ -162,10 +213,16 @@ class System extends Api
                     reference_cursor
                     reference_type
                     owner_cursor
+                    topic
                     event_type
                     payload
                     hmac
                     date_c
+                    response {
+                        channel
+                        status
+                        response
+                    }
                 }
             }
         }';
@@ -202,27 +259,24 @@ class System extends Api
     /**
      * trigger test event to campaign webhook
      *
-     * @param string $type
+     * @param string $topic
      * @param array $config
      *
      * @return Response
      * @throws XcooBeeException
      */
-    public function triggerEvent($type, $config = [])
+    public function triggerEvent($topic, $config = [])
     {
-        $campaignId = $this->_getCampaignId(null, $config);
-
-        $mutation = 'mutation sendTestEvent($campaignId: String!, $type: EventSubscriptionType!){
-            send_test_event(campaign_cursor: $campaignId, type: $type){
-                event_type
+        $mutation = 'mutation sendTestEvent($topic: String){
+            send_test_event(topic: $topic){
+                topic
                 payload
                 hmac
             }
         }';
 
         return $this->_request($mutation, ['config' => [
-            'campaign_cursor' => $campaignId,
-            'type' => $this->_getSubscriptionEvent($type),
+            'topic' => $topic,
         ]], $config);
     }
 
@@ -295,47 +349,5 @@ class System extends Api
                 call_user_func_array($event->handler, array($event->payload));
             }
         }
-    }
-
-    /**
-     * get events
-     *
-     * @param string $event
-     *
-     * @return array
-     * @throws XcooBeeException
-     */
-    protected function _getSubscriptionEvent($event)
-    {
-        $events = [
-            'ConsentApproved'        => 'consent_approved',
-            'ConsentDeclined'        => 'consent_declined',
-            'ConsentChanged'         => 'consent_changed',
-            'ConsentNearExpiration'  => 'consent_near_expiration',
-            'ConsentExpired'         => 'consent_expired',
-            'DataApproved'           => 'data_approved',
-            'DataDeclined'           => 'data_declined',
-            'DataChanged'            => 'data_changed',
-            'DataNearExpiration'     => 'data_near_expiration',
-            'DataExpired'            => 'data_expired',
-            'BreachPresented'        => 'breach_presented',
-            'BreachBeeUsed'          => 'breach_bee_used',
-            'UserDataRequest'        => 'user_data_request',
-            'UserMessage'            => 'user_message',
-            'BeeSuccess'             => 'bee_success',
-            'BeeError'               => 'bee_error',
-            'ProcessSuccess'         => 'process_success',
-            'ProcessError'           => 'process_error',
-            'ProcessFileDelivered'   => 'process_file_delivered',
-            'ProcessFilePresented'   => 'process_file_presented',
-            'ProcessFileDownloaded'  => 'process_file_downloaded',
-            'ProcessFileDeleted'     => 'process_file_deleted'
-        ];
-
-        if (!array_key_exists($event, $events)) {
-            throw new XcooBeeException('invalid "event" provided');
-        }
-
-        return $events[$event];
     }
 }

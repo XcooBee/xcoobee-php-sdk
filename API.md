@@ -32,10 +32,12 @@
         - [UserMessage](#usermessage-2)
 - [System API](#system-api)
     - [ping](#pingconfig)
-    - [addEventSubscription](#addeventsubscriptionarrayofeventandhandlerpairs-campaignid-config)
-    - [listEventSubscriptions](#listeventsubscriptionscampaignid-config)
-    - [deleteEventSubscription](#deleteeventsubscriptionarrayofeventnames-campaignid-config)
-    - [triggerEvent](#triggereventtype-config)
+    - [listEventSubscriptions](#listeventsubscriptionsconfig)
+    - [getAvailableSubscriptions](#getavailablesubscriptionsreferenceid-referencetype-config)
+    - [addEventSubscriptions](#addeventsubscriptionseventsubscriptions-config)
+    - [deleteEventSubscriptions](#deleteeventsubscriptionseventsubscriptions-config)
+    - [unsuspendEventSubscription](#unsuspendeventsubscriptiontopic-channel-config)
+    - [triggerEvent](#triggereventtopic-config)
     - [handleEvents](#handleeventsevents)
     - [getEvents](#geteventsconfig)
 - [Consent Administration API](#consent-administration-api)
@@ -134,7 +136,7 @@ As an alternative to a public site, you can use the Event Polling mechanism as d
 
 If there is a delayed response, the call will be accepted and the response returned via the HTTP POST event configuration. Your system should have a web-endpoint that is reachable by the XcooBee system for the event responses. A webhook is not a REST endpoint (HTTP - verb based).
 
-The webhook system uses HTTPS `POST` calls to send information to you in response to event in XcooBee processing. You subscribe to events by calling the [`addEventSubscription()`](#add-event-subscription) method. More information and examples available in `examples/addEventSubscription.php` in this project.
+The webhook system uses HTTPS `POST` calls to send information to you in response to event in XcooBee processing. You subscribe to events by calling the [`addEventSubscriptions()`](#addeventsubscriptionseventsubscriptions-config) method. More information and examples available in `examples/addEventSubscriptions.php` in this project.
 
 Calling systems should be aware that there may be delays and that responses may be returned in different order from the call order.
 
@@ -194,21 +196,21 @@ If your application is under development and you need to work with events you ca
 #### `b` Register your Event Subscription and Handler Pairs
 
 
-This is one of the simpler parts. As you subscribe to events using the [`addEventSubscription()`](#add-event-subscription) you also supply the PHP function that you wish to invoke when such an event is returned as function argument. See the function definition for more information.
+This is one of the simpler parts. As you subscribe to events using the [`addEventSubscriptions()`](#addeventsubscriptionseventsubscriptions-config) you also supply the PHP function that you wish to invoke when such an event is returned as function argument. See the function definition for more information.
 
 
 #### `c` Process Inbound Events
 
-The easiest way to process inbound event is to invoke the [`handleEvents()`](#handle-events) method of the `system` class.
+The easiest way to process inbound event is to invoke the [`handleEvents()`](#handleeventsevents) method of the `system` class.
 
 Normally this is included in your site endpoint (page) that receives the HTTP POST from XcooBee. If you do event polling, you can pass the full POST body as `event` to the function.
 
-This [`handleEvents()`](#handle-events) will validate call and call your handlers that you have declared in step `b`
+This [`handleEvents()`](#handleeventsevents) will validate call and call your handlers that you have declared in step `b`
 
 
 ### Standard Endpoint (target Url)
 
-If you choose to accept events via webhook (HTTP POST), we recommend the that you create a standard endpoint to handle all communication. During the processing of this page you can, then, call the [`handleEvents()`](#handle-events) method.
+If you choose to accept events via webhook (HTTP POST), we recommend the that you create a standard endpoint to handle all communication. During the processing of this page you can, then, call the [`handleEvents()`](#handleeventsevents) method.
 
 The standard endpoint to create would be `/xbee/webhook`
 
@@ -235,12 +237,12 @@ It contains:
 - expiration date
 
 ### ConsentDeclined
-Fires when a consent request is declined. You should remove user data and sent a XcooBee confirmation via [`confirmDataDelete()`](#confirm-data-delete).
+Fires when a consent request is declined. You should remove user data and sent a XcooBee confirmation via [`confirmDataDelete()`](#confirmdatadeleteconsentid-config).
 The data submitted contains:
 - consent reference
 
 ### ConsentChanged
-Fires when consent is changed. A standard consent object is returned. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirm-consent-change).
+Fires when consent is changed. A standard consent object is returned. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirmconsentchangeconsentid-config).
 It contains:
 - consent reference
 - data types
@@ -248,7 +250,7 @@ It contains:
 - expiration date
 
 ### ConsentPartiallyChanged
-Fires when some consent's properties were changed. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirm-consent-change). A standard consent object is returned, but only updated data type are available.
+Fires when some consent's properties were changed. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirmconsentchangeconsentid-config). A standard consent object is returned, but only updated data type are available.
 It contains:
 - consent reference
 - data types
@@ -262,12 +264,12 @@ It contains:
 - expiration date
 
 ### ConsentExpired
-Fires when consent expired. You should remove user data and sent XcooBee confirmation via [`confirmDataDelete()`](#confirm-data-delete).
+Fires when consent expired. You should remove user data and sent XcooBee confirmation via [`confirmDataDelete()`](#confirmdatadeleteconsentid-config).
 It contains:
 - consent reference
 
 ### ConsentRenewed
-Fires when an active consent was renewed by a user. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirm-consent-change).
+Fires when an active consent was renewed by a user. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirmconsentchangeconsentid-config).
 It contains:
 - consent reference
 - expiration date
@@ -281,7 +283,7 @@ It contains:
 
 ### UserMessage
 Fires when user is sending you a message regarding a consent request.
-Your campaign can enable/disable this feature in the `campaign options`. You can respond to this using a [`sendUserMessage()`](#send-user-message) call.
+Your campaign can enable/disable this feature in the `campaign options`. You can respond to this using a [`sendUserMessage()`](#sendusermessagemessage-reference-config) call.
 It contains:
 - consent reference
 - xcoobeeId
@@ -300,12 +302,12 @@ It contains:
 - expiration
 
 ### DataDeclined
-Fires when user declined to provide data and consent. You should remove user data and sent XcooBee confirmation via [`confirmDataDelete()`](#confirm-data-delete).
+Fires when user declined to provide data and consent. You should remove user data and sent XcooBee confirmation via [`confirmDataDelete()`](#confirmdatadeleteconsentid-config).
 It contains:
 - consent reference
 
 ### DataChanged
-Fires when data or consent is changed. A standard consent object is returned. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirm-consent-change).
+Fires when data or consent is changed. A standard consent object is returned. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirmconsentchangeconsentid-config).
 It contains:
 - consent reference
 - data types with data
@@ -313,7 +315,7 @@ It contains:
 - expiration
 
 ### DataPartiallyChanged
-Fires when some consent's properties were changed. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirm-consent-change). A standard consent object is returned, but only updated data type are available.
+Fires when some consent's properties were changed. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirmconsentchangeconsentid-config). A standard consent object is returned, but only updated data type are available.
 It contains:
 - consent reference
 - data types
@@ -329,12 +331,12 @@ It contains:
 - expiration
 
 ### DataExpired
-Fires when data has expired. You should remove user data and sent XcooBee confirmation via [`confirmDataDelete()`](#confirm-data-delete).
+Fires when data has expired. You should remove user data and sent XcooBee confirmation via [`confirmDataDelete()`](#confirmdatadeleteconsentid-config).
 It contains:
 - consent reference
 
 ### DataRenewed
-Fires when an active consent was renewed by a user. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirm-consent-change).
+Fires when an active consent was renewed by a user. You should confirm update and send XcooBee confirmation via [`confirmConsentChange()`](#confirmconsentchangeconsentid-config).
 It contains:
 - consent reference
 - expiration date
@@ -350,7 +352,7 @@ It contains:
 
 ### UserMessage
 Fires when user is sending you a message regarding a consent request.
-Your campaign can enable/disable this feature in the `campaign options`. You can respond to this using the [`sendUserMessage()`](#send-user-message) function.
+Your campaign can enable/disable this feature in the `campaign options`. You can respond to this using the [`sendUserMessage()`](#sendusermessagemessage-reference-config) function.
 It contains:
 - consent reference
 - xcoobeeId
@@ -371,7 +373,7 @@ It contains:
 
 ### UserMessage
 Fires when user is sending you a message regarding a consent request.
-Your campaign can enable/disable this feature in the `campaign options`. You can respond to this using the [`sendUserMessage()`](#send-user-message) function.
+Your campaign can enable/disable this feature in the `campaign options`. You can respond to this using the [`sendUserMessage()`](#sendusermessagemessage-reference-config) function.
 It contains:
 - breach reference
 - xcoobeeId
@@ -399,52 +401,13 @@ standard response object
 - status 400 if error
 
 
-## addEventSubscription(arrayOfEventAndHandlerPairs[, campaignId, config])
-
-You can register subscriptions to hooks by calling the addEventSubscription function and providing the event (as specified in this document) and handler pairs `eventname: handler`.
-
-There is no wildcard event subscription, however, you can add many handlers at one time.
-
-Example:
-
-```
-$xcoobee->system->addEventSubscription(
-    ['ConsentDeclined' => 'declinedHandler'],
-    'ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be',
-    $config
-);
-```
-
-This will subscribe you on the XcooBee system to receive `ConsentDeclined` events for the `ifddb4cd9-d6ea-4005-9c7a-aeb104bc30be` campaign and call your handler named `declinedHandler(event)` when such an event occurs.
-
-All event data is attached to the `events` object in the function calls.
-
-No response is expected directly from any of the event handlers so returns are void/null.
-
-options:
-
-```
-events     => array with event and handler maps
-campaignId => optional: the campaign Id to use if not default
-config     => optional: the config object
-```
-
-### response
-
-standard response object
-- status 200 if success:
-  - result will contain added events data
-- status 400 if error
-
-
-## listEventSubscriptions([campaignId, config])
+## listEventSubscriptions([config])
 
 list current subscriptions.
 
 options:
 
 ```
-campaignId => optional: only get subscriptions for the campaign id
 config     => optional: the config object
 ```
 ### response
@@ -455,17 +418,115 @@ standard response object
 - status 400 if error
 
 
-## deleteEventSubscription(arrayOfEventNames[, campaignId, config])
+## getAvailableSubscriptions([referenceId, referenceType, config])
 
-delete existing subscriptions.
-If you do not supply a campaign Id the event will for the default campaign Id will be deleted. If the subscription does not exists we will still return success.
+list available topics and channels to subscribe.
+If no arguments passed, method will return all available topics for user.
 
 options:
 
 ```
-arrayOfEventNames => array with eventnames to be unsubscribed
-campaignId        => optional: the campaign Id to use if not default
-config            => optional: the config object
+referenceId     => optional: reference id of related entity (i.e. campaignId)
+referenceType   => optional: type of reference (i.e. campaign, funding_panel)
+config          => optional: the config object
+```
+### response
+
+standard response object
+- status 200 if success:
+  - result will contain subscription topic and channels
+- status 400 if error
+
+
+## addEventSubscriptions(eventSubscriptions[, config])
+
+You can register subscriptions to email, inbox and webhook by calling the addEventSubscriptions function and providing list of event subscription objects.
+
+Event subscription object structure:
+
+```
+topic   => topic of event, you want to subscribe
+channel => channel of event, where you'll receive event
+handler => the PHP function that will be called when we have bee API events
+```
+
+All available topics and channels for each topic you can get by calling [`getAvailableSubscriptions()`](#getavailablesubscriptionsreferenceid-referencetype-config) method
+
+Example:
+
+```
+$xcoobee->system->addEventSubscriptions(
+    [
+        [
+            'topic' => 'campaign:b8d.515543gc11/consent_declined',
+            'channel' => 'email',
+        ],
+        [
+            'topic' => 'campaign:b8d.515543gc11/consent_declined',
+            'channel' => 'webhook',
+            'handler' => 'declinedHandler',
+        ],
+    ],
+    $config
+);
+```
+
+This will subscribe you on the XcooBee system to receive `ConsentDeclined` events for the `b8d.515543gc11` campaign and call your handler named `declinedHandler(event)` when such an event occurs.
+
+All event data is attached to the `events` object in the function calls.
+
+No response is expected directly from any of the event handlers so returns are void/null.
+
+options:
+
+```
+eventSubscriptions  => array with subscriptions
+config              => optional: the config object
+```
+
+### response
+
+standard response object
+- status 200 if success:
+  - result will contain added events data
+- status 400 if error
+
+
+## deleteEventSubscriptions(eventSubscriptions, config])
+
+delete existing subscriptions.
+If the subscription does not exists we will still return success.
+
+Event subscription object structure:
+
+```
+topic   => topic of event, you want to unsubscribe
+channel => channel of event
+```
+
+Example:
+
+```
+$xcoobee->system->deleteEventSubscriptions(
+    [
+        [
+            'topic' => 'campaign:b8d.515543gc11/*',
+            'channel' => 'email',
+        ],
+        [
+            'topic' => 'campaign:b8d.515543gc11/*',
+            'channel' => 'webhook',
+        ],
+    ],
+    $config
+);
+```
+
+options:
+
+```
+eventSubscriptions  => array with topics and channels to be unsubscribed
+config              => optional: the config object
 ```
 ### response
 
@@ -475,15 +536,36 @@ standard response object
 - status 400 if error
 
 
-## triggerEvent(type[, config])
+## unsuspendEventSubscription(topic, channel[, config])
 
-Trigger test event to configured campaign webhook. The structure will be the same as real event (with encrypted payload and HMAC signature).
-Also you will receive `XBEE-TEST-EVENT` header, which indicates that event is test. If campaign webhook is not configured, you'll receive an error.
+Unsuspends suspended subscription.
 
 options:
 
 ```
-type   => name of event
+topic   => topic of event, you want to unsubscribe
+channel => channel of event
+config  => optional: the config object
+```
+### response
+
+standard response object
+- status 200 if success:
+  - result will contain unsuspended subscription
+- status 400 if error
+
+
+## triggerEvent(topic[, config])
+
+Trigger test event to channels (webhook, email, inbox). The structure will be the same as real event (with encrypted payload and HMAC signature).
+
+For webhook event you will receive `XBEE-TEST-EVENT` header, which indicates that event is test. If webhook is not configured, you won't receive an event.
+For inbox event you will receive file with suffix `TestEvent` in filename.
+
+options:
+
+```
+topic  => name of topic, you want trigger an event
 config => optional: the config object
 ```
 ### response
@@ -498,9 +580,9 @@ standard response object
 
 This function does not require a call to the XcooBee API. It is rather the handler for calls that you recceive **from** XcooBee via webhooks as outlined previously.
 
-You should embed this function into the route/endpoint processor that is invoked when XcooBee posts back to you one of the events that you have registered for earlier. You can find out which events these are by calling the [`listEventSubscriptions()`](#list-event-subscriptions) method.
+You should embed this function into the route/endpoint processor that is invoked when XcooBee posts back to you one of the events that you have registered for earlier. You can find out which events these are by calling the [`listEventSubscriptions()`](#listeventsubscriptionsconfig) method.
 
-The webhook post will be validated in this method and if post is valid, we will look into the registered events and further invoke the mapped placeholder function for each event that was created with the [`addEventSubscription()`](#add-event-subscription) method.
+The webhook post will be validated in this method and if post is valid, we will look into the registered events and further invoke the mapped placeholder function for each event that was created with the [`addEventSubscriptions()`](#addeventsubscriptionseventsubscriptions-config) method.
 
 Optionally, the events data object may be passed along with the data from the HTTP header and POST call.
 
@@ -995,7 +1077,7 @@ standard response object
 
 # Bee API
 
-The Bee api is the principal interface to hire bees. Most of the times this will be accomplished in two steps. In the first step you upload your files to be processed by bees using [`uploadFiles()`](#upload-bees) call. If you did not specify an outbox endpoint you will also have to call the [`takeOff()`](#take-off) function with the processing parameters for the bee.
+The Bee api is the principal interface to hire bees. Most of the times this will be accomplished in two steps. In the first step you upload your files to be processed by bees using [`uploadFiles()`](#uploadfilesfiles-endpoint-config) call. If you did not specify an outbox endpoint you will also have to call the [`takeOff()`](#takeoffbees-options-subscriptions-config) function with the processing parameters for the bee.
 
 The immediate response will only cover issues with files for the first bee. If you want to be informed about the progress of the processing you will need to subscribe to events.
 
@@ -1022,7 +1104,7 @@ standard response object
 
 ## uploadFiles(files[, endpoint, config])
 
-You use the uploadFiles function to upload files from your server to XcooBee. You can upload multiple files and you can optionally supply an outbox endpoint. If you have an outbox endpoint you do not need to call the [`takeOff()`](#take-off) function as the endpoint already specifies all processing parameters. If your subscription allows you can configure the outbox endpoints in the XcooBee UI.
+You use the uploadFiles function to upload files from your server to XcooBee. You can upload multiple files and you can optionally supply an outbox endpoint. If you have an outbox endpoint you do not need to call the [`takeOff()`](#takeoffbees-options-subscriptions-config) function as the endpoint already specifies all processing parameters. If your subscription allows you can configure the outbox endpoints in the XcooBee UI.
 
 options:
 ```
@@ -1040,7 +1122,7 @@ standard response object
 
 ## takeOff(bees, options[, subscriptions, config])
 
-You normally use this as follow up call to [`uploadFiles()`](#upload-files). This will start your processing. You specify the bee(s) that you want to hire and the parameter that are needed for the bee to work on your file(s). If you want to be kept up to date you can supply subscriptions. Please note that subscriptions will deduct points from your balance and will cause errors when your balance is insufficient.
+You normally use this as follow up call to [`uploadFiles()`](#uploadfilesfiles-endpoint-config). This will start your processing. You specify the bee(s) that you want to hire and the parameter that are needed for the bee to work on your file(s). If you want to be kept up to date you can supply subscriptions. Please note that subscriptions will deduct points from your balance and will cause errors when your balance is insufficient.
 
 This is the most complex function call in the Bee API and has multiple options and parts.
 

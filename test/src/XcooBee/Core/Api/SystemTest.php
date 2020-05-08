@@ -19,11 +19,11 @@ class SystemTest extends TestCase
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
         $XcooBeeMock->consents = $this->_getMock(Consents::class, [
             'getCampaignInfo' => (object) [
-                    'result' => (object) [
-                            'campaign' => (object) [
-                                    'xcoobee_targets' => [],
-                            ],
+                'result' => (object) [
+                    'campaign' => (object) [
+                        'xcoobee_targets' => [],
                     ],
+                ],
             ]
         ]);
         $XcooBeeMock->users = $this->_getMock(Users::class, [
@@ -43,11 +43,11 @@ class SystemTest extends TestCase
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
         $XcooBeeMock->consents = $this->_getMock(Consents::class, [
             'getCampaignInfo' => (object) [
-                    'result' => (object) [
-                            'campaign' => (object) [
-                                    'xcoobee_targets' => [],
-                            ],
+                'result' => (object) [
+                    'campaign' => (object) [
+                        'xcoobee_targets' => [],
                     ],
+                ],
             ]
         ]);
         $XcooBeeMock->users = $this->_getMock(Users::class, [
@@ -57,10 +57,10 @@ class SystemTest extends TestCase
                 '_getDefaultCampaignId' => null,
         ]);
         $XcooBeeMock->users->expects($this->once())
-                ->method('getUser')
-                ->will($this->returnCallback(function ($config) {
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                }));
+            ->method('getUser')
+            ->will($this->returnCallback(function ($config) {
+                $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
+            }));
         $this->_setProperty($systemMock, '_xcoobee', $XcooBeeMock);
 
         $response = $systemMock->ping(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret']);
@@ -72,14 +72,14 @@ class SystemTest extends TestCase
         $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
         $XcooBeeMock->consents = $this->_getMock(Consents::class, [
             'getCampaignInfo' => (object) [
-                    'result' => null
+                'result' => null
             ]
         ]);
         $XcooBeeMock->users = $this->_getMock(Users::class, [
             'getUser' => (object) ['pgp_public_key' => 'test']
         ]);
         $systemMock = $this->_getMock(System::class, [
-                '_getDefaultCampaignId' => null,
+            '_getDefaultCampaignId' => null,
         ]);
         $this->_setProperty($systemMock, '_xcoobee', $XcooBeeMock);
 
@@ -95,7 +95,7 @@ class SystemTest extends TestCase
             'getUser' => (object) ['pgp_public_key' => null]
         ]);
         $systemMock = $this->_getMock(System::class, [
-                '_getDefaultCampaignId' => null,
+            '_getDefaultCampaignId' => null,
         ]);
         $this->_setProperty($systemMock, '_xcoobee', $XcooBeeMock);
 
@@ -111,195 +111,113 @@ class SystemTest extends TestCase
         ]);
 
         $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['campaignId' => 'testCampaignId'], $params);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals([
+                    'referenceId' => 'campaignId',
+                    'referenceType' => 'campaign',
+                ], $params);
+            }));
 
-        $systemMock->listEventSubscriptions('testCampaignId');
+        $systemMock->listEventSubscriptions('campaignId', 'campaign');
     }
 
-    public function testListEventSubscriptions_UseDefaultCampaign()
-    {
-        $systemMock = $this->_getMock(System::class, [
-            '_request' => true,
-            '_getDefaultCampaignId' => 'testCampaignId',
-        ]);
-
-        $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['campaignId' => 'testCampaignId'], $params);
-                }));
-
-        $systemMock->listEventSubscriptions();
-    }
-
-    public function testListEventSubscriptions_UseConfig()
+    public function testGetAvailableSubscriptions()
     {
         $systemMock = $this->_getMock(System::class, [
             '_request' => true,
         ]);
 
         $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                            $this->assertEquals(['campaignId' => 'testCampaignId'], $params);
-                            $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals([
+                    'referenceId' => 'campaignId',
+                    'referenceType' => 'campaign',
+                ], $params);
+            }));
 
-        $systemMock->listEventSubscriptions('testCampaignId', [
-            'apiKey' => 'testapikey',
-            'apiSecret' => 'testapisecret'
-        ]);
+        $systemMock->getAvailableSubscriptions('campaignId', 'campaign');
     }
 
-    public function testAddEventSubscription()
+    public function testAddEventSubscriptions()
     {
         $systemMock = $this->_getMock(System::class, [
             '_request' => true,
-            '_getSubscriptionEvent' => "testEventType"
         ]);
 
         $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                    $this->assertEquals(['config' => [
-                            'events' => [["handler" => "testEventHandler", "event_type" => "testEventType"]],
-                            'campaign_cursor' => 'testCampaignId'
-                    ]], $params);
-                }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['config' => [
+                    'events' => [
+                        [
+                            'topic' => 'campaign:123.qwerty/*',
+                            'channel' => 'email',
+                        ],
+                        [
+                            'topic' => 'campaign:123.qwerty/*',
+                            'channel' => 'webhook',
+                            'handler' => 'testHandler',
+                        ],
+                    ],
+                ]], $params);
+            }));
 
-        $systemMock->addEventSubscription(["testEventType" => "testEventHandler"], 'testCampaignId');
+        $systemMock->addEventSubscriptions([
+            [
+                'topic' => 'campaign:123.qwerty/*',
+                'channel' => 'email',
+            ],
+            [
+                'topic' => 'campaign:123.qwerty/*',
+                'channel' => 'webhook',
+                'handler' => 'testHandler',
+            ],
+        ]);
     }
 
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
-    public function testAddEventSubscription_InvalidEvent()
+    public function testAddEventSubscriptions_NoTopicProvided()
     {
         $systemMock = $this->_getMock(System::class, [
             '_request' => true,
         ]);
 
-        $systemMock->addEventSubscription(["testEventType" => "testEventHandler"], 'testCampaignId');
-    }
-
-    public function testAddEventSubscription_UseDefaultCampaign()
-    {
-        $systemMock = $this->_getMock(System::class, [
-            '_request' => true,
-            '_getSubscriptionEvent' => "testEventType",
-            '_getDefaultCampaignId' => 'testCampaignId'
-        ]);
-
-        $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                    $this->assertEquals(['config' => [
-                            'events' => [["handler" => "testEventHandler", "event_type" => "testEventType"]],
-                            'campaign_cursor' => 'testCampaignId'
-                    ]], $params);
-                }));
-
-        $systemMock->addEventSubscription(["testEventType" => "testEventHandler"]);
-    }
-
-    public function testAddEventSubscription_useConfig()
-    {
-        $systemMock = $this->_getMock(System::class, [
-            '_request' => true,
-            '_getSubscriptionEvent' => "testEventType"
-        ]);
-
-        $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                    $this->assertEquals(['config' => [
-                            'events' => [["handler" => "testEventHandler", "event_type" => "testEventType"]],
-                            'campaign_cursor' => 'testCampaignId'
-                        ]], $params);
-                    $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                }));
-
-        $systemMock->addEventSubscription(["testEventType" => "testEventHandler"], 'testCampaignId', [
-            'apiKey' => 'testapikey',
-            'apiSecret' => 'testapisecret'
-        ]);
-    }
-
-    public function testDeleteEventSubscription()
-    {
-        $systemMock = $this->_getMock(System::class, [
-            '_request' => true,
-            '_getSubscriptionEvent' => "testEventType"
-        ]);
-
-        $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                    $this->assertEquals(['config' => [
-                            'events' => ["testEventType"],
-                            'campaign_cursor' => 'testCampaignId'
-                    ]], $params);
-                }));
-
-        $systemMock->deleteEventSubscription(["testEventType"], 'testCampaignId');
+        $systemMock->addEventSubscriptions([['channel' => 'email']]);
     }
 
     /**
      * @expectedException \XcooBee\Exception\XcooBeeException
      */
-    public function testDeleteEventSubscription_InvalidEvent()
+    public function testDeleteEventSubscriptions_NoChannelProvided()
     {
         $systemMock = $this->_getMock(System::class, [
             '_request' => true,
         ]);
 
-        $systemMock->deleteEventSubscription(["testEventType"], 'testCampaignId');
+        $systemMock->deleteEventSubscriptions([['topic' => 'campaign:123.qwerty/*']]);
     }
 
-    public function testDeleteEventSubscription_UseDefaultCampaign()
+    public function testUnsuspendEventSubscription()
     {
         $systemMock = $this->_getMock(System::class, [
             '_request' => true,
-            '_getSubscriptionEvent' => "testEventType",
-            '_getDefaultCampaignId' => 'testCampaignId'
         ]);
 
         $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params) {
-                            $this->assertEquals(['config' => [
-                                    'events' => ["testEventType"],
-                                    'campaign_cursor' => 'testCampaignId'
-                                ]], $params);
-                        }));
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals(['config' => [
+                    'topic' => 'campaign:123.qwerty',
+                    'channel' => 'webhook',
+                    'status' => 'active'
+                ]], $params);
+            }));
 
-        $systemMock->deleteEventSubscription(["testEventType"]);
-    }
-
-    public function testDeleteEventSubscription_useConfig()
-    {
-        $systemMock = $this->_getMock(System::class, [
-            '_request' => true,
-            '_getSubscriptionEvent' => "testEventType"
-        ]);
-
-        $systemMock->expects($this->once())
-                ->method('_request')
-                ->will($this->returnCallback(function ($query, $params, $config) {
-                    $this->assertEquals(['config' => [
-                            'events' => ["testEventType"],
-                            'campaign_cursor' => 'testCampaignId'
-                        ]], $params);
-                    $this->assertEquals(['apiKey' => 'testapikey', 'apiSecret' => 'testapisecret'], $config);
-                }));
-
-        $systemMock->deleteEventSubscription(["testEventType"], 'testCampaignId', [
-            'apiKey' => 'testapikey',
-            'apiSecret' => 'testapisecret'
-        ]);
+        $systemMock->unsuspendEventSubscription('campaign:123.qwerty', 'webhook');
     }
 
     public function testGetEvents_DecryptPayload()
@@ -437,12 +355,11 @@ class SystemTest extends TestCase
             ->method('_request')
             ->will($this->returnCallback(function ($query, $params) {
                 $this->assertEquals(['config' => [
-                    'campaign_cursor' => 'testCampaignId',
-                    'type' => 'consent_approved',
+                    'topic' => 'campaign:123.qwerty/consent_approved',
                 ]], $params);
             }));
 
-        $systemMock->triggerEvent("ConsentApproved");
+        $systemMock->triggerEvent('campaign:123.qwerty/consent_approved');
     }
 
     public function testTriggerEvent_useConfig()

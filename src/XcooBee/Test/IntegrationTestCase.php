@@ -13,4 +13,7 @@ abstract class IntegrationTestCase extends TestCase {
     /** @var consentId */
     public static $consentId;
 
+    /** @var campaign */
+    public static $campaign;
+
 }

@@ -6,7 +6,6 @@ use XcooBee\Test\IntegrationTestCase;
 
 class BeesTest extends IntegrationTestCase
 {
-
     public function testListBees()
     {
         $bees = self::$xcoobee->bees->listBees();
@@ -39,5 +38,4 @@ class BeesTest extends IntegrationTestCase
 
         $this->assertEquals(200, $response->code);
     }
-
 }
