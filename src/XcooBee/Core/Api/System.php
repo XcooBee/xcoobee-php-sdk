@@ -96,7 +96,7 @@ class System extends Api
      */
     public function getAvailableSubscriptions($referenceId = null, $referenceType = null, $config = [])
     {
-        $query = 'query getAvailableSubscriptions($referenceType: EventReferenceType, $referenceId: String){
+        $query = 'query getAvailableSubscriptions($referenceType: EventReferenceType, $referenceId: String) {
             available_subscriptions (reference_type: $referenceType, reference_cursor: $referenceId) {
                 topic
                 channels
@@ -170,7 +170,7 @@ class System extends Api
     }
 
     /**
-     * Insuspend event subscription
+     * Unsuspend event subscription
      *
      * @param string $topic
      * @param string $channel
@@ -197,7 +197,7 @@ class System extends Api
     }
 
     /**
-     * get all events
+     * Get all events
      *
      * @param array $config
      *
@@ -257,7 +257,7 @@ class System extends Api
     }
 
     /**
-     * trigger test event to campaign webhook
+     * Trigger test event to campaign webhook
      *
      * @param string $topic
      * @param array $config
@@ -267,8 +267,8 @@ class System extends Api
      */
     public function triggerEvent($topic, $config = [])
     {
-        $mutation = 'mutation sendTestEvent($topic: String){
-            send_test_event(topic: $topic){
+        $mutation = 'mutation sendTestEvent($topic: String) {
+            send_test_event(topic: $topic) {
                 topic
                 payload
                 hmac
