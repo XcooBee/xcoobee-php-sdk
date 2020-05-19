@@ -403,7 +403,7 @@ standard response object
 
 ## listEventSubscriptions([config])
 
-list current subscriptions.
+List current subscriptions.
 
 options:
 
@@ -420,7 +420,7 @@ standard response object
 
 ## getAvailableSubscriptions([referenceId, referenceType, config])
 
-list available topics and channels to subscribe.
+List available topics and channels to subscribe.
 If no arguments passed, method will return all available topics for user.
 
 options:
@@ -440,7 +440,7 @@ standard response object
 
 ## addEventSubscriptions(eventSubscriptions[, config])
 
-You can register subscriptions to email, inbox and webhook by calling the addEventSubscriptions function and providing list of event subscription objects.
+You can register subscriptions to email, inbox, and webhook by calling the `addEventSubscriptions` function and providing list of event subscription objects.
 
 Event subscription object structure:
 
@@ -494,7 +494,7 @@ standard response object
 
 ## deleteEventSubscriptions(eventSubscriptions, config])
 
-delete existing subscriptions.
+Delete existing subscriptions.
 If the subscription does not exists we will still return success.
 
 Event subscription object structure:
