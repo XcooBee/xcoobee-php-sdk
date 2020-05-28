@@ -16,9 +16,16 @@ $xcoobee->setConfig(\XcooBee\Models\ConfigModel::createFromFile());
 //     'apiSecret' => '',
 // ]));
 
-$res = $xcoobee->system->addEventSubscription(
-    ['EventType', 'eventTypeHandler'],
-    'campaignId'
-);
+$available = $xcoobee->system->getAvailableSubscriptions();
 
-var_export($res);
+$subscription = $available->result->available_subscriptions[0];
+
+$res = $xcoobee->system->addEventSubscriptions([
+    [
+        'topic' => $subscription->topic,
+        'channel' => $subscription->channels[0],
+        'handler' => 'testHandler',
+    ]
+]);
+
+var_export($res->result);

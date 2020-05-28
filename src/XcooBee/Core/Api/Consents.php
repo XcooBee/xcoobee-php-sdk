@@ -61,13 +61,12 @@ class Consents extends Api
 
         $query = 'query getCampaignInfo($campaignId: String!) {
             campaign(campaign_cursor: $campaignId) {
+                campaign_cursor
                 campaign_name
+                campaign_reference
                 date_c
                 date_e
                 status
-                xcoobee_targets {
-                    xcoobee_id
-                }
             }
         }';
 

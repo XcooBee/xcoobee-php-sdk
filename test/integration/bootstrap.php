@@ -17,5 +17,8 @@ if (!$consents) {
     die('No consent found');
 }
 
+$campaign = $xcoobee->consents->getCampaignInfo();
+
 IntegrationTestCase::$xcoobee = $xcoobee;
 IntegrationTestCase::$consentId = end($consents->result->consents->data)->consent_cursor;
+IntegrationTestCase::$campaign = $campaign->result->campaign;

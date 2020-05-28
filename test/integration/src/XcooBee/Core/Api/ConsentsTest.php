@@ -6,7 +6,6 @@ use XcooBee\Test\IntegrationTestCase;
 
 class ConsentsTest extends IntegrationTestCase
 {
-
     public function testListCampaigns()
     {
         $campaigns = self::$xcoobee->consents->listCampaigns();
@@ -21,7 +20,6 @@ class ConsentsTest extends IntegrationTestCase
         $this->assertEquals(200, $campaign->code);
         $this->assertEquals('Test campaign', $campaign->result->campaign->campaign_name);
         $this->assertEquals('active', $campaign->result->campaign->status);
-        $this->assertEquals([], $campaign->result->campaign->xcoobee_targets);
     }
 
     public function testRequestConsent()
@@ -33,23 +31,9 @@ class ConsentsTest extends IntegrationTestCase
 
     public function testSetUserDataResponse()
     {
-        $consent = self::$xcoobee->consents->setUserDataResponse('test message', 'requestRef', __DIR__ . '/../../../../assets/testfile.txt');
+        $consent = self::$xcoobee->consents->setUserDataResponse('test message', 'requestRef', __DIR__ . '/../../../../assets/testfile.txt', 'targetUrl', 'testHandler');
         $this->assertEquals(400, $consent->code);
         $this->assertEquals('Data request not found', $consent->errors[0]->message);
-    }
-
-    public function testConfirmConsentChange()
-    {
-        $consent = self::$xcoobee->consents->confirmConsentChange(self::$consentId);
-        $this->assertEquals(200, $consent->code);
-        $this->assertEquals(true, $consent->result);
-    }
-
-    public function testConfirmDataDelete()
-    {
-        $consent = self::$xcoobee->consents->confirmDataDelete(self::$consentId);
-        $this->assertEquals(200, $consent->code);
-        $this->assertEquals(true, $consent->result);
     }
 
     public function testGetConsentData()
@@ -68,5 +52,4 @@ class ConsentsTest extends IntegrationTestCase
         $this->assertEquals(200, $consent->code);
         $this->assertEquals(['application' => false, 'usage' => false, 'advertising' => false, 'statistics' => false], $consent->result);
     }
-
 }
