@@ -32,22 +32,7 @@ class System extends Api
     {
         $user = $this->_xcoobee->users->getUser($config);
         $response = new Response();
-        if ($user->pgp_public_key) {
-            $campaignInfo = $this->_xcoobee->consents->getCampaignInfo(null, $config);
-            if (!empty($campaignInfo->result->campaign)) {
-                $response->code = 200;
-            } else {
-                $response->code = 400;
-                $response->errors = [
-                    (object) ['message' => "campaign not found."]
-                ];
-            }
-        } else {
-            $response->code = 400;
-            $response->errors = [
-                (object) ['message' => "pgp key not found."]
-            ];
-        }
+        $response->code = 200;
 
         return $response;
     }
@@ -254,6 +239,28 @@ class System extends Api
         }
 
         return $events;
+    }
+
+    /**
+     * Delete events by ids
+     *
+     * @param array $eventSubscriptions
+     * @param array $config
+     *
+     * @return Response
+     * @throws XcooBeeException
+     */
+    public function deleteEvents($eventIds, $config = [])
+    {
+        $mutation = 'mutation deleteEvents($ids: [Int] ){
+            delete_events(event_ids: $ids){
+                event_id
+            }
+        }';
+
+        return $this->_request($mutation, [
+            'ids' => $eventIds,
+        ], $config);
     }
 
     /**

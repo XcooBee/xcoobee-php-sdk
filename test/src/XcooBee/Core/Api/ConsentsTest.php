@@ -95,6 +95,7 @@ class ConsentsTest extends TestCase
     {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
+            '_validateCampaignExists' => true
         ]);
 
         $consentsMock->expects($this->once())
@@ -111,6 +112,7 @@ class ConsentsTest extends TestCase
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => true,
             '_getDefaultCampaignId' => 'testCampaignId',
+            '_validateCampaignExists' => true
         ]);
 
         $consentsMock->expects($this->once())
@@ -510,7 +512,8 @@ class ConsentsTest extends TestCase
     public function testGetCookieConsent($requestCode, $requestData, $requestError, $expectedResponse, $xid) {
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
-            '_getUserId' => 'testUserID'
+            '_getUserId' => 'testUserID',
+            '_validateCampaignExists' => true
         ]);
 
         $response = $consentsMock->getCookieConsent($xid, 'testCampaignId');
@@ -533,7 +536,8 @@ class ConsentsTest extends TestCase
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
             '_request' => $this->_createResponse($requestCode, $requestData, $requestError),
             '_getUserId' => 'testUserID',
-            '_getDefaultCampaignId' => 'testCampaignId'
+            '_getDefaultCampaignId' => 'testCampaignId',
+            '_validateCampaignExists' => true
         ]);
 
         $response = $consentsMock->getCookieConsent($xid);
@@ -551,7 +555,8 @@ class ConsentsTest extends TestCase
         $XcooBeeMock->bees->expects($this->once())
             ->method('uploadFiles');
         $consentsMock = $this->_getMock(\XcooBee\Core\Api\Consents::class, [
-            '_request' => $this->_createResponse(200, true)
+            '_request' => $this->_createResponse(200, true),
+            '_validateCampaignExists' => true
         ]);
         $consentsMock->expects($this->once())
             ->method('_request')
