@@ -67,43 +67,6 @@ class SystemTest extends TestCase
         $this->assertEquals(200, $response->code);
     }
 
-    public function testPing_NoCampaignProvided()
-    {
-        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
-        $XcooBeeMock->consents = $this->_getMock(Consents::class, [
-            'getCampaignInfo' => (object) [
-                'result' => null
-            ]
-        ]);
-        $XcooBeeMock->users = $this->_getMock(Users::class, [
-            'getUser' => (object) ['pgp_public_key' => 'test']
-        ]);
-        $systemMock = $this->_getMock(System::class, [
-            '_getDefaultCampaignId' => null,
-        ]);
-        $this->_setProperty($systemMock, '_xcoobee', $XcooBeeMock);
-
-        $response = $systemMock->ping();
-        $this->assertEquals(400, $response->code);
-        $this->assertEquals('campaign not found.', $response->errors[0]->message);
-    }
-
-    public function testPing_NoPGP()
-    {
-        $XcooBeeMock = $this->_getMock(XcooBee::class, [] );
-        $XcooBeeMock->users = $this->_getMock(Users::class, [
-            'getUser' => (object) ['pgp_public_key' => null]
-        ]);
-        $systemMock = $this->_getMock(System::class, [
-            '_getDefaultCampaignId' => null,
-        ]);
-        $this->_setProperty($systemMock, '_xcoobee', $XcooBeeMock);
-
-        $response = $systemMock->ping();
-        $this->assertEquals(400, $response->code);
-        $this->assertEquals('pgp key not found.', $response->errors[0]->message);
-    }
-
     public function testListEventSubscriptions()
     {
         $systemMock = $this->_getMock(System::class, [
@@ -218,6 +181,23 @@ class SystemTest extends TestCase
             }));
 
         $systemMock->unsuspendEventSubscription('campaign:123.qwerty', 'webhook');
+    }
+
+    public function testDeleteEvents()
+    {
+        $systemMock = $this->_getMock(System::class, [
+            '_request' => true,
+        ]);
+
+        $systemMock->expects($this->once())
+            ->method('_request')
+            ->will($this->returnCallback(function ($query, $params) {
+                $this->assertEquals([
+                    'ids' => [1, 2, 3],
+                ], $params);
+            }));
+
+        $systemMock->deleteEvents([1, 2, 3]);
     }
 
     public function testGetEvents_DecryptPayload()

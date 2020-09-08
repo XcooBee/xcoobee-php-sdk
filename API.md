@@ -40,6 +40,7 @@
     - [triggerEvent](#triggereventtopic-config)
     - [handleEvents](#handleeventsevents)
     - [getEvents](#geteventsconfig)
+    - [deleteEvents](#deleteeventseventids-config)
 - [Consent Administration API](#consent-administration-api)
     - [getCampaignInfo](#getcampaigninfocampaignid-config)
     - [listCampaigns](#listcampaignsconfig)
@@ -628,6 +629,23 @@ config => optional: the config object
 standard response object
 - status 200 if success:
     - result will contain events with payload
+- status 400 if error
+
+
+## deleteEvents(eventIds[, config])
+Deletes events by provided IDs
+
+options:
+```
+eventIds => IDs of events, that should be deleted
+config    => optional: the config object
+```
+
+### response
+
+standard response object
+- status 200 if success:
+    - result will contain deleted events
 - status 400 if error
 
 # Consent Administration API

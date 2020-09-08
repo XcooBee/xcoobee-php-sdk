@@ -20,6 +20,23 @@ class Consents extends Api
     }
 
     /**
+     * method for validation if campaign exists
+     *
+     * @param string $campaignId
+     *
+     * @return Boolean
+     * @throws XcooBeeException
+     */
+    protected function _validateCampaignExists($campaignId) {
+        $campaignInfo = $this->_xcoobee->consents->getCampaignInfo($campaignId);
+        if (!empty($campaignInfo->result->campaign)) {
+            return true;
+        }
+
+        throw new XcooBeeException("Campaign not found");
+    }
+
+    /**
      * List all campaigns
      *
      * @param array $config
@@ -85,6 +102,8 @@ class Consents extends Api
     public function requestConsent($xid, $refId = null, $campaignId = null, $config = [])
     {
         $campaignId = $this->_getCampaignId($campaignId, $config);
+
+        $this->_validateCampaignExists($campaignId);
 
         $mutation = 'mutation requestConsent($config: AdditionalRequestConfig) {
             send_consent_request(config: $config) {
@@ -444,6 +463,8 @@ class Consents extends Api
     {
         $campaignId = $this->_getCampaignId($campaignId, $config);
 
+        $this->_validateCampaignExists($campaignId);
+
         $query = 'query listConsents($userId: String!, $campaignId: String!, $status: ConsentStatus, $data_types: [ConsentDatatype]) {
             consents(campaign_owner_cursor: $userId, campaign_cursors: [$campaignId], statuses: [$status], data_types: $data_types) {
                 data {
@@ -547,6 +568,8 @@ class Consents extends Api
         }
 
         $campaignId = $this->_getCampaignId($campaignId, $config);
+
+        $this->_validateCampaignExists($campaignId);
 
         $mutation = 'mutation registerConsents($config: RegisterConsentsConfig) {
             register_consents(config: $config) {
