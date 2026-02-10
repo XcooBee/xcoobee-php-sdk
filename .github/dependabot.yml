@@ -18,11 +18,8 @@ updates:
       include: "scope"
     pull-request-branch-name:
       separator: "/"
-    reviewers:
-      - "Bilal-S"
-    assignees:
-      - "Bilal-S"
     labels:
       - "dependencies"
       - "php"
     versioning-strategy: "auto"
+    auto-merge: true
